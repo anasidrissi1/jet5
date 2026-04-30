@@ -1,0 +1,23 @@
+.app-notifications-stack {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.app-notifications-stack > * {
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .app-notifications-stack {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    gap: 8px;
+  }
+}

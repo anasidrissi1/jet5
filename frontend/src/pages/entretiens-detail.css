@@ -1,0 +1,146 @@
+/* ============================================
+   Détail entretien - carte principale
+   ============================================ */
+
+.entretien-detail-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.entretien-detail-card--highlight {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color), var(--shadow-md);
+}
+
+.entretien-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.entretien-detail-block {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+}
+
+.entretien-block-title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.entretien-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-sm) var(--spacing-lg);
+}
+
+.entretien-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.entretien-summary-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.entretien-summary-value {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.entretien-summary-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.entretien-summary-cost {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--success-color, #10b981);
+}
+
+.entretien-description {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.entretien-operations-table {
+  margin-top: var(--spacing-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.entretien-operations-header {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+}
+
+.entretien-operations-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  align-items: flex-start;
+}
+
+.entretien-operations-category {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.entretien-operations-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.entretien-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+}
+
+.entretien-error {
+  color: var(--danger-color);
+}
+
+@media (max-width: 640px) {
+  .entretien-operations-header,
+  .entretien-operations-row {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Django
+backend/db.sqlite3
+backend/media/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.expo/
+
+# Logs and temp
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/

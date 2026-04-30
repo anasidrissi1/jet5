@@ -1,0 +1,78 @@
+/* ============================================
+   JET5 - Main Stylesheet
+   Import order matters!
+   ============================================ */
+
+/* 1. Design System (variables, animations, components) */
+@import './styles/theme-vars.css';
+
+/* 2. Layout */
+@import './styles/layout.css';
+@import './styles/sidebar.css';
+@import './styles/header.css';
+
+/* 3. Components */
+@import './styles/modal.css';
+@import './styles/loader.css';
+@import './styles/ui.css';
+
+/* 4. Pages */
+@import './styles/pages.css';
+@import './styles/rentabilite.css';
+@import './styles/Login.css';
+@import './styles/Dashboard.css';
+@import './styles/cars.css';
+
+/* 5. Mobile Responsive - DOIT ÊTRE APRÈS TOUS LES AUTRES */
+@import './styles/mobile-responsive.css';
+
+/* ========== GLOBAL OVERRIDES ========== */
+
+/* Scrollbar Styling - Dark Mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Selection */
+::selection {
+  background: rgba(245, 196, 0, 0.3);
+  color: var(--text-primary);
+}
+
+/* Focus Visible */
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+/* Hide numeric spin buttons */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* App Container */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

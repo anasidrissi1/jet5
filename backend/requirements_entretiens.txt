@@ -1,0 +1,7 @@
+# Dépendances pour le système d'entretiens intelligent
+
+# Package pour les calculs de dates (relativedelta)
+python-dateutil>=2.8.2
+
+# Package pour les requêtes HTTP (utilisé par diverses fonctionnalités)
+requests>=2.31.0

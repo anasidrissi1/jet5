@@ -1,0 +1,447 @@
+.cashflow-widget {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cashflow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.cashflow-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.cashflow-periode-tabs {
+  display: flex;
+  gap: 4px;
+  background: #f8f9fa;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.periode-tab {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.periode-tab:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #D4A900;
+}
+
+.periode-tab.active {
+  background: #D4A900;
+  color: white;
+}
+
+.cashflow-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+/* Balance principale */
+.cashflow-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.balance-label {
+  font-size: 13px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.balance-value {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.balance-tendance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+.tendance-icon {
+  font-size: 16px;
+}
+
+.balance-positive {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+}
+
+.balance-negative {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.balance-neutral {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+/* Grid Entrées/Sorties */
+.cashflow-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.cashflow-card {
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.cashflow-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cashflow-card.income {
+  border-color: #27ae60;
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, white 100%);
+}
+
+.cashflow-card.expenses {
+  border-color: #e74c3c;
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, white 100%);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.card-icon {
+  font-size: 20px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-amount {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.cashflow-card.income .card-amount {
+  color: #27ae60;
+}
+
+.cashflow-card.expenses .card-amount {
+  color: #e74c3c;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.detail-label {
+  color: #666;
+}
+
+.detail-value {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Paiements en attente */
+.cashflow-pending {
+  background: #fff9e6;
+  border: 2px solid #f39c12;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.pending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pending-header h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.pending-badge {
+  background: #f39c12;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pending-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+  border-left: 4px solid #f39c12;
+}
+
+.pending-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pending-item.overdue {
+  border-left-color: #e74c3c;
+  background: #fee;
+}
+
+.pending-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pending-client {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.pending-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.retard-badge {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.normal-badge {
+  color: #666;
+}
+
+.pending-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f39c12;
+}
+
+.pending-item.overdue .pending-amount {
+  color: #e74c3c;
+}
+
+.voir-tous-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #f39c12;
+  background: white;
+  color: #f39c12;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.voir-tous-btn:hover {
+  background: #f39c12;
+  color: white;
+}
+
+/* Prévisions */
+.cashflow-forecast {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.cashflow-forecast h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.forecast-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.forecast-label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.forecast-value {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.forecast-value.positive {
+  color: #27ae60;
+}
+
+.forecast-value.negative {
+  color: #e74c3c;
+}
+
+/* Actions */
+.cashflow-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.action-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.action-btn.primary {
+  background: #D4A900;
+  color: white;
+}
+
+.action-btn.primary:hover {
+  background: #5568d3;
+  transform: scale(1.02);
+}
+
+.action-btn.secondary {
+  background: white;
+  color: #D4A900;
+  border: 2px solid #D4A900;
+}
+
+.action-btn.secondary:hover {
+  background: #D4A900;
+  color: white;
+}
+
+.cashflow-loading {
+  text-align: center;
+  padding: 48px;
+  color: #999;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cashflow-widget {
+    padding: 16px;
+  }
+
+  .cashflow-periode-tabs {
+    flex-wrap: wrap;
+  }
+
+  .periode-tab {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .balance-value {
+    font-size: 28px;
+  }
+
+  .cashflow-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .forecast-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cashflow-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .card-amount {
+    font-size: 20px;
+  }
+}

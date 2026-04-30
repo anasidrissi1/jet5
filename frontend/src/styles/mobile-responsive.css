@@ -1,0 +1,792 @@
+/* ============================================
+   JET5 - Mobile Responsive Design
+   Version mobile et tablette optimisée
+   ============================================ */
+
+/* ==== MOBILE FIRST - BASE ==== */
+* {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* ==== TABLETTE (max-width: 1024px) ==== */
+@media (max-width: 1024px) {
+  /* Layout général */
+  .cars-page {
+    padding: 12px !important;
+  }
+
+  /* Grilles */
+  .cars-grid,
+  .clients-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+    gap: 16px;
+  }
+
+  /* Tables */
+  .cars-table,
+  .payments-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cars-table th,
+  .cars-table td {
+    padding: 12px 8px !important;
+    font-size: 13px;
+  }
+
+  /* Modales */
+  .modal-card-reservation {
+    max-width: 95%;
+    margin: 10px auto;
+  }
+
+  .reservation-layout {
+    grid-template-columns: 1fr !important;
+    padding: 16px !important;
+  }
+
+  /* Sidebar disparaît sur tablette */
+  .reservation-summary {
+    display: none !important;
+  }
+
+  /* Formulaires */
+  .form-grid-2,
+  .form-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Stats cards */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+}
+
+/* ==== MOBILE (max-width: 768px) ==== */
+@media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    overflow-x: hidden;
+  }
+
+  .app-layout {
+    min-height: 100dvh;
+  }
+
+  .page-content {
+    width: 100%;
+    padding-top: 0.65rem !important;
+  }
+
+  /* Layout principal */
+  .cars-page {
+    padding: 8px !important;
+  }
+
+  /* Boutons header */
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .header-actions button,
+  .header-actions .btn-primary,
+  .btn-add-new {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  /* Filtres et recherche */
+  .cars-filters,
+  .filters-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .search-bar,
+  .search-bar input {
+    width: 100% !important;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-group select,
+  .select-enhanced {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  /* Grilles en une colonne */
+  .cars-grid,
+  .clients-grid,
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  /* Cards */
+  .car-card,
+  .client-card,
+  .stat-card {
+    padding: 14px !important;
+  }
+
+  .car-card-header h3 {
+    font-size: 16px !important;
+  }
+
+  /* Tables responsive */
+  .cars-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .table-card .data-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .cars-table thead {
+    display: none; /* Cache les en-têtes sur mobile */
+  }
+
+  .table-card .data-table thead {
+    display: none;
+  }
+
+  .cars-table tbody,
+  .cars-table tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--bg-card);
+  }
+
+  .table-card .data-table tbody,
+  .table-card .data-table tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--bg-card);
+  }
+
+  .cars-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+  }
+
+  .table-card .data-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    white-space: normal;
+    gap: 8px;
+  }
+
+  .cars-table td:last-child {
+    border-bottom: none;
+  }
+
+  .table-card .data-table td:last-child {
+    border-bottom: none;
+  }
+
+  .cars-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 8px;
+  }
+
+  .table-card .data-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Modales plein écran sur mobile */
+  .modal-container-reservation {
+    padding: 0 !important;
+    min-height: 100vh;
+  }
+
+  .modal-card-reservation {
+    max-width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .reservation-card-header {
+    padding: 20px 16px !important;
+  }
+
+  .reservation-card-header h2 {
+    font-size: 20px !important;
+  }
+
+  .reservation-layout {
+    padding: 12px !important;
+  }
+
+  /* Formulaires */
+  .form-step {
+    padding: 16px 12px !important;
+    margin-bottom: 16px;
+  }
+
+  .step-header h3 {
+    font-size: 18px !important;
+  }
+
+  .step-columns {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  .selection-card {
+    padding: 14px !important;
+  }
+
+  .selection-header {
+    padding: 10px 0;
+  }
+
+  .selection-title {
+    font-size: 15px !important;
+  }
+
+  .form-field label {
+    font-size: 13px !important;
+  }
+
+  .input-enhanced,
+  .select-enhanced,
+  .textarea-enhanced {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Boutons formulaire */
+  .form-actions-modern {
+    flex-direction: column-reverse;
+    gap: 12px;
+    padding: 16px 12px !important;
+  }
+
+  .btn-submit-modern,
+  .btn-cancel-modern {
+    width: 100% !important;
+    justify-content: center;
+  }
+
+  /* Récap grille */
+  .recap-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .recap-tile {
+    padding: 12px !important;
+  }
+
+  /* Info chips */
+  .info-chips {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .info-chip {
+    width: 100% !important;
+    text-align: center;
+  }
+
+  /* Financial summary */
+  .financial-summary {
+    padding: 16px !important;
+  }
+
+  .summary-row {
+    font-size: 14px;
+  }
+
+  /* Stats dashboard */
+  .stat-card {
+    min-height: auto !important;
+  }
+
+  .stat-value {
+    font-size: 28px !important;
+  }
+
+  /* Badges et pills */
+  .badge,
+  .status-pill {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+
+  /* Actions boutons */
+  .car-actions,
+  .client-actions,
+  .payments-actions {
+    flex-direction: column !important;
+    gap: 8px;
+  }
+
+  .car-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Prolongation block */
+  .prolongation-block {
+    padding: 12px !important;
+  }
+
+  .prolongation-toggle {
+    flex-direction: column !important;
+    gap: 12px;
+  }
+
+  .toggle-chip {
+    width: 100% !important;
+  }
+
+  /* Alert et notifications */
+  .error-banner,
+  .info-box {
+    padding: 12px !important;
+    font-size: 13px;
+  }
+
+  /* Paiements table */
+  .payments-table-card {
+    overflow-x: auto;
+  }
+
+  .payments-table {
+    min-width: 800px; /* Force scroll horizontal */
+  }
+
+  /* Dashboard widgets */
+  .dashboard-widgets {
+    grid-template-columns: 1fr !important;
+  }
+
+  .widget-card {
+    padding: 16px !important;
+  }
+
+  /* Entretiens cards */
+  .entretiens-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .entretien-card {
+    padding: 14px !important;
+  }
+
+  /* Modal actions */
+  .modal-actions {
+    flex-direction: column-reverse !important;
+    gap: 10px;
+  }
+
+  .modal-actions button {
+    width: 100% !important;
+  }
+}
+
+/* ==== PETIT MOBILE (max-width: 480px) ==== */
+@media (max-width: 480px) {
+  /* Texte encore plus petit */
+  body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 22px !important;
+  }
+
+  h2 {
+    font-size: 18px !important;
+  }
+
+  h3 {
+    font-size: 16px !important;
+  }
+
+  /* Padding réduit partout */
+  .cars-page,
+  .reservation-layout,
+  .form-step {
+    padding: 8px !important;
+  }
+
+  /* Cards compactes */
+  .car-card,
+  .client-card,
+  .stat-card {
+    padding: 10px !important;
+  }
+
+  /* Boutons plus petits */
+  button,
+  .btn-primary,
+  .btn-secondary {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+  }
+
+  /* Input plus lisibles */
+  .input-enhanced,
+  .select-enhanced {
+    font-size: 15px !important; /* Plus grand pour la lisibilité */
+  }
+
+  /* Stats en colonne */
+  .stats-grid {
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px !important;
+  }
+
+  .stat-value {
+    font-size: 24px !important;
+  }
+
+  .stat-label {
+    font-size: 12px !important;
+  }
+
+  /* Chips plus petits */
+  .info-chip {
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Modal header */
+  .reservation-card-header {
+    padding: 16px 12px !important;
+  }
+
+  /* Selection cards */
+  .selection-card {
+    padding: 12px !important;
+  }
+
+  /* Form actions */
+  .form-actions-modern {
+    padding: 12px 8px !important;
+  }
+
+  /* Recap tiles */
+  .recap-tile {
+    padding: 10px !important;
+  }
+
+  .recap-label {
+    font-size: 11px !important;
+  }
+
+  .recap-value {
+    font-size: 14px !important;
+  }
+
+  /* Total summary */
+  .total-summary-bar {
+    padding: 14px 12px !important;
+  }
+
+  .total-summary-row {
+    font-size: 13px;
+  }
+
+  .total-summary-row.accent {
+    font-size: 16px !important;
+  }
+}
+
+/* ==== AMÉLIORATION TOUCH ==== */
+@media (hover: none) and (pointer: coarse) {
+  /* Augmente la zone tactile des boutons */
+  button,
+  .btn-primary,
+  .btn-secondary,
+  .card-toggle,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Supprime les effets hover sur mobile */
+  button:hover,
+  .btn-primary:hover,
+  .car-card:hover {
+    transform: none !important;
+  }
+
+  /* Ajoute des effets tactiles */
+  button:active,
+  .btn-primary:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+
+  /* Select plus facile à utiliser */
+  select {
+    font-size: 16px !important; /* Évite le zoom sur iOS */
+  }
+
+  input,
+  textarea {
+    font-size: 16px !important; /* Évite le zoom sur iOS */
+  }
+}
+
+/* ==== MODE PAYSAGE MOBILE ==== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal-card-reservation {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .reservation-card-header {
+    padding: 12px 16px !important;
+  }
+
+  .form-step {
+    padding: 12px !important;
+  }
+}
+
+/* ==== ACCESSIBILITÉ ==== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==== DARK MODE MOBILE ==== */
+@media (max-width: 768px) {
+  html[data-theme="dark"] {
+    background: #0a0e1a;
+  }
+
+  html[data-theme="dark"] .modal-card-reservation {
+    border: none;
+  }
+
+  html[data-theme="dark"] .cars-table tr {
+    background: #1a1f35;
+    border-color: #2a2f45;
+  }
+}
+
+/* ==== NAVIGATION MOBILE ==== */
+@media (max-width: 768px) {
+  /* Sidebar mobile */
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100vh;
+    width: 280px;
+    z-index: 9999;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    display: none;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+
+  /* Header mobile */
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header-logo {
+    font-size: 18px;
+  }
+
+  /* Menu burger */
+  .menu-toggle {
+    display: block;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    margin: 5px auto;
+    transition: 0.3s;
+  }
+}
+
+/* ==== GLOBAL TABLE MOBILE SCROLL ==== */
+@media (max-width: 768px) {
+  /* All data tables scroll horizontally */
+  .table-wrapper,
+  .payments-table-card,
+  .admin-contact-messages-table-wrapper,
+  .reservations-table-wrapper,
+  .entretiens-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
+  /* Prevent table columns from collapsing */
+  .payments-table,
+  .admin-contact-messages-table,
+  .cars-table {
+    min-width: 700px;
+  }
+
+  /* Returns banner - stack items vertically */
+  .returns-banner__list {
+    flex-direction: column;
+  }
+
+  .returns-banner__item {
+    min-width: auto;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .returns-banner__actions {
+    width: 100%;
+  }
+
+  .returns-banner__btn {
+    flex: 1;
+  }
+
+  .returns-banner__top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  /* Page titles */
+  .page-header h1,
+  .page-title {
+    font-size: 1.3rem !important;
+  }
+
+  .page-header p,
+  .page-subtitle {
+    font-size: 0.85rem;
+  }
+
+  /* Action buttons row */
+  .page-actions,
+  .header-actions-row,
+  .toolbar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .page-actions button,
+  .page-actions a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==== PUBLIC PAGES MOBILE ==== */
+@media (max-width: 640px) {
+  /* Section padding */
+  .section-padding {
+    padding: 2rem 0.5rem;
+  }
+
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Public layout content */
+  .public-layout__content {
+    padding: 4rem 0.75rem 1rem;
+  }
+
+  /* Contact form inputs */
+  .public-contact-form input,
+  .public-contact-form textarea,
+  .public-contact-form select {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .public-contact-actions .btn {
+    width: 100%;
+  }
+
+  /* Car card actions */
+  .public-car-card__actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .public-car-card__actions .btn,
+  .public-car-card__cta {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}

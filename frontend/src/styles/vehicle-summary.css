@@ -1,0 +1,61 @@
+/* Carte résumé véhicule - mode sombre harmonisé */
+.vehicle-summary-card {
+  background: #e0e7ff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(99,102,241,0.10);
+  padding: 32px 40px;
+  margin: 24px auto;
+  max-width: 700px;
+  color: #232336;
+  border: 2px solid #FCD34D;
+}
+.vehicle-summary-card h2 {
+  color: #6d28d9;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+.vehicle-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  font-size: 1.1rem;
+}
+.vehicle-summary-col {
+  flex: 1 1 40%;
+  min-width: 220px;
+  margin-bottom: 12px;
+}
+.vehicle-summary-label {
+  font-weight: 700;
+  color: #232336;
+  margin-right: 8px;
+}
+.vehicle-summary-value {
+  font-weight: 700;
+  color: #6d28d9;
+}
+.vehicle-summary-icon {
+  margin-right: 6px;
+  font-size: 1.2rem;
+}
+.vehicle-summary-status {
+  color: #059669;
+  font-weight: 700;
+  background: #d1fae5;
+  border-radius: 8px;
+  padding: 2px 10px;
+  display: inline-block;
+}
+.vehicle-summary-price {
+  color: #f59e42;
+  font-weight: 700;
+}
+@media (max-width: 600px) {
+  .vehicle-summary-card {
+    padding: 18px 8px;
+  }
+  .vehicle-summary-row {
+    gap: 12px;
+  }
+}

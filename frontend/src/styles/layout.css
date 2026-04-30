@@ -1,0 +1,67 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 0;
+  transition: margin-left var(--transition-slow) ease;
+}
+
+.app-layout.is-desktop .main-content.with-sidebar {
+  margin-left: 280px;
+}
+
+.page-content {
+  flex: 1;
+  padding: clamp(var(--spacing-4), 2vw, var(--spacing-8));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 998;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1024px) {
+  .app-layout.is-desktop .main-content.with-sidebar {
+    margin-left: 0;
+  }
+
+  .page-content {
+    padding: var(--spacing-4);
+    padding-bottom: var(--spacing-12);
+  }
+
+}
+
+@media (max-width: 768px) {
+  .app-layout,
+  .main-content,
+  .page-content {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .page-content {
+    padding: 0.75rem;
+    padding-bottom: 5rem;
+  }
+}

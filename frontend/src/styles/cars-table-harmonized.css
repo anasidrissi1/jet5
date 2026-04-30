@@ -1,0 +1,90 @@
+/* Style tableau harmonisé comme l'exemple du screen */
+.cars-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: none;
+}
+.cars-table thead tr {
+  background: linear-gradient(90deg, #FCD34D 0%, #D4A900 100%);
+  color: #fff;
+}
+.cars-table th {
+  padding: 18px 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: left;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  border-bottom: 2px solid #232336;
+}
+.cars-table th:first-child {
+  border-top-left-radius: 14px;
+}
+.cars-table th:last-child {
+  border-top-right-radius: 14px;
+}
+.cars-table td {
+  padding: 16px 12px;
+  font-size: 1rem;
+  color: #e0e7ff;
+  border-bottom: 1px solid #232336;
+  background: none;
+}
+.cars-table tr {
+  background: transparent;
+  transition: background 0.2s;
+}
+.cars-table tr:hover {
+  background: #232336;
+}
+.cars-table .plate-badge {
+  background: #232336;
+  color: #FCD34D;
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 0.95rem;
+  display: inline-block;
+}
+.cars-table .btn-action {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: background 0.2s;
+}
+.cars-table .btn-edit-action {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: #fff;
+}
+.cars-table .btn-edit-action:hover {
+  background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+}
+.cars-table .btn-delete-action {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #fff;
+}
+.cars-table .btn-delete-action:hover {
+  background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
+}
+
+@media (max-width: 768px) {
+  .cars-table th {
+    padding: 12px 8px;
+    font-size: 0.85rem;
+  }
+
+  .cars-table td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+
+  .cars-table .btn-action {
+    padding: 6px 8px;
+    font-size: 1rem;
+    margin-right: 4px;
+  }
+}

@@ -1,0 +1,1293 @@
+/* ============================================
+   JET5 PREMIUM DARK THEME
+   Black + Gold luxury overrides for public site
+   ============================================ */
+
+/* ===== PREMIUM DESIGN TOKENS ===== */
+html[data-theme="dark"] {
+  --premium-black: #000000;
+  --premium-bg: #050505;
+  --premium-bg-elevated: #0a0a0a;
+  --premium-bg-card: #0d0d0d;
+  --premium-gold: #F5C400;
+  --premium-gold-light: #FFD740;
+  --premium-gold-bright: #FFE066;
+  --premium-gold-dark: #D4A900;
+  --premium-border: rgba(245, 196, 0, 0.12);
+  --premium-border-hover: rgba(245, 196, 0, 0.3);
+  --premium-glass: rgba(255, 255, 255, 0.025);
+  --premium-glass-border: rgba(255, 255, 255, 0.06);
+  --premium-glass-hover: rgba(255, 255, 255, 0.045);
+  --premium-text: #f5f5f5;
+  --premium-text-muted: rgba(255, 255, 255, 0.55);
+  --premium-text-subtle: rgba(255, 255, 255, 0.35);
+  --premium-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  --premium-glow: 0 0 40px rgba(245, 196, 0, 0.08);
+}
+
+/* ===== LAYOUT OVERRIDE ===== */
+html[data-theme="dark"] .public-layout {
+  background: var(--premium-black);
+}
+
+/* ===== TOPBAR - TRANSPARENT GLASS ===== */
+html[data-theme="dark"] .public-topbar {
+  background: rgba(0, 0, 0, 0.65);
+  border-bottom: 1px solid rgba(245, 196, 0, 0.08);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+}
+
+html[data-theme="dark"] .public-topbar__logo-image {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
+  opacity: 1;
+}
+
+html[data-theme="dark"] .public-topbar__link {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  transition: color 0.3s ease;
+}
+
+html[data-theme="dark"] .public-topbar__link:hover,
+html[data-theme="dark"] .public-topbar__link--active {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-topbar__cta {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-dark));
+  color: #000;
+  box-shadow: 0 8px 25px rgba(245, 196, 0, 0.25);
+}
+
+html[data-theme="dark"] .public-topbar__cta:hover {
+  box-shadow: 0 12px 35px rgba(245, 196, 0, 0.4);
+}
+
+html[data-theme="dark"] .public-topbar__theme-toggle {
+  color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .public-topbar__theme-toggle:hover {
+  color: var(--premium-gold);
+  border-color: rgba(245, 196, 0, 0.3);
+  background-color: rgba(245, 196, 0, 0.08);
+}
+
+html[data-theme="dark"] .public-topbar__hamburger span {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+html[data-theme="dark"] .public-topbar__mobile-nav {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(245, 196, 0, 0.08);
+}
+
+html[data-theme="dark"] .public-topbar__mobile-link {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme="dark"] .public-topbar__mobile-link:hover,
+html[data-theme="dark"] .public-topbar__mobile-link--active {
+  color: var(--premium-gold);
+}
+
+/* ===== HERO SECTION ===== */
+html[data-theme="dark"] .hero-premium__video {
+  filter: brightness(0.5) contrast(1.1);
+}
+
+html[data-theme="dark"] .hero-premium__overlay-gradient {
+  background:
+    linear-gradient(110deg, rgba(0, 0, 0, 0.92) 15%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+html[data-theme="dark"] .hero-premium__title {
+  color: #ffffff;
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .gradient-text {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html[data-theme="dark"] .hero-premium__description {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .badge-premium {
+  background: rgba(245, 196, 0, 0.12);
+  color: var(--premium-gold);
+  border: 1px solid rgba(245, 196, 0, 0.2);
+}
+
+html[data-theme="dark"] .badge-luxury {
+  background: linear-gradient(135deg, rgba(245, 196, 0, 0.15), rgba(245, 196, 0, 0.05));
+  color: var(--premium-gold-light);
+  border: 1px solid rgba(245, 196, 0, 0.25);
+}
+
+html[data-theme="dark"] .btn-premium {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-dark));
+  color: #000;
+  box-shadow: 0 10px 30px rgba(245, 196, 0, 0.2);
+  font-weight: 700;
+}
+
+html[data-theme="dark"] .btn-premium:hover {
+  box-shadow: 0 20px 45px rgba(245, 196, 0, 0.35);
+  transform: translateY(-2px);
+}
+
+html[data-theme="dark"] .btn-outline-light {
+  border-color: rgba(245, 196, 0, 0.25);
+  color: var(--premium-gold-light);
+}
+
+html[data-theme="dark"] .btn-outline-light:hover {
+  background: rgba(245, 196, 0, 0.1);
+  border-color: rgba(245, 196, 0, 0.4);
+}
+
+html[data-theme="dark"] .stat-number {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .stat-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .stat-item svg {
+  color: var(--premium-gold);
+  opacity: 0.7;
+}
+
+/* ===== SECTION LABELS ===== */
+html[data-theme="dark"] .section-label {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .section-label::before {
+  background: linear-gradient(90deg, var(--premium-gold), transparent);
+}
+
+/* ===== GLASS CARD - PREMIUM ===== */
+html[data-theme="dark"] .glass-card {
+  background: var(--premium-glass);
+  border: 1px solid var(--premium-glass-border);
+  box-shadow: var(--premium-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html[data-theme="dark"] .glass-card:hover {
+  border-color: var(--premium-border-hover);
+  box-shadow:
+    var(--premium-shadow),
+    var(--premium-glow);
+}
+
+/* ===== JET5 SHOWCASE CARD ===== */
+html[data-theme="dark"] .jet5-card {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-border);
+  box-shadow: var(--premium-shadow);
+}
+
+html[data-theme="dark"] .jet5-badge {
+  background: rgba(245, 196, 0, 0.1);
+  color: var(--premium-gold);
+  border: 1px solid rgba(245, 196, 0, 0.2);
+}
+
+html[data-theme="dark"] .jet5-title {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .jet5-description {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+html[data-theme="dark"] .jet5-stats .stat-value {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .jet5-stats .stat-label {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ===== WHY US ===== */
+html[data-theme="dark"] .why-us-content .h2 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .feature-icon--accent {
+  background: rgba(245, 196, 0, 0.1);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .feature-icon--primary {
+  background: rgba(245, 196, 0, 0.08);
+  color: var(--premium-gold-light);
+}
+
+html[data-theme="dark"] .feature-icon--success {
+  background: rgba(245, 196, 0, 0.06);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .feature-text h4 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .feature-text p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .image-frame {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+html[data-theme="dark"] .image-frame::before {
+  border-color: rgba(245, 196, 0, 0.2);
+}
+
+/* ===== CAR CARDS (Homepage) ===== */
+html[data-theme="dark"] .car-card {
+  border: 1px solid rgba(245, 196, 0, 0.08);
+  background: var(--premium-bg-card);
+}
+
+html[data-theme="dark"] .car-card:hover {
+  border-color: rgba(245, 196, 0, 0.2);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(245, 196, 0, 0.06);
+}
+
+html[data-theme="dark"] .car-card__image-overlay {
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 100%);
+}
+
+html[data-theme="dark"] .car-card__image {
+  filter: brightness(0.85) contrast(1.08);
+}
+
+html[data-theme="dark"] .car-card__content {
+  background: var(--premium-bg-card);
+  border-top: 1px solid var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .car-card__title {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .car-card__price {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .car-card__price-period {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="dark"] .car-card__description {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .car-card__spec {
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(245, 196, 0, 0.06);
+  border: 1px solid rgba(245, 196, 0, 0.08);
+}
+
+html[data-theme="dark"] .car-card__badge {
+  background: var(--premium-gold);
+  color: #000;
+  font-weight: 700;
+}
+
+/* Card entrance animation in dark mode */
+html[data-theme="dark"] .car-card--animated {
+  animation-name: premiumCardEntrance;
+}
+
+@keyframes premiumCardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* ===== TESTIMONIALS ===== */
+html[data-theme="dark"] .testimonial-text {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .testimonial-stars svg {
+  fill: var(--premium-gold) !important;
+  color: var(--premium-gold) !important;
+}
+
+html[data-theme="dark"] .author-avatar {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-dark));
+  color: #000;
+}
+
+html[data-theme="dark"] .author-role {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== FAQ ===== */
+html[data-theme="dark"] .faq-question h4 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .faq-question svg {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .faq-answer {
+  color: rgba(255, 255, 255, 0.5);
+  border-top-color: var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .faq-item:hover {
+  border-color: var(--premium-border-hover);
+}
+
+/* ===== ABOUT SECTION ===== */
+html[data-theme="dark"] .public-about {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-border);
+  box-shadow: var(--premium-shadow);
+}
+
+html[data-theme="dark"] .public-about__intro h2 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-about__lead {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme="dark"] .public-about__story p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .public-about__visual {
+  background: var(--premium-bg-elevated);
+  border: 1px solid var(--premium-glass-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .public-about__panel {
+  background: var(--premium-bg-elevated);
+}
+
+html[data-theme="dark"] .public-about__panel-label {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-about__list li {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .public-about__list svg {
+  color: var(--premium-gold);
+}
+
+/* ===== CTA CARD ===== */
+html[data-theme="dark"] .public-cta-card {
+  background:
+    radial-gradient(circle at top left, rgba(245, 196, 0, 0.08), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(245, 196, 0, 0.04), transparent 40%),
+    var(--premium-bg-card);
+  border: 1px solid var(--premium-border);
+  box-shadow: var(--premium-shadow);
+}
+
+html[data-theme="dark"] .public-cta-card__eyebrow {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-cta-card__content h2 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-cta-card__content p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .cta-premium {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-dark));
+  color: #000;
+}
+
+html[data-theme="dark"] .public-cta-card__secondary {
+  border-color: rgba(245, 196, 0, 0.2);
+  color: var(--premium-gold-light);
+}
+
+html[data-theme="dark"] .public-cta-card__secondary:hover {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.35);
+}
+
+/* ===== PUBLIC CARS PAGE ===== */
+html[data-theme="dark"] .public-cars-hero-video {
+  filter: brightness(0.45) contrast(1.1);
+}
+
+html[data-theme="dark"] .public-cars-hero-overlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.92));
+}
+
+html[data-theme="dark"] .public-cars-header__eyebrow {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.18);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-cars-header h1 {
+  color: #ffffff;
+  text-shadow: none;
+}
+
+html[data-theme="dark"] .public-cars-header p {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+html[data-theme="dark"] .public-cars-header__badge {
+  background: var(--premium-glass);
+  border: 1px solid var(--premium-glass-border);
+  color: rgba(255, 255, 255, 0.6);
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .public-cars-filters {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-border);
+  box-shadow: var(--premium-shadow);
+}
+
+html[data-theme="dark"] .public-cars-filters__title {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-cars-filters__header p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .public-cars-filters__mini-badge {
+  background: rgba(245, 196, 0, 0.06);
+  border-color: rgba(245, 196, 0, 0.18);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-cars-filter-field label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .public-cars-filter-field input {
+  border: 1px solid var(--premium-glass-border);
+  background: var(--premium-glass);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-cars-filter-field input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+html[data-theme="dark"] .public-cars-filter-field input:focus {
+  border-color: rgba(245, 196, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.1);
+  background: rgba(245, 196, 0, 0.04);
+}
+
+/* ===== PUBLIC CAR CARDS (/cars page) ===== */
+html[data-theme="dark"] .public-car-card {
+  background: var(--premium-bg-card);
+  border-color: var(--premium-border);
+  box-shadow: var(--premium-shadow);
+}
+
+html[data-theme="dark"] .public-car-card:hover {
+  border-color: var(--premium-border-hover);
+  box-shadow: var(--premium-shadow), var(--premium-glow);
+}
+
+html[data-theme="dark"] .public-car-card__image-wrapper {
+  background: var(--premium-bg-card);
+}
+
+html[data-theme="dark"] .public-car-card__image {
+  filter: brightness(0.85) contrast(1.08);
+}
+
+html[data-theme="dark"] .public-car-card__image-overlay {
+  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 100%);
+}
+
+html[data-theme="dark"] .public-car-card__status-badge--available {
+  background: var(--premium-gold);
+  color: #000;
+}
+
+html[data-theme="dark"] .public-car-card__category {
+  color: var(--premium-text-subtle);
+}
+
+html[data-theme="dark"] .public-car-card__title {
+  color: var(--premium-text);
+}
+
+html[data-theme="dark"] .public-car-card__spec {
+  color: var(--premium-text-muted);
+  background: rgba(245, 196, 0, 0.06);
+  border: 1px solid rgba(245, 196, 0, 0.08);
+}
+
+html[data-theme="dark"] .public-car-card__divider {
+  background: var(--premium-border);
+}
+
+html[data-theme="dark"] .public-car-card__price-prefix {
+  color: var(--premium-text-subtle);
+}
+
+html[data-theme="dark"] .public-car-card__price {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-car-card__price span {
+  color: var(--premium-text-subtle);
+}
+
+html[data-theme="dark"] .public-car-card__cta {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-dark));
+  color: #000;
+}
+
+html[data-theme="dark"] .public-car-card__cta:hover {
+  box-shadow: 0 8px 24px rgba(245, 196, 0, 0.3);
+}
+
+html[data-theme="dark"] .public-car-card__cta--secondary {
+  background: transparent;
+  border: 1px solid rgba(245, 196, 0, 0.2);
+  color: var(--premium-text);
+}
+
+html[data-theme="dark"] .public-car-card__cta--secondary:hover {
+  background: rgba(245, 196, 0, 0.08);
+}
+
+/* ===== CAR DETAILS PAGE ===== */
+html[data-theme="dark"] .public-car-details-header h1 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-car-details-price {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-car-details-image-wrapper {
+  border-color: var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .public-car-gallery-card {
+  background: var(--premium-bg-card);
+  border-color: var(--premium-glass-border);
+}
+
+/* ===== BOOKING PAGE ===== */
+html[data-theme="dark"] .public-booking-header__eyebrow {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.18);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-header h1 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .public-booking-form {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-border);
+  box-shadow: var(--premium-shadow);
+}
+
+html[data-theme="dark"] .public-booking-panel,
+html[data-theme="dark"] .public-booking-summary-card {
+  background: var(--premium-glass);
+  border: 1px solid var(--premium-glass-border);
+  backdrop-filter: blur(10px);
+}
+
+html[data-theme="dark"] .public-booking-panel__icon {
+  background: rgba(245, 196, 0, 0.1);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-panel__header h2 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-panel__header p {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+html[data-theme="dark"] .public-booking-panel label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .public-booking-panel input,
+html[data-theme="dark"] .public-booking-panel select {
+  border: 1px solid var(--premium-glass-border);
+  background: var(--premium-glass);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-panel input::placeholder,
+html[data-theme="dark"] .public-booking-panel select::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+html[data-theme="dark"] .public-booking-panel input:focus,
+html[data-theme="dark"] .public-booking-panel select:focus {
+  border-color: rgba(245, 196, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.1);
+  background: rgba(245, 196, 0, 0.04);
+}
+
+html[data-theme="dark"] .public-booking-check {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .public-booking-check input {
+  accent-color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-choice {
+  border-color: var(--premium-glass-border);
+  background: var(--premium-glass);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .public-booking-choice svg {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-choice strong {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-choice span {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="dark"] .public-booking-choice.is-active {
+  border-color: rgba(245, 196, 0, 0.3);
+  background: rgba(245, 196, 0, 0.06);
+  box-shadow: 0 10px 25px rgba(245, 196, 0, 0.08);
+}
+
+html[data-theme="dark"] .public-booking-summary-card__badge {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.18);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-summary-card__body h3 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-summary-card__body > p {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-summary-list li {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+html[data-theme="dark"] .public-booking-summary-list svg {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-estimate div {
+  background: var(--premium-glass);
+  border: 1px solid var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .public-booking-estimate span {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="dark"] .public-booking-estimate strong {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-summary-note {
+  background: rgba(245, 196, 0, 0.05);
+  border-color: rgba(245, 196, 0, 0.12);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+html[data-theme="dark"] .public-booking-summary-note svg {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-submit {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-dark));
+  color: #000;
+  box-shadow: 0 15px 35px rgba(245, 196, 0, 0.2);
+  font-weight: 700;
+}
+
+html[data-theme="dark"] .public-booking-submit:hover:not(:disabled) {
+  box-shadow: 0 20px 45px rgba(245, 196, 0, 0.35);
+}
+
+/* ===== BOOKING CONFIRMATION ===== */
+html[data-theme="dark"] .public-booking-confirmation-header__eyebrow {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.18);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-header h1 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-confirmation-header p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-card {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-border);
+  box-shadow: var(--premium-shadow);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-hero {
+  background: var(--premium-glass);
+  border-color: var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-hero__icon {
+  background: rgba(245, 196, 0, 0.1);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-hero h2 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-confirmation-hero p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-badge {
+  background: rgba(245, 196, 0, 0.12);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-detail {
+  background: var(--premium-glass);
+  border-color: var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-detail__icon {
+  background: rgba(245, 196, 0, 0.08);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-detail__label {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-detail strong {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-booking-confirmation-summary {
+  background: rgba(245, 196, 0, 0.04);
+  border-color: rgba(245, 196, 0, 0.1);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-note--primary {
+  background: rgba(245, 196, 0, 0.06);
+  border-color: rgba(245, 196, 0, 0.15);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-note--secondary {
+  background: rgba(245, 196, 0, 0.04);
+  border-color: rgba(245, 196, 0, 0.1);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-note a {
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-contact {
+  background: rgba(245, 196, 0, 0.06);
+  color: var(--premium-gold-light);
+}
+
+html[data-theme="dark"] .public-booking-confirmation-contact:hover {
+  background: rgba(245, 196, 0, 0.12);
+}
+
+/* ===== CONTACT PAGE ===== */
+html[data-theme="dark"] .public-contact-header__eyebrow {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.18);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-contact-header h1 {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-contact-header p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .public-contact-info-card {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-glass-border);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .public-contact-info-card:hover {
+  border-color: rgba(245, 196, 0, 0.2);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), var(--premium-glow);
+}
+
+html[data-theme="dark"] .public-contact-info-card__icon {
+  background: rgba(245, 196, 0, 0.08);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-contact-info-card strong {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-contact-info-card span:last-child {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+html[data-theme="dark"] .public-contact-map-card {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .public-contact-map-card__icon {
+  background: rgba(245, 196, 0, 0.08);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-contact-map-card__title strong {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-contact-map-card__title p {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="dark"] .public-contact-map-card__link {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.2);
+  color: var(--premium-gold);
+}
+
+html[data-theme="dark"] .public-contact-map-card__link:hover {
+  background: rgba(245, 196, 0, 0.14);
+}
+
+html[data-theme="dark"] .public-contact-map-frame {
+  background: var(--premium-bg-elevated);
+  border-color: var(--premium-glass-border);
+}
+
+html[data-theme="dark"] .public-contact-form {
+  background: var(--premium-bg-card);
+  border: 1px solid var(--premium-border);
+}
+
+html[data-theme="dark"] .public-contact-form label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="dark"] .public-contact-form input,
+html[data-theme="dark"] .public-contact-form textarea {
+  border: 1px solid var(--premium-glass-border);
+  background: var(--premium-glass);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .public-contact-form input:focus,
+html[data-theme="dark"] .public-contact-form textarea:focus {
+  border-color: rgba(245, 196, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.1);
+  outline: none;
+}
+
+/* ===== SECTION BACKGROUNDS ===== */
+html[data-theme="dark"] .section-dark {
+  background: var(--premium-bg-elevated);
+}
+
+html[data-theme="dark"] .section-light {
+  background: transparent;
+}
+
+html[data-theme="dark"] .section-padding {
+  position: relative;
+}
+
+/* Subtle separator between sections */
+html[data-theme="dark"] .section-padding + .section-padding::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(80%, 600px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245, 196, 0, 0.15), transparent);
+}
+
+/* Feature items - premium hover */
+html[data-theme="dark"] .feature-item {
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid transparent;
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html[data-theme="dark"] .feature-item:hover {
+  background: rgba(245, 196, 0, 0.03);
+  border-color: rgba(245, 196, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+/* ===== BUTTONS GLOBAL (public pages) ===== */
+html[data-theme="dark"] .public-layout .btn-primary {
+  background: linear-gradient(135deg, var(--premium-gold), var(--premium-gold-dark));
+  color: #000;
+  border: none;
+  font-weight: 600;
+}
+
+html[data-theme="dark"] .public-layout .btn-primary:hover {
+  box-shadow: 0 10px 30px rgba(245, 196, 0, 0.25);
+}
+
+html[data-theme="dark"] .public-layout .btn-outline {
+  border-color: rgba(245, 196, 0, 0.2);
+  color: var(--premium-gold-light);
+}
+
+html[data-theme="dark"] .public-layout .btn-outline:hover {
+  background: rgba(245, 196, 0, 0.08);
+  border-color: rgba(245, 196, 0, 0.35);
+}
+
+/* ===== PREMIUM FOOTER ===== */
+.public-footer {
+  background: #000;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 3rem 0 1.5rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.public-footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.75rem;
+}
+
+.public-footer__grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+}
+
+.public-footer__brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.public-footer__logo {
+  height: 40px;
+  width: auto;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
+  opacity: 0.95;
+}
+
+.public-footer__tagline {
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.7;
+  font-size: 0.9rem;
+  max-width: 280px;
+}
+
+.public-footer__col h4 {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.public-footer__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.public-footer__links a {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.public-footer__links a:hover {
+  color: var(--premium-gold, #F5C400);
+}
+
+.public-footer__divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-bottom: 1.5rem;
+}
+
+.public-footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.public-footer__copy {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.public-footer__copy span {
+  color: var(--premium-gold, #F5C400);
+}
+
+.public-footer__social {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.public-footer__social-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.public-footer__social-link:hover {
+  border-color: rgba(245, 196, 0, 0.3);
+  color: var(--premium-gold, #F5C400);
+  background: rgba(245, 196, 0, 0.06);
+}
+
+/* Light mode footer */
+html[data-theme="light"] .public-footer {
+  background: #111827;
+}
+
+@media (max-width: 768px) {
+  .public-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .public-footer__brand-col {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .public-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .public-footer__brand-col {
+    grid-column: span 1;
+  }
+
+  .public-footer__bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ===== PREMIUM ANIMATIONS ===== */
+@keyframes premiumFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(35px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes premiumSlideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes premiumScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes premiumGoldShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes floatGlow {
+  0%, 100% { box-shadow: 0 0 30px rgba(245, 196, 0, 0.05); }
+  50% { box-shadow: 0 0 45px rgba(245, 196, 0, 0.12); }
+}
+
+html[data-theme="dark"] .reveal.active {
+  animation: premiumFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+html[data-theme="dark"] .reveal-left.active {
+  animation: premiumSlideLeft 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+html[data-theme="dark"] .reveal-scale.active {
+  animation: premiumScaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger children in grids */
+html[data-theme="dark"] .feature-item { transition-delay: 0s; }
+html[data-theme="dark"] .feature-item:nth-child(1) .reveal,
+html[data-theme="dark"] .cars-grid .glass-card:nth-child(1),
+html[data-theme="dark"] .testimonials-grid .glass-card:nth-child(1),
+html[data-theme="dark"] .faq-grid .glass-card:nth-child(1) {
+  transition-delay: 0s;
+}
+html[data-theme="dark"] .feature-item:nth-child(2) .reveal,
+html[data-theme="dark"] .cars-grid .glass-card:nth-child(2),
+html[data-theme="dark"] .testimonials-grid .glass-card:nth-child(2),
+html[data-theme="dark"] .faq-grid .glass-card:nth-child(2) {
+  transition-delay: 0.12s;
+}
+html[data-theme="dark"] .feature-item:nth-child(3) .reveal,
+html[data-theme="dark"] .cars-grid .glass-card:nth-child(3),
+html[data-theme="dark"] .testimonials-grid .glass-card:nth-child(3),
+html[data-theme="dark"] .faq-grid .glass-card:nth-child(3) {
+  transition-delay: 0.24s;
+}
+html[data-theme="dark"] .faq-grid .glass-card:nth-child(4) {
+  transition-delay: 0.36s;
+}
+html[data-theme="dark"] .faq-grid .glass-card:nth-child(5) {
+  transition-delay: 0.48s;
+}
+
+/* Subtle gold glow pulse on premium cards on hover */
+html[data-theme="dark"] .glass-card:hover {
+  animation: floatGlow 2s ease-in-out infinite;
+}
+
+/* Gold shimmer on hover for premium elements */
+html[data-theme="dark"] .btn-premium:hover,
+html[data-theme="dark"] .cta-premium:hover {
+  background-size: 200% auto;
+  background-image: linear-gradient(135deg, var(--premium-gold) 0%, var(--premium-gold-light) 50%, var(--premium-gold) 100%);
+  animation: premiumGoldShimmer 2s ease infinite;
+}
+
+/* Skeleton loading - gold tint */
+html[data-theme="dark"] .car-card__skeleton,
+html[data-theme="dark"] .car-card__skeleton-image {
+  background: linear-gradient(90deg, rgba(245, 196, 0, 0.03), rgba(245, 196, 0, 0.08), rgba(245, 196, 0, 0.03));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ===== SCROLLBAR ===== */
+html[data-theme="dark"] .public-layout::-webkit-scrollbar {
+  width: 6px;
+}
+
+html[data-theme="dark"] .public-layout::-webkit-scrollbar-track {
+  background: #000;
+}
+
+html[data-theme="dark"] .public-layout::-webkit-scrollbar-thumb {
+  background: rgba(245, 196, 0, 0.2);
+  border-radius: 3px;
+}
+
+html[data-theme="dark"] .public-layout::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 196, 0, 0.4);
+}

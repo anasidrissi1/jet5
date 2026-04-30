@@ -1,0 +1,312 @@
+.public-contact-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1.25rem 2.5rem;
+}
+
+.public-contact-header {
+  margin-bottom: 1.5rem;
+}
+
+.public-contact-header__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 0.9rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  color: #047857;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.public-contact-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+  color: #020617;
+}
+
+.public-contact-header p {
+  margin-top: 0.45rem;
+  color: #4b5563;
+}
+
+.public-contact-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.public-contact-map-card {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 1.2rem;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.public-contact-map-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.public-contact-map-card__title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.public-contact-map-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.08);
+  color: #B8900A;
+  flex: 0 0 auto;
+}
+
+.public-contact-map-card__title strong {
+  display: block;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.public-contact-map-card__title p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.public-contact-map-card__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #047857;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.public-contact-map-card__link:hover {
+  background: rgba(45, 212, 191, 0.16);
+}
+
+.public-contact-map-frame {
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: #e5e7eb;
+}
+
+.public-contact-map-frame iframe {
+  width: 100%;
+  height: 320px;
+  border: 0;
+  display: block;
+}
+
+.public-contact-info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1rem;
+  border-radius: 1.1rem;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  color: #111827;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.public-contact-info-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(45, 212, 191, 0.24);
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.2);
+}
+
+.public-contact-info-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  flex: 0 0 auto;
+}
+
+.public-contact-info-card__icon svg {
+  display: block;
+}
+
+.public-contact-info-card strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #0f172a;
+}
+
+.public-contact-info-card span:last-child {
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.public-contact-success {
+  color: #4ade80;
+  margin-bottom: 1rem;
+}
+
+.public-contact-form {
+  background: #ffffff;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 1.25rem;
+}
+
+.public-contact-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.public-contact-form input,
+.public-contact-form textarea {
+  border-radius: 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: #f9fafb;
+  padding: 0.8rem 0.85rem;
+  color: #111827;
+}
+
+.public-contact-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Dark mode overrides */
+
+html[data-theme="dark"] .public-contact-header__eyebrow {
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.18);
+  color: #99f6e4;
+}
+
+html[data-theme="dark"] .public-contact-header h1 {
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .public-contact-header p {
+  color: rgba(226, 232, 240, 0.74);
+}
+
+html[data-theme="dark"] .public-contact-map-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+html[data-theme="dark"] .public-contact-map-card__icon {
+  background: rgba(59, 130, 246, 0.12);
+  color: #7dd3fc;
+}
+
+html[data-theme="dark"] .public-contact-map-card__title strong {
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .public-contact-map-card__title p {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+html[data-theme="dark"] .public-contact-map-card__link {
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.18);
+  color: #99f6e4;
+}
+
+html[data-theme="dark"] .public-contact-map-frame {
+  background: rgba(15, 23, 42, 0.95);
+}
+
+html[data-theme="dark"] .public-contact-info-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .public-contact-info-card__icon {
+  background: rgba(45, 212, 191, 0.12);
+  color: #5eead4;
+}
+
+html[data-theme="dark"] .public-contact-info-card strong {
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .public-contact-info-card span:last-child {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+html[data-theme="dark"] .public-contact-form {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .public-contact-form label {
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .public-contact-form input,
+html[data-theme="dark"] .public-contact-form textarea {
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  color: #f9fafb;
+}
+
+@media (max-width: 600px) {
+  .public-contact-page {
+    padding: 0 1rem 2rem;
+  }
+
+  .public-contact-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .public-contact-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .public-contact-map-card__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .public-contact-map-card__link {
+    width: 100%;
+  }
+
+  .public-contact-map-frame iframe {
+    height: 280px;
+  }
+}

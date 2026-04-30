@@ -1,0 +1,143 @@
+.admin-contact-messages-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.admin-contact-messages-header {
+  margin-bottom: 1.5rem;
+}
+
+.admin-contact-messages-header h1 {
+  font-size: 1.8rem;
+}
+
+.admin-contact-messages-header p {
+  color: var(--color-text-muted, #6b7280);
+}
+
+.admin-contact-messages-error {
+  color: #f97373;
+  margin-bottom: 1rem;
+}
+
+.admin-contact-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-contact-message {
+  background: var(--color-surface-elevated, #0b1120);
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 0.85rem 1rem;
+}
+
+.admin-contact-message.unread {
+  border-color: #f97316;
+}
+
+.admin-contact-message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-contact-message-meta {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #9ca3af);
+}
+
+.admin-contact-message-body {
+  margin-bottom: 0.25rem;
+}
+
+.admin-contact-message-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #9ca3af);
+}
+
+.admin-contact-message-actions .btn-secondary {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+}
+
+.admin-contact-messages-table-wrapper {
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.admin-contact-messages-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-contact-messages-table th,
+.admin-contact-messages-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  text-align: left;
+}
+
+.admin-contact-messages-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.admin-contact-messages-table tbody tr.unread {
+  background: rgba(254, 249, 195, 0.6);
+}
+
+.admin-contact-message-table-message {
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-secondary--small {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+}
+
+html[data-theme="dark"] .admin-contact-messages-table-wrapper {
+  background: #020617;
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+html[data-theme="dark"] .admin-contact-messages-table th {
+  background: #020617;
+}
+
+@media (max-width: 768px) {
+  .admin-contact-messages-page {
+    max-width: 100%;
+  }
+
+  .admin-contact-messages-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .admin-contact-message-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .admin-contact-messages-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-contact-messages-table {
+    min-width: 600px;
+  }
+
+  .admin-contact-message {
+    padding: 0.75rem;
+  }
+}

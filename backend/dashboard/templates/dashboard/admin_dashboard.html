@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JET5 Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .stat-card.available { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-card.rented { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stat-card.revenue { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .stat-card.clients { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .notification-badge { position: relative; }
+        .notification-badge .badge { position: absolute; top: -10px; right: -10px; }
+        .chart-container { position: relative; height: 400px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-car"></i> JET5 Dashboard</a>
+            <div class="d-flex">
+                <button class="btn btn-outline-light notification-badge">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge bg-danger">{{ unread_notifications }}</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Statistics Cards -->
+            <div class="col-md-3 mb-4">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calendar-check fa-3x mb-3"></i>
+                        <h4>{{ total_reservations }}</h4>
+                        <p class="mb-0">Total Réservations</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stat-card revenue">
+                    <div class="card-body text-center">
+                        <i class="fas fa-euro-sign fa-3x mb-3"></i>
+                        <h4>{{ total_revenue }} MAD</h4>
+                        <p class="mb-0">Revenus Totaux</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stat-card available">
+                    <div class="card-body text-center">
+                        <i class="fas fa-car fa-3x mb-3"></i>
+                        <h4>{{ cars_available }}</h4>
+                        <p class="mb-0">Voitures Disponibles</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stat-card rented">
+                    <div class="card-body text-center">
+                        <i class="fas fa-key fa-3x mb-3"></i>
+                        <h4>{{ cars_rented }}</h4>
+                        <p class="mb-0">Voitures Louées</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Charts -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-line"></i> Revenus par Mois</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar"></i> Voitures les Plus Louées</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="carsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Activities -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock"></i> Dernières Réservations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Voiture</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in recent_reservations %}
+                                    <tr>
+                                        <td>{{ reservation.client.nom }} {{ reservation.client.prenom }}</td>
+                                        <td>{{ reservation.voiture.immatriculation }}</td>
+                                        <td>{{ reservation.date_creation|date:"d/m/Y" }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if reservation.statut == 'en_cours' %}success{% elif reservation.statut == 'termine' %}secondary{% else %}danger{% endif %}">
+                                                {{ reservation.get_statut_display }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-credit-card"></i> Derniers Paiements</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Montant</th>
+                                        <th>Mode</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for payment in recent_payments %}
+                                    <tr>
+                                        <td>{{ payment.client.nom }} {{ payment.client.prenom }}</td>
+                                        <td>{{ payment.montant }} MAD</td>
+                                        <td>{{ payment.get_mode_paiement_display }}</td>
+                                        <td>{{ payment.date_paiement|date:"d/m/Y H:i" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Alertes et Notifications</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for notification in notifications %}
+                        <div class="alert alert-{% if notification.type == 'assurance' %}warning{% elif notification.type == 'visite' %}info{% elif notification.type == 'autorisation' %}danger{% else %}secondary{% endif %}">
+                            <strong>{{ notification.get_type_display }}:</strong> {{ notification.message }}
+                            <small class="text-muted">{{ notification.date_creation|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: {{ revenue_labels|safe }},
+                datasets: [{
+                    label: 'Revenus (MAD)',
+                    data: {{ revenue_data|safe }},
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Cars Chart
+        const carsCtx = document.getElementById('carsChart').getContext('2d');
+        new Chart(carsCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ cars_labels|safe }},
+                datasets: [{
+                    label: 'Nombre de locations',
+                    data: {{ cars_data|safe }},
+                    backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
