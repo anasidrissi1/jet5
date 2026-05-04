@@ -1,43 +1,10 @@
-.public-layout {
+.jet-layout {
   min-height: 100vh;
-  background-color: var(--bg-secondary);
-  color: var(--color-text-strong, var(--text-primary));
+  display: flex;
+  flex-direction: column;
+  background: var(--jet-bg);
 }
-
-html[data-theme="dark"] .public-layout {
-  background: radial-gradient(circle at top left, #111827 0, #020617 45%, #020617 100%);
-}
-
-.public-layout__content {
-  padding: 5rem 1.75rem 1.75rem; /* marge en haut pour la topbar fixe */
-}
-
-.public-layout__content .hero-premium,
-.public-layout__content .public-cars-hero-bg {
-  margin-left: calc(-1.75rem);
-  margin-right: calc(-1.75rem);
-}
-
-@media (max-width: 900px) {
-  .public-layout__content {
-    padding: 4.5rem 1rem 1rem;
-  }
-
-  .public-layout__content .hero-premium,
-  .public-layout__content .public-cars-hero-bg {
-    margin-left: -1rem;
-    margin-right: -1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .public-layout__content {
-    padding: 4rem 0.5rem 0.75rem;
-  }
-
-  .public-layout__content .hero-premium,
-  .public-layout__content .public-cars-hero-bg {
-    margin-left: -0.5rem;
-    margin-right: -0.5rem;
-  }
+.jet-main {
+  flex: 1;
+  padding-top: 80px;
 }

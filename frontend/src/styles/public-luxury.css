@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root,
+[data-theme="light"] {
+  --jet-bg: #FAFAFA;
+  --jet-surface: #FFFFFF;
+  --jet-card: #FFFFFF;
+  --jet-text: #1A1A1A;
+  --jet-text-muted: #555555;
+  --jet-border: #E5E5E5;
+  --jet-gold: #C9A03D;
+  --jet-gold-soft: rgba(201, 160, 61, 0.12);
+  --jet-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --jet-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.10);
+  --jet-overlay: rgba(255,255,255,0.85);
+  --jet-radius: 16px;
+  --jet-transition: 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+[data-theme="dark"] {
+  --jet-bg: #121212;
+  --jet-surface: #181818;
+  --jet-card: #1E1E1E;
+  --jet-text: #FFFFFF;
+  --jet-text-muted: #B0B0B0;
+  --jet-border: #2C2C2C;
+  --jet-gold: #D4AF37;
+  --jet-gold-soft: rgba(212, 175, 55, 0.15);
+  --jet-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --jet-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
+  --jet-overlay: rgba(0,0,0,0.7);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--jet-bg);
+  color: var(--jet-text);
+  transition: background var(--jet-transition), color var(--jet-transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--jet-text);
+}
+
+a { color: inherit; text-decoration: none; }
+
+.jet-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.jet-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all var(--jet-transition);
+  text-decoration: none;
+}
+
+.jet-btn-primary {
+  background: var(--jet-gold);
+  color: #1A1A1A;
+  box-shadow: 0 6px 20px var(--jet-gold-soft);
+}
+.jet-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(201, 160, 61, 0.35);
+}
+
+.jet-btn-outline {
+  background: transparent;
+  color: var(--jet-text);
+  border: 1.5px solid var(--jet-border);
+}
+.jet-btn-outline:hover {
+  border-color: var(--jet-gold);
+  color: var(--jet-gold);
+}
+
+.jet-card {
+  background: var(--jet-card);
+  border: 1px solid var(--jet-border);
+  border-radius: var(--jet-radius);
+  box-shadow: var(--jet-shadow);
+  transition: all var(--jet-transition);
+}
+.jet-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--jet-shadow-lg);
+  border-color: var(--jet-gold);
+}
+
+.jet-section {
+  padding: 96px 0;
+}
+
+.jet-eyebrow {
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--jet-gold);
+  margin-bottom: 16px;
+}
+
+.jet-section-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0 0 16px;
+  line-height: 1.1;
+}
+
+.jet-section-subtitle {
+  color: var(--jet-text-muted);
+  font-size: 1.05rem;
+  max-width: 640px;
+  margin: 0 0 56px;
+  line-height: 1.6;
+}
+
+.jet-input,
+.jet-select,
+.jet-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--jet-surface);
+  color: var(--jet-text);
+  border: 1.5px solid var(--jet-border);
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  transition: all var(--jet-transition);
+}
+.jet-input:focus,
+.jet-select:focus,
+.jet-textarea:focus {
+  outline: none;
+  border-color: var(--jet-gold);
+  box-shadow: 0 0 0 3px var(--jet-gold-soft);
+}
+
+.jet-label {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--jet-text-muted);
+  margin-bottom: 8px;
+}
+
+.jet-grid {
+  display: grid;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .jet-section { padding: 64px 0; }
+  .jet-container { padding: 0 16px; }
+}

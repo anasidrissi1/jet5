@@ -1,181 +1,135 @@
-import React, { useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
-import { HiOutlineEnvelope, HiOutlinePhone } from "react-icons/hi2";
-import { MapPinned } from "lucide-react";
-import PublicLayout from "../components/layout/PublicLayout";
-import apiClient from "../api/apiClient";
-import "../styles/public-contact.css";
+﻿import { Mail, MapPin, Phone, Clock } from "lucide-react";
+import { useState } from "react";
+import { submitPublicContact } from "@/services/publicApi";
 
-const initialForm = {
-  name: "",
-  email: "",
-  phone: "",
-  message: "",
-};
+export default function PublicContact() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
 
-const CONTACT_PHONE_DISPLAY = "06 25 99 07 09";
-const CONTACT_PHONE_LINK = "+212625990709";
-const CONTACT_EMAIL = "jet5.casa@gmail.com";
-const CONTACT_WHATSAPP_LINK = `https://wa.me/${CONTACT_PHONE_LINK.replace("+", "")}`;
-const AGENCY_ADDRESS = "11 Rue du Liban, Casablanca 20250";
-const AGENCY_MAP_QUERY = "JET5, 11 Rue du Liban, Casablanca 20250";
-const GOOGLE_MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(AGENCY_MAP_QUERY)}`;
-const GOOGLE_MAPS_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(AGENCY_MAP_QUERY)}&output=embed&hl=fr`;
-
-function PublicContact() {
-  const [form, setForm] = useState(initialForm);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setSubmitting(true);
-    setError(null);
+    setSending(true);
 
     try {
-      await apiClient.post("/dashboard/contact/", form);
-      setSent(true);
-      setForm(initialForm);
-    } catch (err) {
-      console.error("Erreur lors de l'envoi du message de contact", err);
-      setError("Impossible d'envoyer le message. Veuillez réessayer plus tard.");
+      const combinedMessage = subject ? `${subject}\n\n${message}` : message;
+      await submitPublicContact({
+        name,
+        email,
+        phone,
+        message: combinedMessage,
+      });
+
+      setName("");
+      setEmail("");
+      setPhone("");
+      setSubject("");
+      setMessage("");
+      alert("Message envoyé !");
+    } catch (error) {
+      alert("Impossible d'envoyer votre message pour le moment.");
     } finally {
-      setSubmitting(false);
+      setSending(false);
     }
-  };
+  }
 
   return (
-    <PublicLayout>
-      <div className="public-contact-page">
-        <header className="public-contact-header">
-          <span className="public-contact-header__eyebrow">Contact direct</span>
-          <h1>Contact</h1>
-          <p>Une question sur une location ou notre flotte&nbsp;? Envoyez-nous un message.</p>
-        </header>
-
-        <section className="public-contact-info-grid">
-          <a className="public-contact-info-card" href={`tel:${CONTACT_PHONE_LINK}`} aria-label={`Appeler le ${CONTACT_PHONE_DISPLAY}`}>
-            <span className="public-contact-info-card__icon">
-              <HiOutlinePhone size={20} />
-            </span>
-            <div>
-              <strong>Appels</strong>
-              <span>{CONTACT_PHONE_DISPLAY}</span>
-            </div>
-          </a>
-
-          <a className="public-contact-info-card" href={CONTACT_WHATSAPP_LINK} target="_blank" rel="noreferrer" aria-label={`Ouvrir WhatsApp pour ${CONTACT_PHONE_DISPLAY}`}>
-            <span className="public-contact-info-card__icon">
-              <FaWhatsapp size={20} />
-            </span>
-            <div>
-              <strong>WhatsApp</strong>
-              <span>{CONTACT_PHONE_DISPLAY}</span>
-            </div>
-          </a>
-
-          <a className="public-contact-info-card" href={`mailto:${CONTACT_EMAIL}`} aria-label={`Envoyer un email a ${CONTACT_EMAIL}`}>
-            <span className="public-contact-info-card__icon">
-              <HiOutlineEnvelope size={20} />
-            </span>
-            <div>
-              <strong>Email</strong>
-              <span>{CONTACT_EMAIL}</span>
-            </div>
-          </a>
-        </section>
-
-        <section className="public-contact-map-card">
-          <div className="public-contact-map-card__header">
-            <div className="public-contact-map-card__title">
-              <span className="public-contact-map-card__icon">
-                <MapPinned size={18} />
-              </span>
-              <div>
-                <strong>Agence JET5</strong>
-                <p>{AGENCY_ADDRESS}</p>
+    <section className="jet-contact">
+      <div className="jet-container">
+        <div className="jet-contact-grid">
+          <div className="jet-contact-info">
+            <span className="jet-eyebrow">Contact</span>
+            <h1>Parlons de votre prochain trajet</h1>
+            <p>
+              Notre équipe se tient à votre disposition pour répondre à toutes vos
+              demandes et vous proposer une expérience sur mesure.
+            </p>
+            <div className="jet-contact-list">
+              <div className="jet-contact-item">
+                <div className="jet-contact-item-icon"><Phone size={18} /></div>
+                <div>
+                  <div className="label">Téléphone</div>
+                  <div className="value">
+                    <a href="tel:+212661811580" style={{ color: "inherit", textDecoration: "underline" }}>
+                      Appeler: +212 6 61 81 15 80
+                    </a>
+                    {" · "}
+                    <a
+                      href="https://wa.me/212661811580"
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: "inherit", textDecoration: "underline" }}
+                    >
+                      WhatsApp
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="jet-contact-item">
+                <div className="jet-contact-item-icon"><Mail size={18} /></div>
+                <div>
+                  <div className="label">Email</div>
+                  <div className="value">
+                    <a href="mailto:jet5maroc@gmail.com" style={{ color: "inherit", textDecoration: "underline" }}>
+                      jet5maroc@gmail.com
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="jet-contact-item">
+                <div className="jet-contact-item-icon"><MapPin size={18} /></div>
+                <div>
+                  <div className="label">Adresse</div>
+                  <div className="value">
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=11+Rue+du+Liban,+Casablanca+20250"
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: "inherit", textDecoration: "underline" }}
+                    >
+                      11 Rue du Liban, Casablanca 20250
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="jet-contact-item">
+                <div className="jet-contact-item-icon"><Clock size={18} /></div>
+                <div><div className="label">Horaires</div><div className="value">7j/7 · 8h — 22h</div></div>
               </div>
             </div>
-            <a href={GOOGLE_MAPS_LINK} target="_blank" rel="noreferrer" className="public-contact-map-card__link">
-              Ouvrir dans Maps
-            </a>
           </div>
-
-          <div className="public-contact-map-frame">
-            <iframe
-              title="Localisation de l'agence JET5"
-              src={GOOGLE_MAPS_EMBED}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
-        </section>
-
-        {sent && (
-          <p className="public-contact-success">
-            Votre message a été envoyé. Nous vous répondrons dans les plus brefs délais.
-          </p>
-        )}
-
-        {error && (
-          <p className="public-contact-error">{error}</p>
-        )}
-
-        <form className="public-contact-form" onSubmit={handleSubmit}>
-          <label>
-            Nom complet
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Email
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </label>
-          <label>
-            Téléphone
-            <input
-              type="tel"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Message
-            <textarea
-              name="message"
-              value={form.message}
-              onChange={handleChange}
-              rows={4}
-              required
-            />
-          </label>
-          <div className="public-contact-actions">
-            <button type="submit" className="btn-primary" disabled={submitting}>
-              {submitting ? "Envoi..." : "Envoyer"}
-            </button>
-          </div>
-        </form>
+          <form className="jet-contact-form" onSubmit={handleSubmit}>
+            <div style={{ display: "grid", gap: 20 }}>
+              <div>
+                <label className="jet-label">Nom complet</label>
+                <input type="text" className="jet-input" value={name} onChange={(e) => setName(e.target.value)} required />
+              </div>
+              <div>
+                <label className="jet-label">Email</label>
+                <input type="email" className="jet-input" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              </div>
+              <div>
+                <label className="jet-label">Téléphone</label>
+                <input type="tel" className="jet-input" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+              </div>
+              <div>
+                <label className="jet-label">Sujet</label>
+                <input type="text" className="jet-input" value={subject} onChange={(e) => setSubject(e.target.value)} required />
+              </div>
+              <div>
+                <label className="jet-label">Message</label>
+                <textarea className="jet-textarea" rows={6} value={message} onChange={(e) => setMessage(e.target.value)} required />
+              </div>
+              <button className="jet-btn jet-btn-primary" type="submit" disabled={sending}>
+                {sending ? "Envoi en cours..." : "Envoyer le message"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </PublicLayout>
+    </section>
   );
 }
-
-export default PublicContact;

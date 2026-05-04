@@ -55,103 +55,36 @@ const getAllClientDocuments = (client) => [
   ...getClientDocuments(client, 'passeport'),
 ];
 
-// Composant QR Code Modal
 const QRCodeModal = ({ isOpen, onClose }) => {
   const qrRef = useRef(null);
-  
+
   if (!isOpen) return null;
-  
+
   const inscriptionUrl = `${window.location.origin}/inscription`;
-  
+
   const handleCopyLink = () => {
     navigator.clipboard.writeText(inscriptionUrl);
-    alert('Lien copié !');
+    alert('Lien copie !');
   };
-  
+
   const handlePrint = () => {
-    // Récupérer le SVG du QR code
     const svgElement = qrRef.current?.querySelector('svg');
     const svgData = svgElement ? new XMLSerializer().serializeToString(svgElement) : '';
     const svgBase64 = svgData ? btoa(unescape(encodeURIComponent(svgData))) : '';
     const svgUrl = svgBase64 ? `data:image/svg+xml;base64,${svgBase64}` : '';
-    
+
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
-        <head>
-          <title>QR Code Inscription - JET5</title>
-          <style>
-            body { 
-              font-family: Arial, sans-serif; 
-              display: flex; 
-              flex-direction: column; 
-              align-items: center; 
-              justify-content: center; 
-              min-height: 100vh; 
-              margin: 0;
-              padding: 20px;
-              background: #f5f5f5;
-            }
-            .container {
-              background: white;
-              padding: 40px;
-              border-radius: 20px;
-              text-align: center;
-              box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            }
-            h1 { color: #D4A900; margin-bottom: 10px; }
-            h2 { color: #333; margin-bottom: 30px; font-weight: normal; }
-            .qr-code {
-              width: 250px;
-              height: 250px;
-              margin: 0 auto 20px;
-              padding: 15px;
-              background: white;
-              border-radius: 20px;
-              box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            }
-            .qr-code img {
-              width: 100%;
-              height: 100%;
-            }
-            .url { 
-              color: #666; 
-              font-size: 14px; 
-              word-break: break-all;
-              padding: 15px;
-              background: #f0f0f0;
-              border-radius: 10px;
-              margin-top: 20px;
-            }
-            .instructions {
-              margin-top: 30px;
-              padding: 20px;
-              background: #e8f4fd;
-              border-radius: 10px;
-              color: #333;
-            }
-            .instructions h3 { margin-top: 0; color: #D4A900; }
-            .instructions ol { text-align: left; margin: 10px 0 0 0; padding-left: 20px; }
-            .instructions li { margin: 8px 0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>🚗 JET5</h1>
-            <h2>Scannez pour vous inscrire</h2>
-            <div class="qr-code">
-              ${svgUrl ? `<img src="${svgUrl}" alt="QR Code" />` : '<p>QR Code</p>'}
+        <head><title>QR Code Inscription - JET5</title></head>
+        <body style="font-family: Arial, sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; background:#f5f5f5;">
+          <div style="background:#fff; border-radius:16px; padding:24px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,.12); max-width:420px; width:92%;">
+            <h2 style="margin-top:0;">QR Code Inscription Client</h2>
+            <div style="width:220px; height:220px; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; border:1px solid #ddd; border-radius:12px;">
+              ${svgUrl ? `<img src="${svgUrl}" alt="QR Code" style="width:200px;height:200px;" />` : '<p>QR Code</p>'}
             </div>
-            <div class="url">${inscriptionUrl}</div>
-            <div class="instructions">
-              <h3>📋 Instructions</h3>
-              <ol>
-                <li>Scannez le QR code avec votre téléphone</li>
-                <li>Remplissez le formulaire d'inscription</li>
-                <li>Un agent validera votre inscription</li>
-              </ol>
-            </div>
+            <p style="font-size:12px; color:#666; word-break:break-all; margin:0;">${inscriptionUrl}</p>
           </div>
         </body>
       </html>
@@ -161,109 +94,56 @@ const QRCodeModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.7)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999
-    }} onClick={onClose}>
-      <div style={{
-        background: '#1a1a2e',
-        borderRadius: '20px',
-        padding: '32px',
-        maxWidth: '450px',
-        width: '90%',
-        textAlign: 'center',
-        border: '1px solid #3a3a5c'
-      }} onClick={e => e.stopPropagation()}>
-        <h2 style={{ color: '#fff', marginTop: 0, marginBottom: '8px' }}>📱 QR Code Inscription</h2>
-        <p style={{ color: '#a0a0c0', marginBottom: '24px', fontSize: '14px' }}>
-          Affichez ce QR code à l'agence pour que les clients s'inscrivent
-        </p>
-        
-        <div ref={qrRef} style={{
-          width: '220px',
-          height: '220px',
-          background: '#ffffff',
-          margin: '0 auto 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '16px',
-          padding: '15px',
-          boxSizing: 'border-box'
-        }}>
-          <QRCodeSVG 
-            value={inscriptionUrl} 
-            size={190}
-            level="H"
-            includeMargin={false}
-            fgColor="#1a1a2e"
-            bgColor="#ffffff"
-          />
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0, 0, 0, 0.65)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          background: '#1a1a2e',
+          borderRadius: '18px',
+          padding: '24px',
+          width: '92%',
+          maxWidth: '440px',
+          textAlign: 'center',
+          border: '1px solid #3a3a5c',
+        }}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h3 style={{ color: '#fff', marginTop: 0 }}>QR Code Inscription</h3>
+        <p style={{ color: '#a0a0c0', fontSize: '13px' }}>Utilisez ce QR code pour inscrire un client.</p>
+
+        <div
+          ref={qrRef}
+          style={{
+            width: '220px',
+            height: '220px',
+            background: '#fff',
+            margin: '0 auto 14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '14px',
+          }}
+        >
+          <QRCodeSVG value={inscriptionUrl} size={190} level="H" includeMargin={false} fgColor="#1a1a2e" bgColor="#ffffff" />
         </div>
-        
-        <p style={{ color: '#a0a0c0', fontSize: '12px', marginBottom: '16px' }}>
-          Ou utilisez ce lien :
-        </p>
-        
-        <div style={{
-          background: '#0f0f1a',
-          padding: '12px',
-          borderRadius: '10px',
-          marginBottom: '24px',
-          wordBreak: 'break-all',
-          fontSize: '13px',
-          color: '#D4A900',
-          border: '1px solid #3a3a5c'
-        }}>
-          {inscriptionUrl}
+
+        <div style={{ color: '#D4A900', fontSize: '12px', wordBreak: 'break-all', marginBottom: '16px' }}>{inscriptionUrl}</div>
+
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button className="btn-export" onClick={handlePrint}>Imprimer</button>
+          <button className="btn-export" onClick={handleCopyLink}>Copier lien</button>
+          <button className="btn-export" onClick={onClose}>Fermer</button>
         </div>
-        
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-          <button onClick={handlePrint} style={{
-            padding: '12px 24px',
-            background: 'linear-gradient(135deg, #D4A900 0%, #B8900A 100%)',
-            border: 'none',
-            borderRadius: '10px',
-            color: '#fff',
-            fontWeight: '600',
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}>
-            🖨️ Imprimer
-          </button>
-          <button onClick={handleCopyLink} style={{
-            padding: '12px 24px',
-            background: 'transparent',
-            border: '2px solid #D4A900',
-            borderRadius: '10px',
-            color: '#D4A900',
-            fontWeight: '600',
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}>
-            📋 Copier lien
-          </button>
-        </div>
-        
-        <button onClick={onClose} style={{
-          marginTop: '20px',
-          padding: '8px 16px',
-          background: 'transparent',
-          border: 'none',
-          color: '#a0a0c0',
-          cursor: 'pointer',
-          fontSize: '14px'
-        }}>
-          Fermer
-        </button>
       </div>
     </div>
   );
@@ -712,13 +592,13 @@ function Clients() {
               ☰
             </button>
           </div>
-          
-          <button 
-            className="btn-export" 
+
+          <button
+            className="btn-export"
             onClick={() => setShowQRModal(true)}
             style={{ background: 'linear-gradient(135deg, #D4A900 0%, #B8900A 100%)' }}
           >
-            📱 QR Inscription
+            QR Inscription
           </button>
           
           <button className="btn-export" onClick={handleExport}>
@@ -954,7 +834,6 @@ function Clients() {
         )}
       </div>
 
-      {/* Modal QR Code */}
       <QRCodeModal isOpen={showQRModal} onClose={() => setShowQRModal(false)} />
     </div>
   );

@@ -25,6 +25,7 @@ class PublicVoitureSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'marque', 'modele', 'immatriculation', 'couleur', 'kilometrage',
             'prix_journalier', 'statut', 'image_principale', 'images', 'is_available',
+            'is_popular',
             'categorie', 'categorie_label', 'transmission', 'transmission_label',
             'carburant', 'annee', 'description', 'nombre_places', 'equipements',
         ]
@@ -37,6 +38,27 @@ class VoitureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Voiture
         fields = '__all__'
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+
+        instance = getattr(self, 'instance', None)
+        is_popular = attrs.get('is_popular', getattr(instance, 'is_popular', False))
+
+        if is_popular:
+            # Popular cars are always visible on the public site.
+            attrs['is_public'] = True
+
+            selected = Voiture.objects.filter(is_popular=True)
+            if instance is not None:
+                selected = selected.exclude(pk=instance.pk)
+
+            if selected.count() >= 3:
+                raise serializers.ValidationError({
+                    'is_popular': "Vous pouvez selectionner au maximum 3 voitures populaires."
+                })
+
+        return attrs
 
 
 # ----------------- ENTRETIEN DÉTAILS SERIALIZERS -----------------

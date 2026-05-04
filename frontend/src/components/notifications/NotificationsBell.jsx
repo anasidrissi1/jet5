@@ -21,22 +21,13 @@ function NotificationsBell({ feed }) {
   const markNotificationsAsRead = feed?.markNotificationsAsRead;
   const loading = feed?.loading;
 
-  const badgeCount = urgentNotifications.length > 0 ? urgentNotifications.length : unreadNotifications.length;
-  const badgeVariant = urgentNotifications.length > 0 ? "alert" : unreadNotifications.length > 0 ? "info" : "none";
-
-  const activeSource = useMemo(() => {
-    if (urgentNotifications.length > 0) {
-      return urgentNotifications;
-    }
-    if (unreadNotifications.length > 0) {
-      return unreadNotifications;
-    }
-    return notifications;
-  }, [urgentNotifications, unreadNotifications, notifications]);
+  const unreadCount = unreadNotifications.length;
+  const badgeCount = urgentNotifications.length > 0 ? urgentNotifications.length : unreadCount;
+  const badgeVariant = urgentNotifications.length > 0 ? "alert" : unreadCount > 0 ? "info" : "none";
 
   const previewNotifications = useMemo(() => {
-    return activeSource.slice(0, MAX_PREVIEW);
-  }, [activeSource]);
+    return notifications.slice(0, MAX_PREVIEW);
+  }, [notifications]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -63,38 +54,18 @@ function NotificationsBell({ feed }) {
     setIsOpen((prev) => !prev);
   };
 
-  const handleMarkAll = async () => {
-    if (!markNotificationsAsRead) {
-      return;
-    }
-    const ids = activeSource
-      .filter((notification) => !notification.est_lue)
-      .map((notification) => notification.id);
-    if (ids.length === 0) {
-      return;
-    }
-    await markNotificationsAsRead(ids);
-  };
-
-  const handleMarkSingle = async (id) => {
+  const handleNotificationClick = async (notification) => {
     if (!markNotificationAsRead) {
       return;
     }
-    await markNotificationAsRead(id);
-    setIsOpen(false);
+    if (!notification?.est_lue) {
+      await markNotificationAsRead(notification.id);
+    }
   };
 
   const handleViewAll = () => {
     navigate("/admin/notifications");
     setIsOpen(false);
-  };
-
-  const getTypeClass = (notification) => {
-    const type = String(notification?.type_notification || notification?.type || '').toLowerCase();
-    if (type.includes('urgent') || type.includes('expir') || type.includes('retard')) return 'is-danger';
-    if (type.includes('warning') || type.includes('alerte')) return 'is-warning';
-    if (type.includes('success') || type.includes('ok')) return 'is-success';
-    return 'is-info';
   };
 
   return (
@@ -117,19 +88,11 @@ function NotificationsBell({ feed }) {
       {isOpen && (
         <div ref={popoverRef} className="notifications-bell__popover">
           <div className="notifications-bell__header">
-            <div>
+            <div className="notifications-bell__header-main">
               <h3>Notifications</h3>
-              <p>
-                {urgentNotifications.length > 0
-                  ? `${urgentNotifications.length} urgente(s)`
-                  : `${unreadNotifications.length} non lue(s)`}
-              </p>
+              <p>{unreadCount} non lue(s)</p>
             </div>
-            {previewNotifications.some((notification) => !notification.est_lue) && (
-              <div className="notifications-bell__header-actions">
-                <button type="button" onClick={handleMarkAll}>Tout marquer comme lu</button>
-              </div>
-            )}
+            <span className="notifications-bell__unread-pill">{unreadCount}</span>
           </div>
 
           <div className="notifications-bell__content">
@@ -137,37 +100,25 @@ function NotificationsBell({ feed }) {
               <div className="notifications-bell__empty">Chargement…</div>
             ) : notifications.length === 0 ? (
               <div className="notifications-bell__empty">Aucune notification enregistrée.</div>
-            ) : previewNotifications.length === 0 ? (
-              <div className="notifications-bell__empty">Toutes les notifications sont lues 🎉</div>
             ) : (
               <ul className="notifications-bell__list">
                 {previewNotifications.map((notification) => {
-                  const { typeLabel, dueDateLabel } = getNotificationDetails(notification);
+                  const { dueDateLabel } = getNotificationDetails(notification);
                   const message = notification.message || notification.titre || 'Nouvelle notification';
                   return (
                     <li key={notification.id} className="notifications-bell__item">
-                      <div className="notifications-bell__item-main">
-                        <div className="notifications-bell__item-head">
-                          <span className={`notifications-bell__item-type ${getTypeClass(notification)}`}>{typeLabel}</span>
-                          <div className="notifications-bell__item-meta">
-                            {!notification.est_lue && <span className="notifications-bell__item-dot" />}
-                            <span className="notifications-bell__item-date">{dueDateLabel}</span>
-                          </div>
-                        </div>
-                        <p className="notifications-bell__item-message">{message}</p>
-                      </div>
-                      {!notification.est_lue && (
-                        <button
-                          type="button"
-                          className="notifications-bell__item-action"
-                          onClick={() => handleMarkSingle(notification.id)}
-                        >
-                          Lu
-                        </button>
-                      )}
-                      {notification.est_lue && (
-                        <span className="notifications-bell__item-read">Lue</span>
-                      )}
+                      <button
+                        type="button"
+                        className="notifications-bell__item-button"
+                        onClick={() => handleNotificationClick(notification)}
+                        title={message}
+                      >
+                        <span className={`notifications-bell__item-dot ${notification.est_lue ? "is-read" : "is-unread"}`} />
+                        <span className="notifications-bell__item-main">
+                          <span className="notifications-bell__item-message">{message}</span>
+                          <span className="notifications-bell__item-date">{dueDateLabel}</span>
+                        </span>
+                      </button>
                     </li>
                   );
                 })}

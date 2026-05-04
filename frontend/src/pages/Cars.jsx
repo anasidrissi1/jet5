@@ -22,7 +22,6 @@ function Cars() {
   
   // Sécurise l'initialisation de cars pour éviter les erreurs
   const [cars, setCars] = useState([]);
-  const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
@@ -71,27 +70,16 @@ function Cars() {
     return result;
   }, [cars, search, statusFilter]);
 
-  // Ajoute un log pour vérifier la réponse API
-  const NORMALIZABLE_STATUSES = new Set([
-    'libre',
-    'disponible',
-    'available',
-    'free',
-    'louee',
-    'louée',
-    'loue',
-    'reservee',
-    'réservée',
-    'reserve',
+  const AVAILABLE_STATUSES = new Set(['libre', 'disponible', 'available', 'free']);
+  const UNAVAILABLE_STATUSES = new Set([
+    'louee', 'louée', 'loue', 'indisponible', 'unavailable',
+    'reservee', 'réservée', 'reserve', 'occupe', 'occupee'
   ]);
 
   async function fetchCars() {
     setLoading(true);
     try {
       const carsResponse = await apiClient.get('/cars/voitures/');
-      const reservationsResponse = await apiClient
-        .get('/reservations/')
-        .catch(() => ({ data: [] }));
 
       const voitures = Array.isArray(carsResponse.data?.results)
         ? carsResponse.data.results
@@ -99,31 +87,28 @@ function Cars() {
           ? carsResponse.data
           : [];
 
-      const reservationsDataRaw = Array.isArray(reservationsResponse.data?.results)
-        ? reservationsResponse.data.results
-        : Array.isArray(reservationsResponse.data)
-          ? reservationsResponse.data
-          : [];
-
-      setReservations(reservationsDataRaw);
-
-      const activeStatuses = new Set(['planifiee', 'en_cours']);
-      const activeCarIds = new Set(
-        reservationsDataRaw
-          .filter((reservation) => activeStatuses.has((reservation.statut || '').toLowerCase()))
-          .map((reservation) => String(reservation.voiture))
-      );
-
       const enhancedCars = voitures.map((car) => {
         const normalizedStatus = (car.statut || '').toLowerCase();
-        const isActive = activeCarIds.has(String(car.id));
 
-        // Normalize to two logical states: 'disponible' or 'louee'
-        const statut_normalized = isActive ? 'louee' : (
-          NORMALIZABLE_STATUSES.has(normalizedStatus) ? 'disponible' : 'louee'
-        );
+        let statut_normalized = normalizedStatus;
+        if (UNAVAILABLE_STATUSES.has(normalizedStatus)) {
+          statut_normalized = 'louee';
+        } else if (AVAILABLE_STATUSES.has(normalizedStatus)) {
+          statut_normalized = 'disponible';
+        } else if (normalizedStatus === 'entretien') {
+          statut_normalized = 'entretien';
+        } else if (normalizedStatus === 'hors_service' || normalizedStatus === 'hors service') {
+          statut_normalized = 'hors_service';
+        } else {
+          statut_normalized = 'disponible';
+        }
 
-        const statut_display = statut_normalized === 'disponible' ? 'Disponible' : 'Louée';
+        const statut_display =
+          statut_normalized === 'disponible' ? 'Disponible'
+            : statut_normalized === 'louee' ? 'Louée'
+              : statut_normalized === 'entretien' ? 'Entretien'
+                : statut_normalized === 'hors_service' ? 'Hors service'
+                  : 'Disponible';
 
         return {
           ...car,
@@ -218,8 +203,8 @@ function Cars() {
 
   const selectedCarReservations = useMemo(() => {
     if (!activeCar) return [];
-    return reservations.filter((r) => String(r.voiture) === String(activeCar.id));
-  }, [activeCar, reservations]);
+    return [];
+  }, [activeCar]);
 
   const selectedCarStats = useMemo(() => {
     if (!activeCar) return null;

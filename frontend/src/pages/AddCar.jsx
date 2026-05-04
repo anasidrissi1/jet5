@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import apiClient from '../api/apiClient';
 import '../styles/pages.css';
@@ -8,6 +8,38 @@ import FormInput from '../components/FormInput';
 import SelectField from '../components/SelectField';
 import { useEntityForm } from '../hooks/useEntityForm';
 import { useNotification } from '../contexts/NotificationContext';
+
+const normalizeCarStatus = (value) => {
+  const status = (value || '').toString().trim().toLowerCase();
+
+  if (['libre', 'disponible', 'available', 'free'].includes(status)) {
+    return 'libre';
+  }
+
+  if ([
+    'louee', 'loue', 'indisponible', 'unavailable',
+    'reserve', 'reservee', 'occupe', 'occupee'
+  ].includes(status)) {
+    return 'louee';
+  }
+
+  if (['entretien', 'maintenance'].includes(status)) {
+    return 'entretien';
+  }
+
+  if (['hors_service', 'hors service', 'out_of_service', 'hs'].includes(status)) {
+    return 'hors_service';
+  }
+
+  return 'libre';
+};
+
+const normalizePublicFlag = (value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  const normalized = String(value || '').toLowerCase();
+  return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
+};
 
 function AddCar(){
   const navigate = useNavigate();
@@ -23,9 +55,12 @@ function AddCar(){
     carburant:'', transmission:'', categorie:'', annee:'',
     description:'', nombre_places:'', equipements:'',
     is_public: true,
+    is_popular: false,
     image_principale: null,
     gallery_images: [],
   };
+
+  const [popularSelectedCount, setPopularSelectedCount] = useState(0);
 
   const { form, setForm, loading, error, setError, setLoading } = useEntityForm({
     fetchUrl,
@@ -33,6 +68,56 @@ function AddCar(){
     initialValues: INITIAL
   });
 
+  useEffect(() => {
+    if (!isEdit) return;
+
+    const nextStatus = normalizeCarStatus(form?.statut);
+    const nextPublicFlag = normalizePublicFlag(form?.is_public);
+    const nextPopularFlag = normalizePublicFlag(form?.is_popular);
+
+    if (form?.statut !== nextStatus || form?.is_public !== nextPublicFlag || form?.is_popular !== nextPopularFlag) {
+      setForm((prev) => ({
+        ...prev,
+        statut: nextStatus,
+        is_public: nextPublicFlag,
+        is_popular: nextPopularFlag,
+      }));
+    }
+  }, [isEdit, form?.statut, form?.is_public, form?.is_popular, setForm]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchPopularCount = async () => {
+      try {
+        const response = await apiClient.get('/cars/voitures/');
+        const list = Array.isArray(response?.data?.results)
+          ? response.data.results
+          : Array.isArray(response?.data)
+            ? response.data
+            : [];
+
+        const count = list.filter((car) => {
+          const isPopular = normalizePublicFlag(car?.is_popular);
+          if (!isPopular) return false;
+          if (!id) return true;
+          return String(car?.id) !== String(id);
+        }).length;
+
+        if (!cancelled) {
+          setPopularSelectedCount(count);
+        }
+      } catch (countError) {
+        console.error('Erreur chargement compteur voitures populaires', countError);
+      }
+    };
+
+    fetchPopularCount();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const handleChange = (e) => setForm({...form, [e.target.name]: e.target.value});
 
@@ -40,8 +125,26 @@ function AddCar(){
     setForm({
       ...form,
       is_public: isPublic,
+      is_popular: isPublic ? form.is_popular : false,
     });
   };
+
+  const handlePopularChange = (isPopular) => {
+    if (isPopular && !form.is_popular && popularSelectedCount >= 3) {
+      addNotification('Maximum 3 voitures populaires atteint. Desactivez une autre voiture d\'abord.', 'error');
+      return;
+    }
+
+    setForm({
+      ...form,
+      is_popular: isPopular,
+      is_public: isPopular ? true : form.is_public,
+    });
+  };
+
+  const popularSlotsRemaining = useMemo(() => {
+    return Math.max(0, 3 - popularSelectedCount - (form.is_popular ? 1 : 0));
+  }, [popularSelectedCount, form.is_popular]);
 
   const focusField = (fieldName) => {
     const field = document.querySelector(`[name="${fieldName}"]`);
@@ -84,8 +187,15 @@ function AddCar(){
       setLoading(true);
       setError(null);
 
+      const payload = {
+        ...form,
+        statut: normalizeCarStatus(form.statut),
+        is_public: normalizePublicFlag(form.is_public),
+        is_popular: normalizePublicFlag(form.is_popular),
+      };
+
       const formData = new FormData();
-      Object.entries(form).forEach(([key, value]) => {
+      Object.entries(payload).forEach(([key, value]) => {
         if (value === undefined || value === null || value === '') {
           return;
         }
@@ -270,7 +380,7 @@ function AddCar(){
                   placeholder={null}
                   options={[
                     { value: 'libre', label: 'Disponible' },
-                    { value: 'louee', label: 'Louée' },
+                    { value: 'louee', label: 'Indisponible' },
                     { value: 'entretien', label: 'En entretien' },
                     { value: 'hors_service', label: 'Hors service' }
                   ]}
@@ -365,6 +475,44 @@ function AddCar(){
                       onClick={() => handleVisibilityChange(false)}
                     >
                       Masquer
+                    </button>
+                  </div>
+                </div>
+
+                <div className="car-visibility-card" style={{ marginTop: '1rem' }}>
+                  <div className="car-visibility-header">
+                    <div>
+                      <span className="car-visibility-label">Voiture populaire (Accueil)</span>
+                      <p className="car-visibility-help">
+                        Selectionnez cette voiture pour la section publique "Voitures populaires". Limite globale: 3 voitures.
+                      </p>
+                    </div>
+                    <span className={`car-visibility-state ${form.is_popular ? 'is-public' : 'is-private'}`}>
+                      {form.is_popular ? 'Selectionnee' : 'Non selectionnee'}
+                    </span>
+                  </div>
+
+                  <p className="car-visibility-help" style={{ marginTop: 0 }}>
+                    {form.is_popular
+                      ? `Cette voiture prend 1 place populaire (${Math.max(0, 2 - popularSelectedCount)} place(s) restante(s)).`
+                      : `${popularSlotsRemaining} place(s) populaire(s) restante(s).`}
+                  </p>
+
+                  <div className="car-visibility-toggle" role="group" aria-label="Selection voiture populaire">
+                    <button
+                      type="button"
+                      className={`car-visibility-option ${form.is_popular ? 'active' : ''}`}
+                      onClick={() => handlePopularChange(true)}
+                      disabled={!form.is_popular && popularSelectedCount >= 3}
+                    >
+                      Selectionner
+                    </button>
+                    <button
+                      type="button"
+                      className={`car-visibility-option ${!form.is_popular ? 'active inactive' : ''}`}
+                      onClick={() => handlePopularChange(false)}
+                    >
+                      Retirer
                     </button>
                   </div>
                 </div>
@@ -509,7 +657,7 @@ function AddCar(){
                       <span className="car-summary-label">Statut</span>
                       <span className={`car-summary-badge status-${form.statut || 'unknown'}`}>
                         {form.statut === 'libre' && 'Disponible'}
-                        {form.statut === 'louee' && 'Louée'}
+                        {form.statut === 'louee' && 'Indisponible'}
                         {form.statut === 'entretien' && 'Entretien'}
                         {form.statut === 'hors_service' && 'Hors service'}
                         {!form.statut && 'Non défini'}

@@ -1,36 +1,43 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { X } from "lucide-react";
 import "../../styles/public-sidebar.css";
 
-function PublicSidebar() {
-  const links = [
-    { to: "/", label: "Accueil" },
-    { to: "/cars", label: "Nos voitures" },
-    { to: "/contact", label: "Contact" },
-  ];
-
+export default function PublicSidebar({ open, onClose, links }) {
+  const { pathname } = useLocation();
   return (
-    <aside className="public-sidebar">
-      <div className="public-sidebar__brand">
-        <span className="public-sidebar__brand-main">JET5</span>
-        <span className="public-sidebar__brand-sub">Location de voitures</span>
-      </div>
-
-      <nav className="public-sidebar__nav">
-        {links.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            className={({ isActive }) =>
-              `public-sidebar__link ${isActive ? "public-sidebar__link--active" : ""}`
-            }
+    <>
+      <div className={`jet-sidebar-overlay ${open ? "open" : ""}`} onClick={onClose} />
+      <aside className={`jet-sidebar ${open ? "open" : ""}`}>
+        <div className="jet-sidebar-head">
+          <span style={{ fontFamily: "Poppins", fontWeight: 800, fontSize: "1.25rem" }}>
+            JET5
+          </span>
+          <button className="jet-sidebar-close" onClick={onClose} aria-label="Fermer">
+            <X size={18} />
+          </button>
+        </div>
+        <nav className="jet-sidebar-nav">
+          {links.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              onClick={onClose}
+              className={pathname === l.to ? "active" : ""}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <Link
+            to="/booking"
+            onClick={onClose}
+            className="jet-btn jet-btn-primary"
+            style={{ marginTop: 16 }}
           >
-            {link.label}
-          </NavLink>
-        ))}
-      </nav>
-    </aside>
+            Réserver maintenant
+          </Link>
+        </nav>
+        <div className="jet-sidebar-foot">© JET5 Location · Tous droits réservés</div>
+      </aside>
+    </>
   );
 }
-
-export default PublicSidebar;

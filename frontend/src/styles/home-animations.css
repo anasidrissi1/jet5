@@ -1,0 +1,82 @@
+.opacity-0 {
+  opacity: 0;
+}
+
+.fade-in-up {
+  animation: homeFadeUp 0.7s ease both;
+}
+
+.scale-in {
+  animation: homeScaleIn 0.55s ease both;
+}
+
+.card-hover {
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 34px rgba(22, 24, 36, 0.14);
+}
+
+.btn-hover {
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.btn-hover:hover {
+  transform: translateY(-1px);
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+.expanded {
+  max-height: 240px !important;
+}
+
+.delay-0 { animation-delay: 0ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-900 { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
+
+@keyframes homeFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes homeScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up,
+  .scale-in {
+    animation: none !important;
+  }
+
+  .card-hover,
+  .btn-hover {
+    transition: none !important;
+  }
+}

@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/layout/Layout';
+import PublicLayout from './components/layout/PublicLayout';
 import Loader from './components/Loader';
 import Notification from './components/Notification';
 import { useAuth } from './contexts/AuthContext';
@@ -40,6 +41,7 @@ const NotificationDetail = lazy(() => import('./pages/notifications/Notification
 const ContactMessages = lazy(() => import('./pages/ContactMessages'));
 const PublicHome = lazy(() => import('./pages/PublicHome'));
 const PublicCars = lazy(() => import('./pages/PublicCars'));
+const PublicService = lazy(() => import('./pages/PublicService'));
 const PublicCarDetails = lazy(() => import('./pages/PublicCarDetails'));
 const PublicBooking = lazy(() => import('./pages/PublicBooking'));
 const PublicBookingConfirmation = lazy(() => import('./pages/PublicBookingConfirmation'));
@@ -51,13 +53,16 @@ function RouteFallback() {
 }
 
 const publicRoutes = [
-  { path: '/', element: <PublicHome /> },
-  { path: '/cars', element: <PublicCars /> },
-  { path: '/cars/:id', element: <PublicCarDetails /> },
-  { path: '/booking/:id', element: <PublicBooking /> },
-  { path: '/booking-confirmation/:id', element: <PublicBookingConfirmation /> },
-  { path: '/contact', element: <PublicContact /> },
-  { path: '/inscription', element: <ClientInscription /> },
+  { path: '/', element: <PublicHome />, withLayout: true },
+  { path: '/cars', element: <PublicCars />, withLayout: true },
+  { path: '/service', element: <PublicService />, withLayout: true },
+  { path: '/cars/:id', element: <PublicCarDetails />, withLayout: true },
+  { path: '/booking', element: <PublicBooking />, withLayout: true },
+  { path: '/booking/:id', element: <PublicBooking />, withLayout: true },
+  { path: '/booking-confirmation', element: <PublicBookingConfirmation />, withLayout: true },
+  { path: '/booking-confirmation/:id', element: <PublicBookingConfirmation />, withLayout: true },
+  { path: '/contact', element: <PublicContact />, withLayout: true },
+  { path: '/inscription', element: <ClientInscription />, withLayout: false },
 ];
 
 const adminRoutes = [
@@ -117,7 +122,11 @@ function App() {
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           {publicRoutes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.withLayout ? <PublicLayout>{route.element}</PublicLayout> : route.element}
+            />
           ))}
 
           <Route path="/login" element={user ? <Navigate to="/admin/dashboard" replace /> : <Login />} />

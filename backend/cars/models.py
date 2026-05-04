@@ -59,6 +59,10 @@ class Voiture(models.Model):
         default=False,
         help_text="Si activé, la voiture sera affichée sur le site public"
     )
+    is_popular = models.BooleanField(
+        default=False,
+        help_text="Si activé, la voiture apparaît dans la section 'Voitures populaires' (max 3)."
+    )
     image_principale = models.ImageField(
         upload_to='cars/',
         blank=True,
