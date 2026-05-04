@@ -4,8 +4,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.db import OperationalError, ProgrammingError
 import logging
 from .models import Agent
 from .serializers import AgentSerializer
@@ -23,6 +25,15 @@ def login(request):
 
     try:
         user = authenticate(request, username=username, password=password)
+    except (OperationalError, ProgrammingError) as exc:
+        # Common production failure when django-axes tables are not migrated.
+        # Fallback keeps admin login available while infrastructure is fixed.
+        logger.error('Authentication backend DB error, trying fallback backend: %s', exc)
+        try:
+            user = ModelBackend().authenticate(request, username=username, password=password)
+        except Exception as fallback_exc:
+            logger.error('Fallback authentication error: %s', fallback_exc)
+            return Response({'error': 'Authentication error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     except Exception as exc:
         logger.error('Authentication backend error: %s', exc)
         return Response({'error': 'Authentication error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
