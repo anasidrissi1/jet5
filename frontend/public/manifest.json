@@ -9,13 +9,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/jet5logo.png",
+      "src": "/jet5logo.png?v=2",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/jet5logo.png",
+      "src": "/jet5logo.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -23,7 +23,7 @@
   ],
   "screenshots": [
     {
-      "src": "/jet5logo.png",
+      "src": "/jet5logo.png?v=2",
       "sizes": "540x720",
       "type": "image/png",
       "form_factor": "narrow"

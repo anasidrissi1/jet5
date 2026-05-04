@@ -1,5 +1,5 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import PublicLayout from './components/layout/PublicLayout';
 import Loader from './components/Loader';
@@ -50,6 +50,16 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 function RouteFallback() {
   return <Loader text="Chargement de la page..." />;
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
 }
 
 const publicRoutes = [
@@ -119,6 +129,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           {publicRoutes.map((route) => (

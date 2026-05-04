@@ -113,7 +113,7 @@ export default function PublicBooking() {
                 <label className="jet-label">Véhicule</label>
                 <select className="jet-select" value={carId} onChange={(e) => setCarId(e.target.value)} required>
                   {cars.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name} — {c.price}€/jour</option>
+                    <option key={c.id} value={c.id}>{c.name} — {c.price} DH/jour</option>
                   ))}
                 </select>
               </div>
@@ -160,10 +160,10 @@ export default function PublicBooking() {
           <aside className="jet-summary">
             <h3>Récapitulatif</h3>
             <div className="jet-summary-row"><span>Véhicule</span><span>{car?.name || "-"}</span></div>
-            <div className="jet-summary-row"><span>Prix journalier</span><span>{car?.price || 0}€</span></div>
+            <div className="jet-summary-row"><span>Prix journalier</span><span>{car?.price || 0} DH</span></div>
             <div className="jet-summary-row"><span>Durée</span><span>{days} jour{days > 1 ? "s" : ""}</span></div>
             <div className="jet-summary-row"><span>Assurance premium</span><span>Incluse</span></div>
-            <div className="jet-summary-row total"><span>Total TTC</span><span>{total}€</span></div>
+            <div className="jet-summary-row total"><span>Total TTC</span><span>{total} DH</span></div>
           </aside>
         </div>
       </div>

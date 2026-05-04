@@ -63,7 +63,7 @@ export default function PublicCarDetails() {
             <span className="jet-eyebrow">{car.category}</span>
             <h1>{car.name}</h1>
             <div className="jet-details-price">
-              {car.price}€ <small>/ jour, TTC</small>
+              {car.price} DH <small>/ jour, TTC</small>
             </div>
             <p className="jet-details-desc">{car.description}</p>
             <div className="jet-spec-grid">

@@ -83,7 +83,7 @@ export default function PublicCars() {
                 </div>
                 <div className="jet-car-foot">
                   <div className="jet-car-price">
-                    {car.price}€ <small>/ jour</small>
+                    {car.price} DH <small>/ jour</small>
                   </div>
                   <span style={{ color: "var(--jet-gold)", fontWeight: 600, fontSize: "0.9rem" }}>
                     Détails →

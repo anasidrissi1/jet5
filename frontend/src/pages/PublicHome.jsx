@@ -134,7 +134,7 @@ export default function PublicHome() {
                   <h3 className="jet-car-name">{car.name}</h3>
                   <div className="jet-car-foot">
                     <div className="jet-car-price">
-                      {car.price}€ <small>/ jour</small>
+                      {car.price} DH <small>/ jour</small>
                     </div>
                     <ArrowRight size={20} color="var(--jet-gold)" />
                   </div>

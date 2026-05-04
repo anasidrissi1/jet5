@@ -96,4 +96,19 @@
 @media (max-width: 960px) {
   .jet-nav { display: none; }
   .jet-burger { display: flex; }
+  .jet-topbar-inner {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  .jet-logo {
+    min-width: 0;
+  }
+  .jet-logo img {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+  .jet-logo span {
+    display: none;
+  }
 }
