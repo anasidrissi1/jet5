@@ -1,0 +1,84 @@
+/* Final theme consistency layer for legacy styles with hardcoded colors */
+
+html[data-theme='dark'],
+html[data-theme='light'] {
+  --legacy-warm-1: #d4b061;
+  --legacy-warm-2: #b8923a;
+  --legacy-warm-3: #92712b;
+  --legacy-warm-soft: #efe5d2;
+}
+
+html[data-theme='light'] body,
+html[data-theme='light'] .app-layout,
+html[data-theme='light'] .main-content,
+html[data-theme='light'] .page-content {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary);
+}
+
+/* Neutralize stark white card-like surfaces in light mode */
+html[data-theme='light'] :is(
+  .page-container,
+  .page-header,
+  .page-body,
+  .cars-header,
+  .cars-body,
+  .table-container,
+  .summary-card,
+  .dashboard-card,
+  .chart-card,
+  .modal-content,
+  .login-form,
+  .contract-form,
+  .contract-section,
+  .search-and-filters,
+  .stats-header,
+  .filters-section,
+  .cards-grid > *
+) {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary);
+}
+
+/* Ensure form controls switch with theme consistently */
+html[data-theme='light'] :is(input, select, textarea):not([type='checkbox']):not([type='radio']),
+html[data-theme='dark'] :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+html[data-theme='light'] :is(input, select, textarea):focus,
+html[data-theme='dark'] :is(input, select, textarea):focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 22%, transparent) !important;
+}
+
+/* Map legacy bright yellow accents to softer broken yellow */
+html[data-theme] :is(
+  .btn-danger,
+  .badge-danger,
+  .status-hors_service,
+  .status-pill.status-loue,
+  .status-pill.status-reserve
+) {
+  border-color: var(--legacy-warm-2) !important;
+}
+
+html[data-theme] .badge-danger,
+html[data-theme] .status-hors_service {
+  background: var(--legacy-warm-soft) !important;
+  color: #6f5722 !important;
+}
+
+/* Harmonize table/section gradient bars in legacy pages */
+html[data-theme] :is(
+  .table-header-sticky thead th,
+  .reservation-card-header,
+  .summary-strip,
+  .gradient-bar,
+  .header-accent
+) {
+  background: linear-gradient(135deg, var(--legacy-warm-1) 0%, var(--legacy-warm-2) 65%, var(--legacy-warm-3) 100%) !important;
+}

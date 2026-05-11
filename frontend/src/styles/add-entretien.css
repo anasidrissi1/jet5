@@ -1,4 +1,4 @@
-/* ==========================================
+﻿/* ==========================================
    ADD ENTRETIEN - MODERN DESIGN SYSTEM
    ========================================== */
 
@@ -61,7 +61,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -151,7 +151,7 @@
 .select-enhanced:focus,
 .textarea-enhanced:focus {
   outline: none;
-  border-color: #D4A900;
+  border-color: #B8923A;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -281,7 +281,7 @@
 }
 
 .btn-submit-modern {
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
@@ -336,3 +336,4 @@
     display: none;
   }
 }
+

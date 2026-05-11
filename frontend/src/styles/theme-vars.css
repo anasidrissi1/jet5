@@ -4,14 +4,14 @@
 
 :root {
   /* Accent and semantic tokens shared by both themes */
-  --color-teal: #F5C400;
-  --color-teal-light: #FFF8D6;
+  --color-teal: #C8A24A;
+  --color-teal-light: #F3EAD6;
   --color-success: #22c55e;
-  --color-warning: #F5C400;
-  --color-danger: #D4A900;
-  --color-danger-dark: #B8900A;
-  --color-info: #D4A900;
-  --color-violet: #D4A900;
+  --color-warning: #C8A24A;
+  --color-danger: #B8923A;
+  --color-danger-dark: #92712B;
+  --color-info: #B8923A;
+  --color-violet: #B8923A;
 
   --primary-color: var(--color-teal);
   --on-accent: #111827;
@@ -57,8 +57,8 @@
   --shadow-md: 0 2px 8px rgba(15, 23, 42, 0.1);
   --shadow-lg: 0 8px 18px rgba(15, 23, 42, 0.12);
   --shadow-xl: 0 16px 30px rgba(15, 23, 42, 0.16);
-  --shadow-teal: 0 8px 24px rgba(245, 196, 0, 0.15);
-  --shadow-danger: 0 8px 24px rgba(212, 169, 0, 0.28);
+  --shadow-teal: 0 8px 24px rgba(200, 162, 74, 0.2);
+  --shadow-danger: 0 8px 24px rgba(184, 146, 58, 0.26);
 
   /* ========== TRANSITIONS ========== */
   --transition-fast: 150ms ease-out;
@@ -76,29 +76,30 @@
   --z-tooltip: 1070;
 
   /* ========== GRADIENTS ========== */
-  --gradient-teal: linear-gradient(135deg, #F5C400 0%, #D4A900 60%, #B8900A 100%);
+  --gradient-teal: linear-gradient(135deg, #D4B061 0%, #B8923A 60%, #92712B 100%);
   --gradient-success: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  --gradient-warning: linear-gradient(135deg, #F5C400 0%, #D4A900 100%);
-  --gradient-danger: linear-gradient(135deg, #F5C400 0%, #B8900A 100%);
-  --gradient-info: linear-gradient(135deg, #F5C400 0%, #D4A900 100%);
-  --gradient-violet: linear-gradient(135deg, #F5C400 0%, #D4A900 100%);
+  --gradient-warning: linear-gradient(135deg, #D4B061 0%, #B8923A 100%);
+  --gradient-danger: linear-gradient(135deg, #C8A24A 0%, #92712B 100%);
+  --gradient-info: linear-gradient(135deg, #D4B061 0%, #B8923A 100%);
+  --gradient-violet: linear-gradient(135deg, #D4B061 0%, #B8923A 100%);
 
   /* Cross-component semantic surfaces */
-  --surface-panel: #FFFFFF;
+  --surface-panel: #EEF1F5;
   --surface-info-bg: rgba(59, 130, 246, 0.12);
   --surface-info-border: rgba(96, 165, 250, 0.4);
   --surface-success-bg: rgba(34, 197, 94, 0.12);
   --surface-success-border: rgba(74, 222, 128, 0.35);
-  --surface-warning-bg: rgba(245, 196, 0, 0.12);
-  --surface-warning-border: rgba(245, 196, 0, 0.32);
-  --surface-danger-bg: rgba(245, 196, 0, 0.16);
-  --surface-danger-border: rgba(212, 169, 0, 0.4);
+  --surface-warning-bg: rgba(200, 162, 74, 0.14);
+  --surface-warning-border: rgba(184, 146, 58, 0.36);
+  --surface-danger-bg: rgba(200, 162, 74, 0.16);
+  --surface-danger-border: rgba(146, 113, 43, 0.42);
   --surface-muted-bg: rgba(148, 163, 184, 0.18);
   --surface-muted-border: rgba(148, 163, 184, 0.28);
   --focus-ring: var(--color-info);
 }
 
 html[data-theme="dark"] {
+  color-scheme: dark;
   --bg-primary: #0A0A0A;
   --bg-secondary: #0D0D0D;
   --bg-card: #111111;
@@ -121,14 +122,15 @@ html[data-theme="dark"] {
 }
 
 html[data-theme="light"] {
-  --bg-primary: #F9F9F9;
-  --bg-secondary: #FFFFFF;
-  --bg-card: #FFFFFF;
-  --bg-hover: #F3F4F6;
-  --bg-tertiary: #F3F4F6;
+  color-scheme: light;
+  --bg-primary: #E9EDF2;
+  --bg-secondary: #E2E7EE;
+  --bg-card: #EEF2F7;
+  --bg-hover: #DEE4EC;
+  --bg-tertiary: #E3E8EF;
 
-  --border-color: #E5E7EB;
-  --border-hover: rgba(245, 196, 0, 0.45);
+  --border-color: #CCD4DF;
+  --border-hover: rgba(184, 146, 58, 0.42);
 
   --text-primary: #0F172A;
   --text-secondary: #1F2937;
@@ -139,18 +141,18 @@ html[data-theme="light"] {
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
   --shadow-xl: 0 16px 30px rgba(0, 0, 0, 0.1);
-  --surface-panel: #FFFFFF;
-  --surface-info-bg: #FFFBEB;
-  --surface-info-border: #FDE68A;
+  --surface-panel: #E8EDF4;
+  --surface-info-bg: #ECEFF5;
+  --surface-info-border: #CFD7E2;
   --surface-success-bg: #ECFDF3;
   --surface-success-border: #BBF7D0;
-  --surface-warning-bg: #FFFBEB;
-  --surface-warning-border: #FDE68A;
-  --surface-danger-bg: #FFFBEB;
-  --surface-danger-border: #FDE68A;
-  --surface-muted-bg: #F3F4F6;
-  --surface-muted-border: #E5E7EB;
-  --focus-ring: #D4A900;
+  --surface-warning-bg: #F3EBDC;
+  --surface-warning-border: #D0B276;
+  --surface-danger-bg: #EFE5D2;
+  --surface-danger-border: #C8A25D;
+  --surface-muted-bg: #E3E8EF;
+  --surface-muted-border: #CCD4DF;
+  --focus-ring: #B8923A;
 }
 
 /* ========== GLOBAL STYLES ========== */

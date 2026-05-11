@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -16,7 +16,7 @@ export default defineConfig({
     host: '0.0.0.0',
   },
   esbuild: {
-    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
   },
   plugins: [
     react({
@@ -40,4 +40,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

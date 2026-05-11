@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    JET5 - Header Styles
    ============================================ */
 
@@ -76,8 +76,8 @@
 
 .menu-toggle:hover {
   background: var(--bg-hover);
-  border-color: #d4a900;
-  color: #f5c400;
+  border-color: #B8923A;
+  color: #C8A24A;
 }
 
 .menu-toggle:active {
@@ -122,7 +122,7 @@
 }
 
 .header-search:hover {
-  border-color: #d4a900;
+  border-color: #B8923A;
   box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.14);
 }
 
@@ -199,8 +199,8 @@
 
 .theme-toggle-btn:hover {
   background: var(--bg-hover);
-  color: #f5c400;
-  border-color: #d4a900;
+  color: #C8A24A;
+  border-color: #B8923A;
   transform: rotate(15deg);
 }
 
@@ -255,7 +255,7 @@
   gap: 0.4rem;
   border: 1px solid rgba(245, 196, 0, 0.35);
   background: linear-gradient(90deg, #0A0A0A, #1a1a1a);
-  color: #F5C400;
+  color: #C8A24A;
   border-radius: var(--radius-lg);
   padding: 0.45rem 0.75rem;
   box-shadow: 0 6px 18px rgba(245, 196, 0, 0.15);
@@ -280,7 +280,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #F5C400;
+  background: #C8A24A;
   box-shadow: 0 0 0 4px rgba(245, 196, 0, 0.2);
   animation: pulse-alert 1.6s ease-in-out infinite;
   flex-shrink: 0;
@@ -298,7 +298,7 @@
 }
 
 .returns-banner__cta {
-  color: #F5C400;
+  color: #C8A24A;
   font-weight: var(--font-weight-semibold);
   font-size: 0.78rem;
   padding: 0.3rem 0.7rem;
@@ -479,3 +479,4 @@
     height: 32px;
   }
 }
+

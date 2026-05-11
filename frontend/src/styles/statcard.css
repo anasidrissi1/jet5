@@ -1,5 +1,5 @@
-.stat-card {
-  background: #ffffff;
+﻿.stat-card {
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -55,7 +55,7 @@
 }
 
 .stat-trend.negative {
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .stats-grid {

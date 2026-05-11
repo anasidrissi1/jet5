@@ -1,4 +1,4 @@
-/* ===== RESERVATIONS PROFESSIONAL PAGE ===== */
+﻿/* ===== RESERVATIONS PROFESSIONAL PAGE ===== */
 
 .reservations-professional-page {
   --page-shell-padding: clamp(16px, 4vw, 24px);
@@ -161,7 +161,7 @@
 
 .btn-secondary {
   padding: 10px 20px;
-  background: #d4a900;
+  background: #B8923A;
   color: white;
   border: none;
   border-radius: 8px;
@@ -172,7 +172,7 @@
 }
 
 .btn-secondary:hover {
-  background: #b8900a;
+  background: #92712B;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212, 169, 0, 0.32);
 }
@@ -221,6 +221,20 @@
   box-shadow: var(--shadow-lg);
 }
 
+.stat-card.is-clickable {
+  cursor: pointer;
+}
+
+.stat-card.is-clickable:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary-color) 65%, #ffffff 35%);
+  outline-offset: 2px;
+}
+
+.stat-card.is-selected {
+  border-color: color-mix(in srgb, var(--primary-color) 70%, #ffffff 30%);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--primary-color) 28%, transparent);
+}
+
 .stat-icon {
   display: none;
 }
@@ -246,8 +260,8 @@
 
 /* Slightly emphasize the colored stripe and spacing */
 .stat-active { border-left: 6px solid #10b981; padding-left: 16px; }
-.stat-revenue { border-left: 6px solid #d4a900; padding-left: 16px; }
-.stat-total { border-left: 6px solid #f5c400; padding-left: 16px; }
+.stat-revenue { border-left: 6px solid #B8923A; padding-left: 16px; }
+.stat-total { border-left: 6px solid #C8A24A; padding-left: 16px; }
 .stat-upcoming { border-left: 6px solid #f59e0b; padding-left: 16px; }
 
 /* ===== SEARCH SECTION ===== */
@@ -306,7 +320,7 @@
 
 .search-input-pro:focus {
   outline: none;
-  border-color: #d4a900;
+  border-color: #B8923A;
   box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.1);
 }
 
@@ -383,14 +397,14 @@
 }
 
 .filter-btn:hover {
-  border-color: #d4a900;
-  color: #d4a900;
+  border-color: #B8923A;
+  color: #B8923A;
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #f5c400 0%, #d4a900 100%);
+  background: linear-gradient(135deg, #C8A24A 0%, #B8923A 100%);
   color: #111827;
-  border-color: #d4a900;
+  border-color: #B8923A;
 }
 
 /* ===== CONTENT ===== */
@@ -511,7 +525,7 @@
   background: var(--bg-hover);
 }
 
-/* Light mode: réserver un tableau clair et lisible */
+/* Light mode: rÃ©server un tableau clair et lisible */
 html[data-theme="light"] .reservations-table-wrapper .data-table {
   background: var(--bg-card);
   color: var(--text-primary);
@@ -575,7 +589,7 @@ html[data-theme="dark"] .reservations-table-wrapper .data-table tbody tr:hover {
   background: #1e293b;
 }
 
-/* Light mode: textes plus foncés pour une meilleure lisibilité */
+/* Light mode: textes plus foncÃ©s pour une meilleure lisibilitÃ© */
 html[data-theme="light"] .reservations-table-wrapper .client-name,
 html[data-theme="light"] .reservations-table-wrapper .vehicle-name,
 html[data-theme="light"] .reservations-table-wrapper .vehicle-plate,
@@ -601,13 +615,13 @@ html[data-theme="light"] .reservations-table-wrapper .status-pill.status-disponi
 
 html[data-theme="light"] .reservations-table-wrapper .status-pill.status-louee {
   background: #fef3c7;
-  border-color: #f5c400;
+  border-color: #C8A24A;
   color: #8a6d00;
 }
 
 html[data-theme="light"] .reservations-table-wrapper .status-pill.status-en_cours {
   background: #fef3c7;
-  border-color: #f5c400;
+  border-color: #C8A24A;
   color: #8a6d00;
 }
 
@@ -714,13 +728,13 @@ html[data-theme="light"] .reservations-table-wrapper .status-pill.status-termine
 
 .status-pill.status-louee {
   background: rgba(245, 196, 0, 0.2);
-  border-color: #f5c400;
+  border-color: #C8A24A;
   color: #fef3c7;
 }
 
 .status-pill.status-en_cours {
   background: rgba(245, 196, 0, 0.24);
-  border-color: #d4a900;
+  border-color: #B8923A;
   color: #fef3c7;
 }
 
@@ -800,7 +814,7 @@ html[data-theme="light"] .reservations-table-wrapper .status-pill.status-termine
 
 .online-priority-pill.online-priority-urgent {
   background: rgba(245, 196, 0, 0.2);
-  color: #fde68a;
+  color: #D0B276;
   border: 1px solid rgba(212, 169, 0, 0.42);
 }
 
@@ -935,7 +949,7 @@ html[data-theme="light"] .reservations-table-wrapper .status-pill.status-termine
   letter-spacing: 0.08em;
   font-size: 11px;
   font-weight: 700;
-  color: #fde68a;
+  color: #D0B276;
 }
 
 .online-contact-card__body {
@@ -1035,13 +1049,13 @@ html[data-theme="dark"] .online-contact-card__item p {
 }
 
 .btn-pa {
-  background: linear-gradient(135deg, #f5c400 0%, #d4a900 100%);
+  background: linear-gradient(135deg, #C8A24A 0%, #B8923A 100%);
   border: none;
   color: #111827;
 }
 
 .btn-pa:hover {
-  background: linear-gradient(135deg, #d4a900 0%, #b8900a 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
 }
 
 .pa-modal-overlay {
@@ -1229,7 +1243,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .extend-modal-highlight
   margin-bottom: 6px;
   font-size: 13px;
   font-weight: 700;
-  color: #fde68a;
+  color: #D0B276;
 }
 
 html[data-theme="light"] .modal-card.light.pa-modal-card .modal-form-group label {
@@ -1242,7 +1256,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .modal-form-group label
   gap: 10px;
   font-size: 13px;
   font-weight: 700;
-  color: #fde68a;
+  color: #D0B276;
   cursor: pointer;
 }
 
@@ -1364,13 +1378,13 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
 }
 
 .pa-modal-footer .btn-primary {
-  background: linear-gradient(135deg, #f5c400, #d4a900);
+  background: linear-gradient(135deg, #C8A24A, #B8923A);
   border: none;
   color: #111827;
 }
 
 .pa-modal-footer .btn-primary:hover {
-  background: linear-gradient(135deg, #d4a900, #b8900a);
+  background: linear-gradient(135deg, #B8923A, #92712B);
 }
 
 .text-center {
@@ -1418,7 +1432,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
 
 .reservations-table-pro th.sortable:hover {
   transform: translateY(-1px);
-  color: #fde68a;
+  color: #D0B276;
 }
 
 .reservations-table-pro tbody tr {
@@ -1600,7 +1614,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
 
 .status-annule {
   background: rgba(245, 196, 0, 0.2);
-  color: #f5c400;
+  color: #C8A24A;
   border-color: rgba(212, 169, 0, 0.4);
 }
 
@@ -1618,7 +1632,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
 
 .origin-en_ligne {
   background: rgba(59, 130, 246, 0.16);
-  color: #d4a900;
+  color: #B8923A;
   border-color: rgba(59, 130, 246, 0.32);
 }
 
@@ -1679,7 +1693,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
 }
 
 .btn-delete-action:hover {
-  background: #d4a900;
+  background: #B8923A;
   color: #111827;
   transform: translateY(-1px);
 }
@@ -1710,7 +1724,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
 .state-icon-error {
   background: rgba(245, 196, 0, 0.15);
   border-color: rgba(212, 169, 0, 0.4);
-  color: #f5c400;
+  color: #C8A24A;
   font-size: 28px;
   font-weight: 700;
 }
@@ -1732,7 +1746,7 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
   right: 16px;
   height: 3px;
   border-radius: 999px;
-  background: #fde68a;
+  background: #D0B276;
 }
 
 .state-icon-list::before {
@@ -1936,3 +1950,4 @@ html[data-theme="light"] .modal-card.light.pa-modal-card .pa-input[type='date'] 
   align-items: center;
   min-height: 400px;
 }
+

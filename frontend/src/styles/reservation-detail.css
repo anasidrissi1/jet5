@@ -1,4 +1,4 @@
-/* Reservation Detail Page Styles */
+﻿/* Reservation Detail Page Styles */
 .reservation-detail-page {
   display: flex;
   justify-content: center;
@@ -121,7 +121,7 @@
 .reservation-detail-value.highlight-info {
   background: rgba(59, 130, 246, 0.15);
   border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #D4A900;
+  color: #B8923A;
 }
 
 /* Status badges */
@@ -144,7 +144,7 @@
 .reservation-detail-page .status-badge.status-blue {
   background: rgba(59, 130, 246, 0.2);
   border: 1px solid rgba(59, 130, 246, 0.4);
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .reservation-detail-page .status-badge.status-purple {
@@ -156,7 +156,7 @@
 .reservation-detail-page .status-badge.status-red {
   background: rgba(245, 196, 0, 0.2);
   border: 1px solid rgba(245, 196, 0, 0.4);
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .reservation-detail-page .status-badge.status-gray {
@@ -306,7 +306,7 @@
 
 .payment-history-remise {
   font-size: 0.85rem;
-  color: #facc15;
+  color: #D4B061;
   background: rgba(250, 204, 21, 0.1);
   padding: 4px 10px;
   border-radius: 6px;
@@ -374,3 +374,4 @@
     width: 100%;
   }
 }
+

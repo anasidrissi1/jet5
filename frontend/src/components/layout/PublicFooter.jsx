@@ -9,7 +9,6 @@ export default function PublicFooter() {
           <div className="jet-footer-brand">
             <Link to="/" className="jet-logo">
               <img src={logo} alt="JET5" width={40} height={40} loading="lazy" />
-              <span>JET5</span>
             </Link>
             <p>
               Location de véhicules premium. Une expérience d'exception, une flotte d'élite,
@@ -23,14 +22,6 @@ export default function PublicFooter() {
               <li><Link to="/cars">Véhicules</Link></li>
               <li><Link to="/service">Services</Link></li>
               <li><Link to="/contact">Contact</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4>Légal</h4>
-            <ul>
-              <li><a href="#">Mentions légales</a></li>
-              <li><a href="#">CGV</a></li>
-              <li><a href="#">Confidentialité</a></li>
             </ul>
           </div>
           <div>

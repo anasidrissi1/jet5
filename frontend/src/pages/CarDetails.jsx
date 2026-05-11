@@ -404,7 +404,7 @@ function CarDetails() {
                         </td>
                         <td>
                           <button
-                            onClick={() => navigate(`/admin/reservations/${r.id}`)}
+                            onClick={() => navigate(`/admin/reservations/view/${r.id}`)}
                             className="btn-sm btn-view"
                           >
                             Voir

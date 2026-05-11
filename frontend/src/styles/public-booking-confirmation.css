@@ -43,3 +43,10 @@
   margin-bottom: 32px;
   letter-spacing: 0.1em;
 }
+
+@media (max-width: 600px) {
+  .jet-confirmation { padding: 64px 0; }
+  .jet-confirmation-card { padding: 32px 20px; }
+  .jet-confirmation h1 { font-size: 1.5rem; }
+  .jet-check { width: 64px; height: 64px; font-size: 2rem; }
+}

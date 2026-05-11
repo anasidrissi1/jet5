@@ -65,69 +65,67 @@ const buildInfoItem = (label, value, formatter = (val) => val) => {
 };
 
 function CarDetailModal({ car, stats, reservations = [], onNavigateUnpaid, onClose, onEdit }) {
-  if (!car) {
-    return null;
-  }
+  const safeCar = car || {};
 
-  const statusKey = (car.statut || "").toLowerCase();
-  const statusInfo = STATUS_MAP[statusKey] || { label: car.statut || "Statut inconnu", tone: "status-default" };
+  const statusKey = (safeCar.statut || "").toLowerCase();
+  const statusInfo = STATUS_MAP[statusKey] || { label: safeCar.statut || "Statut inconnu", tone: "status-default" };
 
   const meta = useMemo(() => {
     const quick = [
       buildInfoItem("Statut", statusInfo.label),
-      buildInfoItem("Kilométrage", car.kilometrage, formatMileage),
-      buildInfoItem("Prix journalier", car.prix_journalier, formatMoney),
+      buildInfoItem("Kilométrage", safeCar.kilometrage, formatMileage),
+      buildInfoItem("Prix journalier", safeCar.prix_journalier, formatMoney),
     ].filter(Boolean);
 
     const identification = [
-      buildInfoItem("Immatriculation", car.immatriculation),
-      buildInfoItem("Numéro de châssis", car.numero_chassis),
-      buildInfoItem("Propriétaire", car.proprietaire),
+      buildInfoItem("Immatriculation", safeCar.immatriculation),
+      buildInfoItem("Numéro de châssis", safeCar.numero_chassis),
+      buildInfoItem("Propriétaire", safeCar.proprietaire),
     ].filter(Boolean);
 
     const characteristics = [
-      buildInfoItem("Marque", car.marque),
-      buildInfoItem("Modèle", car.modele),
-      buildInfoItem("Année", car.annee),
-      buildInfoItem("Couleur", car.couleur),
-      buildInfoItem("Catégorie", car.categorie || car.type),
-      buildInfoItem("Carburant", car.carburant),
-      buildInfoItem("Transmission", car.transmission),
-      buildInfoItem("Places", car.places),
-      buildInfoItem("Portes", car.portes),
-      buildInfoItem("Puissance fiscale", car.puissance_fiscale),
-      buildInfoItem("Cylindrée", car.cylindree),
+      buildInfoItem("Marque", safeCar.marque),
+      buildInfoItem("Modèle", safeCar.modele),
+      buildInfoItem("Année", safeCar.annee),
+      buildInfoItem("Couleur", safeCar.couleur),
+      buildInfoItem("Catégorie", safeCar.categorie || safeCar.type),
+      buildInfoItem("Carburant", safeCar.carburant),
+      buildInfoItem("Transmission", safeCar.transmission),
+      buildInfoItem("Places", safeCar.places),
+      buildInfoItem("Portes", safeCar.portes),
+      buildInfoItem("Puissance fiscale", safeCar.puissance_fiscale),
+      buildInfoItem("Cylindrée", safeCar.cylindree),
     ].filter(Boolean);
 
     const maintenance = [
-      buildInfoItem("Assurance", coalesce(car.assurance)),
-      buildInfoItem("Expiration assurance", car.assurance_expiration, formatDate),
-      buildInfoItem("Vignette", coalesce(car.vignette)),
-      buildInfoItem("Expiration vignette", car.vignette_expiration, formatDate),
-      buildInfoItem("Vidange", coalesce(car.vidange)),
-      buildInfoItem("Prochaine vidange", car.prochaine_vidange, formatDate),
-      buildInfoItem("Visite technique", coalesce(car.visite_technique)),
-      buildInfoItem("Prochaine visite", car.prochaine_visite_technique || car.visite_technique_expiration, formatDate),
-      buildInfoItem("Garantie", coalesce(car.garantie)),
-      buildInfoItem("Expiration garantie", car.garantie_expiration, formatDate),
+      buildInfoItem("Assurance", coalesce(safeCar.assurance)),
+      buildInfoItem("Expiration assurance", safeCar.assurance_expiration, formatDate),
+      buildInfoItem("Vignette", coalesce(safeCar.vignette)),
+      buildInfoItem("Expiration vignette", safeCar.vignette_expiration, formatDate),
+      buildInfoItem("Vidange", coalesce(safeCar.vidange)),
+      buildInfoItem("Prochaine vidange", safeCar.prochaine_vidange, formatDate),
+      buildInfoItem("Visite technique", coalesce(safeCar.visite_technique)),
+      buildInfoItem("Prochaine visite", safeCar.prochaine_visite_technique || safeCar.visite_technique_expiration, formatDate),
+      buildInfoItem("Garantie", coalesce(safeCar.garantie)),
+      buildInfoItem("Expiration garantie", safeCar.garantie_expiration, formatDate),
     ].filter(Boolean);
 
     const financial = [
-      buildInfoItem("Prix d'achat", car.prix_achat, formatMoney),
-      buildInfoItem("Prix de vente", car.prix_vente, formatMoney),
-      buildInfoItem("Caution", car.caution, formatMoney),
-      buildInfoItem("Kilométrage gratuit/jour", car.kilometrage_gratuit),
-      buildInfoItem("Coût km suppl.", car.cout_km_supplementaire, formatMoney),
+      buildInfoItem("Prix d'achat", safeCar.prix_achat, formatMoney),
+      buildInfoItem("Prix de vente", safeCar.prix_vente, formatMoney),
+      buildInfoItem("Caution", safeCar.caution, formatMoney),
+      buildInfoItem("Kilométrage gratuit/jour", safeCar.kilometrage_gratuit),
+      buildInfoItem("Coût km suppl.", safeCar.cout_km_supplementaire, formatMoney),
     ].filter(Boolean);
 
     const dates = [
-      buildInfoItem("Date d'achat", car.date_achat, formatDate),
-      buildInfoItem("Date de mise en service", car.date_mise_en_service, formatDate),
-      buildInfoItem("Dernière mise à jour", car.updated_at, formatDate),
-      buildInfoItem("Créée le", car.created_at, formatDate),
+      buildInfoItem("Date d'achat", safeCar.date_achat, formatDate),
+      buildInfoItem("Date de mise en service", safeCar.date_mise_en_service, formatDate),
+      buildInfoItem("Dernière mise à jour", safeCar.updated_at, formatDate),
+      buildInfoItem("Créée le", safeCar.created_at, formatDate),
     ].filter(Boolean);
 
-    const notesValue = coalesce(car.commentaires || car.commentaire || car.notes || car.observations || car.remarques);
+    const notesValue = coalesce(safeCar.commentaires || safeCar.commentaire || safeCar.notes || safeCar.observations || safeCar.remarques);
 
     return {
       quick,
@@ -138,7 +136,7 @@ function CarDetailModal({ car, stats, reservations = [], onNavigateUnpaid, onClo
       dates,
       notes: notesValue,
     };
-  }, [car, statusInfo.label]);
+  }, [safeCar, statusInfo.label]);
 
   const handleOverlayClick = () => {
     if (typeof onClose === "function") {
@@ -161,6 +159,10 @@ function CarDetailModal({ car, stats, reservations = [], onNavigateUnpaid, onClo
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
+
+  if (!car) {
+    return null;
+  }
 
   return (
     <div className="assurance-modal-overlay car-detail-overlay" onClick={handleOverlayClick} role="dialog" aria-modal="true">

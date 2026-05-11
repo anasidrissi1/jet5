@@ -1,4 +1,4 @@
-/* MonthSelector Styles - Dark Mode */
+﻿/* MonthSelector Styles - Dark Mode */
 .month-selector {
   display: flex;
   align-items: center;
@@ -49,7 +49,7 @@
 .month-select:focus,
 .year-select:focus {
   outline: none;
-  border-color: #B8900A;
+  border-color: #92712B;
   box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.2);
 }
 
@@ -61,7 +61,7 @@
 }
 
 .month-current-btn {
-  background: linear-gradient(135deg, #B8900A 0%, #8A6E00 100%);
+  background: linear-gradient(135deg, #92712B 0%, #8A6E00 100%);
   border: none;
   border-radius: 8px;
   padding: 10px 16px;
@@ -100,3 +100,4 @@
     width: 100%;
   }
 }
+

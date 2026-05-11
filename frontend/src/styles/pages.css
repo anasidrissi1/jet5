@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    JET5 - Pages Common Styles
    ============================================ */
 
@@ -346,9 +346,9 @@
 }
 
 .simple-form-error {
-  border: 1px solid var(--color-danger, #D4A900);
+  border: 1px solid var(--color-danger, #B8923A);
   background: rgba(245, 196, 0, 0.08);
-  color: var(--color-danger, #D4A900);
+  color: var(--color-danger, #B8923A);
   padding: 12px;
   border-radius: 12px;
   font-weight: 700;
@@ -469,3 +469,4 @@
     justify-content: center;
   }
 }
+

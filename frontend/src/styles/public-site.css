@@ -131,4 +131,16 @@
 
 @media (max-width: 768px) {
   .jet-cta-band { padding: 40px 24px; }
+  .jet-hero { min-height: 100svh; }
+  .jet-hero-content { padding: 48px 0 56px; }
+  .jet-hero p { font-size: 1rem; }
+  .jet-hero-actions { gap: 12px; }
+  .jet-features { grid-template-columns: 1fr; }
+  .jet-feature { padding: 24px; }
+}
+
+@media (max-width: 480px) {
+  .jet-cta-band { padding: 28px 16px; }
+  .jet-hero-actions { flex-direction: column; }
+  .jet-hero-actions .jet-btn { width: 100%; }
 }

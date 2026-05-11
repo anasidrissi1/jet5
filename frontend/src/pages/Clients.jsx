@@ -446,7 +446,6 @@ function Clients() {
   const [search, setSearch] = useState('');
   const [user, setUser] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'table'
-  const [selectedClient, setSelectedClient] = useState(null);
   const [showQRModal, setShowQRModal] = useState(false);
 
   useEffect(() => {
@@ -455,8 +454,8 @@ function Clients() {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         setUser(payload);
-      } catch (e) {
-        console.error('Error parsing token:', e);
+      } catch {
+        // ignore malformed token
       }
     }
   }, []);
@@ -469,9 +468,37 @@ function Clients() {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get('/clients/');
-      const data = response.data;
-      const clientsList = Array.isArray(data) ? data : data?.results ?? data?.items ?? [];
+      const fetchAllClients = async () => {
+        const allItems = [];
+        let page = 1;
+        let hasNext = true;
+        const MAX_PAGES = 200;
+
+        while (hasNext && page <= MAX_PAGES) {
+          const response = await apiClient.get('/clients/', {
+            params: { page, page_size: 100 },
+          });
+          const payload = response.data;
+
+          if (Array.isArray(payload)) {
+            return payload;
+          }
+
+          const pageItems = Array.isArray(payload?.results)
+            ? payload.results
+            : Array.isArray(payload?.items)
+              ? payload.items
+              : [];
+          allItems.push(...pageItems);
+
+          hasNext = Boolean(payload?.next);
+          page += 1;
+        }
+
+        return allItems;
+      };
+
+      const clientsList = await fetchAllClients();
       setClients(clientsList || []);
     } catch (err) {
       console.error('Error fetching clients:', err);
@@ -503,7 +530,6 @@ function Clients() {
         await apiClient.delete(`/clients/${id}/`);
         addNotification('Client supprimé avec succès', 'success');
         fetchClients();
-        setSelectedClient(null);
       } catch (err) {
         console.error('Error deleting client:', err);
         addNotification('Erreur lors de la suppression du client', 'error');

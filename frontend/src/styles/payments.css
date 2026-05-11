@@ -1,4 +1,4 @@
-/* Suivi Financier Styles */
+﻿/* Suivi Financier Styles */
 .payments-page {
   --page-shell-padding: clamp(16px, 4vw, 24px);
   background: var(--bg-secondary);
@@ -68,7 +68,7 @@
 }
 
 .export-button {
-  background: #D4A900;
+  background: #B8923A;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -81,12 +81,12 @@
 }
 
 .export-button:hover {
-  background: #B8900A;
+  background: #92712B;
 }
 
 .btn-export-modern {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #D4A900 0%, #8A6E00 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #8A6E00 100%);
   color: white;
   border: none;
   border-radius: 10px;
@@ -169,7 +169,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(59, 130, 246, 0.12);
-  color: #F5C400;
+  color: #C8A24A;
   font-size: 11px;
   font-weight: 700;
 }
@@ -193,7 +193,7 @@
 }
 
 .sidebar-chip.is-active {
-  background: linear-gradient(135deg, #D4A900, #B8900A);
+  background: linear-gradient(135deg, #B8923A, #92712B);
   border-color: transparent;
   color: white;
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
@@ -250,7 +250,7 @@
 }
 
 .sidebar-toggle.is-on {
-  background: linear-gradient(135deg, #D4A900, #B8900A);
+  background: linear-gradient(135deg, #B8923A, #92712B);
   border-color: transparent;
   color: white;
   box-shadow: 0 10px 20px rgba(220, 38, 38, 0.35);
@@ -373,7 +373,7 @@
   padding: 6px 14px;
   border-radius: 999px;
   background: rgba(148, 163, 184, 0.15);
-  color: #FDE68A;
+  color: #D0B276;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -450,7 +450,7 @@
 }
 
 .payments-pill__dot.warning { background: #f59e0b; }
-.payments-pill__dot.danger { background: #D4A900; }
+.payments-pill__dot.danger { background: #B8923A; }
 
 .payments-hero__actions {
   display: flex;
@@ -477,7 +477,7 @@
 }
 
 .hero-action--primary {
-  background: linear-gradient(135deg, #D4A900, #8A6E00);
+  background: linear-gradient(135deg, #B8923A, #8A6E00);
   color: #f8fafc;
   box-shadow: 0 8px 20px rgba(212, 169, 0, 0.4);
 }
@@ -535,7 +535,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #D4A900, #f97316);
+  background: linear-gradient(90deg, #B8923A, #f97316);
 }
 
 .hero-progress__meta {
@@ -722,7 +722,7 @@
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #10b981 0%, #D4A900 100%);
+  background: linear-gradient(90deg, #10b981 0%, #B8923A 100%);
   border-radius: 10px;
   transition: width 0.3s ease;
 }
@@ -759,8 +759,8 @@
 }
 
 .status-hors_service {
-  background: #FFFBEB;
-  color: #B8900A;
+  background: #F3EBDC;
+  color: #92712B;
 }
 
 .action-buttons {
@@ -831,13 +831,13 @@
 }
 
 .btn-view {
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
   color: white;
-  border: 1px solid #B8900A;
+  border: 1px solid #92712B;
 }
 
 .btn-view:hover {
-  background: linear-gradient(135deg, #B8900A 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #92712B 0%, #1d4ed8 100%);
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
@@ -1053,9 +1053,9 @@
 .payment-status-stack { display: flex; flex-direction: column; gap: 6px; }
 .badge-success { background: #d1fae5; color: #065f46; }
 .badge-warning { background: #fef3c7; color: #92400e; }
-.badge-danger { background: #FFF6CC; color: #7A6000; }
+.badge-danger { background: #EFE5D2; color: #7A6000; }
 .badge-late {
-  background: linear-gradient(135deg, #B8900A 0%, #8A6E00 100%);
+  background: linear-gradient(135deg, #92712B 0%, #8A6E00 100%);
   color: white;
   font-size: 11px;
   padding: 4px 8px;
@@ -1203,7 +1203,7 @@ html[data-theme="light"] .payments-hero__badge {
 }
 
 html[data-theme="light"] .payments-hero__progress {
-  background: #ffffff;
+  background: var(--bg-card);
   border-color: rgba(148, 163, 184, 0.35);
 }
 
@@ -1212,7 +1212,7 @@ html[data-theme="light"] .hero-progress__bar {
 }
 
 html[data-theme="light"] .payments-hero-card {
-  background: #ffffff;
+  background: var(--bg-card);
 }
 
 html[data-theme="light"] .payments-hero-card--total {
@@ -1233,7 +1233,7 @@ html[data-theme="light"] .payments-table-card {
 }
 
 html[data-theme="light"] .payments-table-toolbar {
-  background: #ffffff;
+  background: var(--bg-card);
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
@@ -1405,4 +1405,5 @@ html[data-theme="light"] .payments-table thead th {
     justify-content: center;
   }
 }
+
 

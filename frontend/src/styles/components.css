@@ -1,4 +1,4 @@
-/* Section header */
+﻿/* Section header */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -37,7 +37,7 @@
   align-items: center;
   padding: var(--spacing-8);
   color: var(--gray-500);
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
@@ -62,8 +62,8 @@
 /* Error message */
 .error-message {
   padding: var(--spacing-4);
-  background-color: #FFF6CC;
-  border: 1px solid #D4A900;
+  background-color: #EFE5D2;
+  border: 1px solid #B8923A;
   border-radius: var(--radius-lg);
   color: #7A6000;
   margin: var(--spacing-4) 0;
@@ -71,7 +71,7 @@
 
 .error-message button {
   margin-top: var(--spacing-2);
-  background-color: #B8900A;
+  background-color: #92712B;
 }
 
 .error-message button:hover {
@@ -87,7 +87,7 @@
 }
 
 .chart-container {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: var(--spacing-4);
   box-shadow: var(--shadow);

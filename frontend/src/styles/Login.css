@@ -1,4 +1,4 @@
-/* Login Page - Dark Mode Car Rental Theme (style teal d'origine) */
+﻿/* Login Page - Dark Mode Car Rental Theme (style teal d'origine) */
 .login-container {
   display: flex;
   justify-content: center;
@@ -19,7 +19,7 @@
   pointer-events: none;
 }
 
-/* Bouton de switch thème en haut à droite */
+/* Bouton de switch thÃ¨me en haut Ã  droite */
 .login-theme-toggle {
   position: absolute;
   top: 20px;
@@ -182,7 +182,7 @@
 
 .error-message {
   background: rgba(220, 53, 69, 0.18);
-  color: #FDE68A;
+  color: #D0B276;
   padding: 0.75rem 1rem;
   border-radius: 10px;
   border: 1px solid rgba(220, 53, 69, 0.4);
@@ -228,7 +228,7 @@ html[data-theme="light"] .brand-tagline {
 }
 
 html[data-theme="light"] .login-form {
-  background: #ffffff;
+  background: var(--bg-card);
   border-color: rgba(148, 163, 184, 0.35);
   box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12);
 }
@@ -248,15 +248,15 @@ html[data-theme="light"] .login-form input::placeholder {
 }
 
 html[data-theme="light"] .login-form input:focus {
-  background: #ffffff;
+  background: var(--bg-card);
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.18);
 }
 
 html[data-theme="light"] .error-message {
-  background: #FFF6CC;
+  background: #EFE5D2;
   color: #8A6E00;
-  border-color: #FDE68A;
+  border-color: #D0B276;
 }
 
 html[data-theme="light"] .login-footer p {
@@ -280,3 +280,4 @@ html[data-theme="light"] .login-footer p {
     right: 12px;
   }
 }
+

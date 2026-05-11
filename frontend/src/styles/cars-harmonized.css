@@ -1,11 +1,11 @@
-/* Style harmonisé pour la page des voitures, inspiré de la page entretiens */
+﻿/* Style harmonisÃ© pour la page des voitures, inspirÃ© de la page entretiens */
 .cars-page {
   padding: clamp(16px, 4vw, 32px);
   background: #181c2f;
   min-height: 100vh;
 }
 .cars-header {
-  background: linear-gradient(135deg, #D4A900 0%, #F5C400 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #C8A24A 100%);
   border-radius: 18px;
   padding: clamp(20px, 5vw, 32px) clamp(24px, 6vw, 40px);
   margin-bottom: clamp(20px, 4vw, 32px);
@@ -57,7 +57,7 @@
   font-size: 1rem;
 }
 .btn-add-car {
-  background: linear-gradient(135deg, #D4A900 0%, #F5C400 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #C8A24A 100%);
   color: #fff;
   font-weight: 700;
   border: none;
@@ -69,7 +69,7 @@
   transition: background 0.2s;
 }
 .btn-add-car:hover {
-  background: linear-gradient(135deg, #F5C400 0%, #D4A900 100%);
+  background: linear-gradient(135deg, #C8A24A 0%, #B8923A 100%);
 }
 .btn-export-excel {
   background: none;
@@ -109,7 +109,7 @@
   box-shadow: 0 18px 40px rgba(2,6,23,0.6);
 }
 /* Replace full-color backgrounds with subtle left color accent */
-.cars-stat-blue { border-left: 6px solid #D4A900; }
+.cars-stat-blue { border-left: 6px solid #B8923A; }
 .cars-stat-green { border-left: 6px solid #059669; }
 .cars-stat-yellow { border-left: 6px solid #f59e42; }
 .cars-stat-orange { border-left: 6px solid #f43f5e; }
@@ -147,7 +147,7 @@
   min-width: 780px;
 }
 .cars-table thead tr {
-  background: linear-gradient(135deg, #D4A900 0%, #F5C400 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #C8A24A 100%);
   color: #fff;
 }
 .cars-table th {
@@ -206,7 +206,7 @@
   padding: 48px 0;
 }
 .btn-add-empty {
-  background: linear-gradient(135deg, #D4A900 0%, #F5C400 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #C8A24A 100%);
   color: #fff;
   font-weight: 700;
   border: none;
@@ -217,7 +217,7 @@
   margin-top: 18px;
 }
 .btn-add-empty:hover {
-  background: linear-gradient(135deg, #F5C400 0%, #D4A900 100%);
+  background: linear-gradient(135deg, #C8A24A 0%, #B8923A 100%);
 }
 
 @media (max-width: 1024px) {
@@ -278,3 +278,4 @@
     padding: 14px;
   }
 }
+

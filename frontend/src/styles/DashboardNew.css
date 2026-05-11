@@ -1,5 +1,5 @@
-/* ============================================
-   NOUVEAU DASHBOARD - DESIGN ÉPURÉ
+﻿/* ============================================
+   NOUVEAU DASHBOARD - DESIGN Ã‰PURÃ‰
    ============================================ */
 
 .dashboard-new {
@@ -68,7 +68,7 @@
 .dashboard-new-header h1 {
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -96,8 +96,8 @@
 .btn-refresh:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: #D4A900;
-  color: #D4A900;
+  border-color: #B8923A;
+  color: #B8923A;
 }
 
 /* KPIs Grid */
@@ -130,7 +130,7 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(180deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(180deg, #B8923A 0%, #92712B 100%);
 }
 
 .dashboard-new .kpi-card:hover {
@@ -143,11 +143,11 @@
 }
 
 .dashboard-new .kpi-depenses::before {
-  background: linear-gradient(180deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(180deg, #B8923A 0%, #92712B 100%);
 }
 
 .dashboard-new .kpi-benefice-positive::before {
-  background: linear-gradient(180deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(180deg, #B8923A 0%, #92712B 100%);
 }
 
 .dashboard-new .kpi-benefice-negative::before {
@@ -155,7 +155,7 @@
 }
 
 .dashboard-new .kpi-voitures::before {
-  background: linear-gradient(180deg, #F5C400 0%, #B8900A 100%);
+  background: linear-gradient(180deg, #C8A24A 0%, #92712B 100%);
 }
 
 .dashboard-new .kpi-content {
@@ -194,7 +194,7 @@
 
 .dashboard-new .kpi-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #F5C400 0%, #B8900A 100%);
+  background: linear-gradient(90deg, #C8A24A 0%, #92712B 100%);
   border-radius: 3px;
   transition: width 0.5s ease;
 }
@@ -266,7 +266,7 @@
 }
 
 .info-badge {
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -275,7 +275,7 @@
 }
 
 .alert-badge {
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
 }
 
 .warning-badge {
@@ -318,7 +318,7 @@
 .retour-item:hover {
   background: var(--bg-hover);
   transform: translateX(4px);
-  border-color: #D4A900;
+  border-color: #B8923A;
 }
 
 .retour-icon {
@@ -369,7 +369,7 @@
   padding: 16px;
   background: var(--bg-secondary);
   border-radius: 12px;
-  border-left: 4px solid #D4A900;
+  border-left: 4px solid #B8923A;
   border: 1px solid var(--border-color);
 }
 
@@ -378,11 +378,11 @@
 }
 
 .alerte-visite {
-  border-left-color: #D4A900;
+  border-left-color: #B8923A;
 }
 
 .alerte-autorisation {
-  border-left-color: #F5C400;
+  border-left-color: #C8A24A;
 }
 
 .alerte-icon {
@@ -530,3 +530,4 @@
 }
 
 /* Redundant media queries merged above */
+

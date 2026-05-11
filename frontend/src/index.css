@@ -26,6 +26,9 @@
 /* 5. Mobile Responsive - DOIT ÊTRE APRÈS TOUS LES AUTRES */
 @import './styles/mobile-responsive.css';
 
+/* 6. Final Theme Fixes - overrides legacy hardcoded colors */
+@import './styles/theme-mode-fixes.css';
+
 /* ========== GLOBAL OVERRIDES ========== */
 
 /* Scrollbar Styling - Dark Mode */
@@ -49,7 +52,7 @@
 
 /* Selection */
 ::selection {
-  background: rgba(245, 196, 0, 0.3);
+  background: color-mix(in srgb, var(--primary-color) 35%, transparent);
   color: var(--text-primary);
 }
 

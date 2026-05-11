@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    JET5 - Sidebar Styles
    ============================================ */
 
@@ -97,7 +97,7 @@
 .nav-item.active {
   background: rgba(245, 196, 0, 0.12);
   color: var(--text-primary);
-  border-left: 3px solid #d4a900;
+  border-left: 3px solid #B8923A;
 }
 
 .nav-item.parent {
@@ -124,7 +124,7 @@
 
 .nav-item.parent.open {
   background: rgba(245, 196, 0, 0.1);
-  color: #f5c400;
+  color: #C8A24A;
 }
 
 .nav-item.single {
@@ -208,12 +208,12 @@
 .nav-subitem.active {
   background: rgba(245, 196, 0, 0.12);
   color: var(--text-primary);
-  border-left: 3px solid #d4a900;
+  border-left: 3px solid #B8923A;
   font-weight: 600;
 }
 
 .nav-subitem.active::before {
-  background: #d4a900;
+  background: #B8923A;
   width: 6px;
   height: 6px;
 }
@@ -381,7 +381,7 @@
     opacity: 1;
   }
 
-  /* Sidebar masquée par défaut sur mobile */
+  /* Sidebar masquÃ©e par dÃ©faut sur mobile */
   .sidebar-professional {
     transform: translateX(-100%);
     box-shadow: none;
@@ -404,7 +404,7 @@
 }
 
 @media (max-width: 480px) {
-  /* Sidebar pleine largeur sur petits écrans */
+  /* Sidebar pleine largeur sur petits Ã©crans */
   .sidebar-professional {
     width: 85%;
     max-width: 300px;

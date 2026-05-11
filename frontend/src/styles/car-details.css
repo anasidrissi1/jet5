@@ -1,4 +1,4 @@
-/* Car Details Page - Full Page Layout */
+﻿/* Car Details Page - Full Page Layout */
 
 .car-details-quick-stats {
   display: grid;
@@ -89,7 +89,7 @@
 }
 
 .car-details-kpi-card.info {
-  border-left: 4px solid #D4A900;
+  border-left: 4px solid #B8923A;
 }
 
 .car-details-kpi-card.neutral {
@@ -277,19 +277,19 @@
 }
 
 .status-badge.status-termine,
-.status-badge.status-terminée {
+.status-badge.status-terminÃ©e {
   background: #d1fae5;
   color: #065f46;
 }
 
 .status-badge.status-planifiee,
-.status-badge.status-planifiée {
+.status-badge.status-planifiÃ©e {
   background: #fef3c7;
   color: #92400e;
 }
 
 .status-badge.status-annule {
-  background: #FFF6CC;
+  background: #EFE5D2;
   color: #7A6000;
 }
 
@@ -380,3 +380,4 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+

@@ -1,2017 +1,995 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { jsPDF } from 'jspdf';
 import apiClient from '../api/apiClient';
-
-import Loader from '../components/Loader';
 import PageHeader from '../components/PageHeader';
-import FormInput from '../components/FormInput';
-
+import Loader from '../components/Loader';
 import { useNotification } from '../contexts/NotificationContext';
-
-import '../styles/pages.css';
-
 import '../styles/add-reservation.css';
 
-
-
-const PAYMENT_METHOD_LABELS = {
-
-  CASH: 'Espèces',
-
-  CARD: 'Carte Bancaire',
-
-  CHEQUE: 'Chèque',
-
-  TPE: 'TPE',
-
-  TRANSFER: 'Virement',
-
-  OTHER: 'Autre',
-
+const carsService = {
+  list: (params = {}) => apiClient.get('/cars/voitures/', { params }),
 };
 
+const clientsService = {
+  list: (params = {}) => apiClient.get('/clients/', { params }),
+};
 
+const reservationsService = {
+  list: (params = {}) => apiClient.get('/reservations/', { params }),
+  get: (id) => apiClient.get(`/reservations/${id}/`),
+  create: (payload) => apiClient.post('/reservations/', payload),
+  update: (id, payload) => apiClient.put(`/reservations/${id}/`, payload),
+};
 
-const AVAILABLE_CAR_STATUSES = ['disponible', 'libre', 'free', 'available'];
-const UNAVAILABLE_CAR_STATUSES = [
-  'loue', 'louee', 'louée', 'loueé',
-  'reserve', 'reservee', 'réservee', 'réservée', 'reservée',
-  'en_cours', 'en cours', 'en location', 'occupation',
-  'maintenance', 'entretien', 'panne', 'vendue',
-];
-const ACTIVE_RESERVATION_STATUSES = [
-  'en_cours', 'en cours',
-  'planifiee', 'planifiée', 'planifie', 'planifié',
-  'confirmée', 'confirmee', 'confirmé', 'confirme',
-  'active', 'en_attente', 'en attente',
-  'reservee', 'réservée', 'reserve', 'reservée', 'reservec',
-];
+const CONTRACT_TAG = '__CONTRACT_JSON__:';
 
-const truthyFlag = (value) => value === true || value === 'true' || value === 1;
+const emptyExtras = {
+  locataire_nom: '',
+  locataire_prenom: '',
+  locataire_telephone: '',
+  locataire_cin: '',
+  locataire_adresse: '',
+  locataire_expiration_permis: '',
+  locataire_numero_permis: '',
+  locataire_delivre_le: '',
+  locataire_passport: '',
 
-const normalizeId = (value) => {
-  if (value == null) {
+  secondaire_nom: '',
+  secondaire_prenom: '',
+  secondaire_cin: '',
+  secondaire_adresse: '',
+  secondaire_telephone: '',
+  secondaire_expiration_permis: '',
+  secondaire_numero_permis: '',
+  secondaire_delivre_le: '',
+  secondaire_passport: '',
+
+  livraison_date: '',
+  livraison_heure: '',
+  livraison_km: '',
+  livraison_lieu: '',
+
+  recuperation_date: '',
+  recuperation_heure: '',
+  recuperation_km: '',
+  recuperation_lieu: '',
+
+  prolongation_date: '',
+  prolongation_heure: '',
+  prolongation_km: '',
+  prolongation_lieu: '',
+
+  depart_pneu_secours: false,
+  depart_cric: false,
+  depart_gilets: false,
+  depart_tapis: false,
+  depart_rayures: false,
+  depart_aucun_dommage: false,
+  depart_observation: '',
+  depart_jauge: 'E',
+
+  retour_pneu_secours: false,
+  retour_cric: false,
+  retour_gilets: false,
+  retour_tapis: false,
+  retour_rayures: false,
+  retour_aucun_dommage: false,
+  retour_observation: '',
+  retour_jauge: 'E',
+
+  signature_agent: '',
+  signature_client: '',
+  service_extra: '0',
+  tva_rate: '20',
+  notes: '',
+};
+
+const initialCore = {
+  voiture: '',
+  client: '',
+  conducteur_secondaire: '',
+  date_debut: '',
+  heure_depart: '',
+  date_fin: '',
+  heure_retour: '',
+  nombre_jours: '1',
+  prix_journalier: '',
+  avance: '0',
+  franchise: '0',
+  numero_contrat: '',
+  methode_paiement: 'CASH',
+};
+
+const money = (value) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return '0.00';
+  return n.toFixed(2);
+};
+
+const displayMoney = (value) => `${Number(value || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH`;
+
+const formatDate = (value) => {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString('fr-FR');
+};
+
+const toInputDate = (value) => {
+  if (!value) return '';
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toISOString().slice(0, 10);
+};
+
+const firstDefined = (...values) => {
+  for (const value of values) {
+    if (value == null) continue;
+    if (typeof value === 'string' && value.trim() === '') continue;
+    return value;
+  }
+  return '';
+};
+
+const extractClientIdentity = (client) => {
+  if (!client) {
+    return {
+      nom: '',
+      prenom: '',
+      telephone: '',
+      cin: '',
+      adresse: '',
+      numeroPermis: '',
+      dateDelivrance: '',
+      dateExpiration: '',
+      passport: '',
+    };
+  }
+
+  const dateExpiration = toInputDate(firstDefined(client.permis_date_expiration, client.cin_date_expiration));
+  const dateDelivrance = toInputDate(firstDefined(client.permis_date_delivrance));
+
+  return {
+    nom: firstDefined(client.nom),
+    prenom: firstDefined(client.prenom),
+    telephone: firstDefined(client.telephone, client.telephone_whatsapp),
+    cin: firstDefined(client.cin_numero, client.cin),
+    adresse: firstDefined(client.adresse, client.ville),
+    numeroPermis: firstDefined(client.permis_numero, client.numero_permis),
+    dateDelivrance,
+    dateExpiration,
+    passport: firstDefined(client.passeport_numero, client.passport_numero),
+  };
+};
+
+const normalizeText = (value) =>
+  String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const getClientSearchAliases = (client) => {
+  const nom = client?.nom || '';
+  const prenom = client?.prenom || '';
+  return [
+    `${nom} ${prenom}`,
+    `${prenom} ${nom}`,
+    nom,
+    prenom,
+  ].map(normalizeText).filter(Boolean);
+};
+
+const todayIso = () => new Date().toISOString().slice(0, 10);
+
+const computeNombreJours = (dateDebut, dateFin) => {
+  if (!dateDebut || !dateFin) return null;
+  const start = new Date(dateDebut);
+  const end = new Date(dateFin);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) return null;
+  return Math.max(1, Math.round((end - start) / (24 * 60 * 60 * 1000)));
+};
+
+const computeDateFin = (dateDebut, nombreJours) => {
+  if (!dateDebut) return null;
+  const start = new Date(dateDebut);
+  if (Number.isNaN(start.getTime())) return null;
+  const days = Math.max(1, parseInt(nombreJours, 10) || 1);
+  const end = new Date(start);
+  end.setDate(end.getDate() + days);
+  return end.toISOString().slice(0, 10);
+};
+
+const parseContractData = (comment) => {
+  if (!comment || typeof comment !== 'string') return null;
+  if (!comment.startsWith(CONTRACT_TAG)) return null;
+  try {
+    return JSON.parse(comment.slice(CONTRACT_TAG.length));
+  } catch (_) {
     return null;
   }
-  if (typeof value === 'object') {
-    if ('id' in value) {
-      return normalizeId(value.id);
-    }
-    return null;
-  }
-  const numeric = Number(value);
-  if (!Number.isNaN(numeric)) {
-    return String(numeric);
-  }
-  return String(value);
 };
 
-const isReservationActiveLike = (reservation) => {
-  if (!reservation) {
-    return false;
-  }
-  const status = (reservation.statut || reservation.status || '')
-    .toString()
-    .trim()
-    .toLowerCase();
+const buildContractComment = (extras) => `${CONTRACT_TAG}${JSON.stringify(extras)}`;
 
-  if (status && ACTIVE_RESERVATION_STATUSES.includes(status)) {
-    return true;
-  }
-
-  const flags = [
-    reservation.active,
-    reservation.is_active,
-    reservation.est_active,
-    reservation.reservation_active,
-    reservation.en_cours,
-    reservation.enCours,
-  ];
-  return flags.some(truthyFlag);
+const clearSecondaryFields = {
+  secondaire_nom: '',
+  secondaire_prenom: '',
+  secondaire_telephone: '',
+  secondaire_cin: '',
+  secondaire_adresse: '',
+  secondaire_expiration_permis: '',
+  secondaire_numero_permis: '',
+  secondaire_delivre_le: '',
+  secondaire_passport: '',
 };
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const DEFAULT_LONG_DURATION_COUNT = 3;
-const DEFAULT_LONG_DURATION_UNIT = 'YEARS';
-
-const addMonthsSafe = (dateValue, months) => {
-  const source = new Date(dateValue);
-  if (Number.isNaN(source.getTime())) return null;
-
-  const day = source.getDate();
-  const next = new Date(source);
-  next.setMonth(next.getMonth() + months);
-
-  // Keep same day-of-month when possible, else clamp to month end.
-  if (next.getDate() < day) {
-    next.setDate(0);
-  }
-  return next;
-};
-
-const addYearsSafe = (dateValue, years) => addMonthsSafe(dateValue, years * 12);
-
-const longDurationToMonths = (count, unit) => {
-  const safeCount = Math.max(1, parseInt(count, 10) || 1);
-  return unit === 'MONTHS' ? safeCount : safeCount * 12;
-};
-
-const computeRentalDays = (startDate, endDate) => {
-  if (!startDate) return 0;
-  const start = new Date(startDate);
-  const end = endDate ? new Date(endDate) : null;
-  if (end && !Number.isNaN(end.getTime()) && !Number.isNaN(start.getTime())) {
-    const rawDiff = Math.round((end.setHours(0, 0, 0, 0) - start.setHours(0, 0, 0, 0)) / DAY_MS);
-    // Durée calculée en jours calendaires (fin exclusive)
-    return Math.max(1, rawDiff);
-  }
-  return Math.max(1, 1);
-};
-
-const hasActiveContractOrRental = (car) => {
-  if (!car) return false;
-  const status = (car.statut || car.status || '').toString().toLowerCase();
-  if (UNAVAILABLE_CAR_STATUSES.includes(status)) return true;
-
-  const flags = [
-    car.en_location,
-    car.has_active_contract,
-    car.has_active_reservation,
-    car.active_contract,
-    car.active_reservation,
-    car.contract_active,
-    car.contrat_actif,
-    car.contrat_en_cours,
-    car.reservation_en_cours,
-    car.en_cours_location,
-    car.est_loue,
-    car.estLouee,
-    car.is_rented,
-  ];
-  if (flags.some((flag) => flag === true || flag === 'true' || flag === 1)) return true;
-
-  // If an active reservation object exists
-  if (car.current_reservation || car.reservation_active) return true;
-  return false;
-};
-
-const isCarAvailable = (car) => {
-  if (!car) return false;
-  if (hasActiveContractOrRental(car)) return false;
-
-  const status = (car.statut || car.status || '').toString().trim().toLowerCase();
-  if (!status) {
-    return true;
-  }
-
-  if (UNAVAILABLE_CAR_STATUSES.includes(status)) {
-    return false;
-  }
-
-  if (AVAILABLE_CAR_STATUSES.includes(status)) {
-    return true;
-  }
-
-  // Statuts inconnus considérés disponibles s'ils ne sont pas marqués indisponibles
-  return true;
-};
-
-
-
-const todayIso = () => new Date().toISOString().split('T')[0];
-
-
-
-const formatMoney = (value) => {
-
-  const amount = Number.parseFloat(value);
-
-  if (Number.isNaN(amount)) {
-
-    return '0,00 DH';
-
-  }
-
-  return `${amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH`;
-
-};
-
-
 
 function AddReservation() {
-
   const { id } = useParams();
-
   const isEdit = Boolean(id);
-
   const navigate = useNavigate();
-
-  const location = useLocation();
-
   const { addNotification } = useNotification();
 
-  const today = useMemo(() => todayIso(), []);
-
-  const showFullSidebar = !isEdit;
-
-
-
-  const [initializing, setInitializing] = useState(true);
+  const [loadingInit, setLoadingInit] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [contractBusy, setContractBusy] = useState(false);
 
   const [cars, setCars] = useState([]);
-
   const [clients, setClients] = useState([]);
-  const [activeCarIds, setActiveCarIds] = useState(new Set());
+  const [reservations, setReservations] = useState([]);
 
-  const [form, setForm] = useState({
-    voiture: '',
-    client: '',
-    conducteur_secondaire: '',
-    date_debut: todayIso(),
-    heure_depart: '',
-    date_fin: '',
-    heure_retour: '',
-    nombre_jours: '1',
-    jours_prolongation: '0',
-    prix_journalier: '',
-    tarif_special: '',
-    avance: '0',
-    franchise: '0',
-    long_duration: false,
-    long_duration_count: String(DEFAULT_LONG_DURATION_COUNT),
-    long_duration_unit: DEFAULT_LONG_DURATION_UNIT,
-    billing_mode: 'JOURNALIER',
-    numero_contrat: '',
-    methode_paiement: 'CASH',
-    commentaire: '',
-  });
+  const [core, setCore] = useState({ ...initialCore, date_debut: todayIso() });
+  const [extras, setExtras] = useState({ ...emptyExtras });
+  const [savedReservation, setSavedReservation] = useState(null);
+  const [clientQuery, setClientQuery] = useState('');
 
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-
-  // Search states for autocomplete fields
-  const [carSearch, setCarSearch] = useState('');
-  const [clientSearch, setClientSearch] = useState('');
-  const [secondarySearch, setSecondarySearch] = useState('');
-  const [carDropdownOpen, setCarDropdownOpen] = useState(false);
-  const [clientDropdownOpen, setClientDropdownOpen] = useState(false);
-  const [secondaryDropdownOpen, setSecondaryDropdownOpen] = useState(false);
-  const carRef = useRef(null);
-  const clientRef = useRef(null);
-  const secondaryRef = useRef(null);
-
-  const uniqueById = useCallback((list) => {
-    const seen = new Set();
-    return (list || []).filter((item) => {
-      const key = item && item.id;
-      if (key == null || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, []);
-
-
-
-  const emitGeneralError = useCallback((message) => {
-
-    setErrors((prev) => ({ ...prev, general: message }));
-
-    addNotification(message, 'error');
-
-  }, [addNotification]);
-
-
-
-  const clearGeneralError = useCallback(() => {
-
-    setErrors((prev) => {
-
-      if (!prev || prev.general == null) {
-
-        return prev;
-
-      }
-
-      const next = { ...prev };
-
-      delete next.general;
-
-      return next;
-
-    });
-
-  }, []);
-
-
-
-  useEffect(() => {
-
-    const normalizePayload = (data) => (
-
-      Array.isArray(data) ? data : data?.results ?? data?.items ?? []
-
+  const selectedCar = useMemo(() => cars.find((c) => String(c.id) === String(core.voiture)) || null, [cars, core.voiture]);
+  const selectedClient = useMemo(() => clients.find((c) => String(c.id) === String(core.client)) || null, [clients, core.client]);
+  const selectedSecondaryClient = useMemo(
+    () => clients.find((c) => String(c.id) === String(core.conducteur_secondaire)) || null,
+    [clients, core.conducteur_secondaire],
+  );
+  const availableCars = useMemo(() => {
+    const activeStatuses = new Set(['planifiee', 'en_cours']);
+    const blockedCarIds = new Set(
+      reservations
+        .filter((reservation) => {
+          const reservationId = String(reservation.id || '');
+          if (isEdit && reservationId === String(id)) return false;
+          return activeStatuses.has(String(reservation.statut || '').toLowerCase());
+        })
+        .map((reservation) => String(reservation.voiture)),
     );
 
+    const filtered = cars.filter((car) => !blockedCarIds.has(String(car.id)));
+    if (core.voiture && !filtered.some((car) => String(car.id) === String(core.voiture))) {
+      const selected = cars.find((car) => String(car.id) === String(core.voiture));
+      if (selected) filtered.push(selected);
+    }
+    return filtered;
+  }, [cars, reservations, isEdit, id, core.voiture]);
 
+  const clientLabelById = (idValue) => {
+    const linked = clients.find((item) => String(item.id) === String(idValue));
+    if (!linked) return '';
+    return `${linked.nom || ''} ${linked.prenom || ''}`.trim();
+  };
 
+  useEffect(() => {
     const load = async () => {
-
       try {
+        const fetchAllPages = async (loader, baseParams = {}) => {
+          const allItems = [];
+          let page = 1;
+          let hasNext = true;
+          const MAX_PAGES = 200;
 
-        const [carsRes, clientsRes, activeRes] = await Promise.all([
-          apiClient.get('/cars/voitures/'),
-          apiClient.get('/clients/'),
-          apiClient
-            .get('/reservations/?active=true')
-            .catch(() => apiClient.get('/reservations/?status=en_cours'))
-            .catch(() => null),
-        ]);
+          while (hasNext && page <= MAX_PAGES) {
+            const response = await loader({ ...baseParams, page, page_size: 200 });
+            const payload = response.data;
 
+            if (Array.isArray(payload)) {
+              return payload;
+            }
 
+            if (Array.isArray(payload?.results)) {
+              allItems.push(...payload.results);
+              hasNext = Boolean(payload.next);
+              page += 1;
+              continue;
+            }
 
-        const carsPayload = normalizePayload(carsRes.data) || [];
-        const uniqueCars = uniqueById(carsPayload);
-
-        const activeReservations = normalizePayload(activeRes?.data) || [];
-        const activeIds = new Set(
-          activeReservations
-            .filter((reservation) => isReservationActiveLike(reservation))
-            .map((res) => normalizeId(res.voiture ?? res.voiture_id))
-            .filter(Boolean)
-        );
-        setActiveCarIds(activeIds);
-
-        // Ne garder que les voitures disponibles en création (pas d'active reservation)
-        setCars(
-          isEdit
-            ? uniqueCars
-            : uniqueCars.filter((car) => isCarAvailable(car) && !activeIds.has(normalizeId(car.id)))
-        );
-
-        setClients(normalizePayload(clientsRes.data) || []);
-
-
-
-        if (isEdit) {
-
-            const reservationRes = await apiClient.get(`/reservations/${id}/`);
-
-            const reservation = reservationRes.data;
-
-            setForm({
-
-              voiture: reservation.voiture != null ? String(reservation.voiture) : '',
-
-              client: reservation.client != null ? String(reservation.client) : '',
-
-              conducteur_secondaire: reservation.conducteur_secondaire != null ? String(reservation.conducteur_secondaire) : '',
-
-              date_debut: reservation.date_debut || todayIso(),
-
-              heure_depart: reservation.heure_depart || '',
-
-              date_fin: reservation.date_fin || '',
-
-              heure_retour: reservation.heure_retour || '',
-
-              nombre_jours: reservation.nombre_jours != null ? String(reservation.nombre_jours) : '1',
-
-              jours_prolongation: reservation.jours_prolongation != null ? String(reservation.jours_prolongation) : '0',
-
-              prix_journalier: reservation.prix_journalier != null ? String(reservation.prix_journalier) : '',
-
-              tarif_special: reservation.tarif_special != null ? String(reservation.tarif_special) : '',
-
-              avance: reservation.avance != null ? String(reservation.avance) : '0',
-
-              franchise: reservation.franchise != null ? String(reservation.franchise) : '0',
-
-              long_duration: Boolean(reservation.long_duration),
-              long_duration_count: String(DEFAULT_LONG_DURATION_COUNT),
-              long_duration_unit: DEFAULT_LONG_DURATION_UNIT,
-
-              billing_mode: reservation.billing_mode || 'JOURNALIER',
-
-              numero_contrat: reservation.numero_contrat != null ? String(reservation.numero_contrat) : '',
-
-              methode_paiement: reservation.methode_paiement || 'CASH',
-
-              commentaire: reservation.commentaire || '',
-
-            });
-
+            return [];
           }
 
+          return allItems;
+        };
+
+        const [carsList, clientsList, reservationsList] = await Promise.all([
+          fetchAllPages(carsService.list),
+          fetchAllPages(clientsService.list),
+          fetchAllPages(reservationsService.list),
+        ]);
+        setCars(carsList);
+        setClients(clientsList);
+        setReservations(reservationsList);
+
+        if (isEdit) {
+          const res = await reservationsService.get(id);
+          const r = res.data;
+          setSavedReservation(r);
+
+          setCore((prev) => ({
+            ...prev,
+            voiture: r.voiture != null ? String(r.voiture) : '',
+            client: r.client != null ? String(r.client) : '',
+            conducteur_secondaire: r.conducteur_secondaire != null ? String(r.conducteur_secondaire) : '',
+            date_debut: r.date_debut || prev.date_debut,
+            heure_depart: r.heure_depart || '',
+            date_fin: r.date_fin || '',
+            heure_retour: r.heure_retour || '',
+            nombre_jours: r.nombre_jours != null ? String(r.nombre_jours) : '1',
+            prix_journalier: r.prix_journalier != null ? String(r.prix_journalier) : '',
+            avance: r.avance != null ? String(r.avance) : '0',
+            franchise: r.franchise != null ? String(r.franchise) : '0',
+            numero_contrat: r.numero_contrat != null ? String(r.numero_contrat) : '',
+            methode_paiement: r.methode_paiement || 'CASH',
+          }));
+
+          const contract = parseContractData(r.commentaire);
+          if (contract) {
+            setExtras((prev) => ({ ...prev, ...contract }));
+          }
+        }
       } catch (error) {
-
-        console.error('Erreur lors du chargement des données de réservation :', error);
-
-        emitGeneralError('Impossible de charger les données nécessaires.');
-
+        console.error(error);
+        addNotification('Impossible de charger les données du contrat.', 'error');
       } finally {
-
-        setInitializing(false);
-
+        setLoadingInit(false);
       }
-
     };
-
-
 
     load();
+  }, [addNotification, id, isEdit]);
 
-  }, [id, isEdit, emitGeneralError, uniqueById]);
-
-  // Scroll to heure_retour when coming from "Récupérer"
   useEffect(() => {
-    if (location?.state?.focusRetour && !initializing) {
-      const el = document.getElementById('heure_retour');
-      if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          el.focus();
-        }, 300);
-      }
-    }
-  }, [initializing, location?.state?.focusRetour]);
-
-  const selectableCars = useMemo(() => (
-
-    cars.filter((car) => {
-
-      const carIdNormalized = normalizeId(car.id);
-      const available = isCarAvailable(car);
-
-      const isCurrentSelection = String(car.id) === String(form.voiture);
-
-      const hasActiveReservation = carIdNormalized ? activeCarIds.has(carIdNormalized) : false;
-
-      if (isEdit) {
-        return (available || isCurrentSelection) && (!hasActiveReservation || isCurrentSelection);
-      }
-
-      return available && !hasActiveReservation;
-
-    })
-
-  ), [cars, form.voiture, isEdit, activeCarIds]);
-
-
-
-  const selectedCar = useMemo(() => (
-
-    cars.find((car) => String(car.id) === String(form.voiture)) || null
-
-  ), [cars, form.voiture]);
-
-
-
-  const carOptions = useMemo(() => selectableCars, [selectableCars]);
-
-
-
-  const selectedClient = useMemo(() => (
-
-    clients.find((client) => String(client.id) === String(form.client)) || null
-
-  ), [clients, form.client]);
-
-
-
-  const clientOptions = useMemo(() => clients, [clients]);
-
-
-
-  const secondaryDriver = useMemo(() => (
-
-    clients.find((client) => String(client.id) === String(form.conducteur_secondaire)) || null
-
-  ), [clients, form.conducteur_secondaire]);
-
-
-
-  const secondaryOptions = useMemo(() => (
-
-    clients.filter((client) => String(client.id) !== String(form.client))
-
-  ), [clients, form.client]);
-
-  // Filtered options for searchable dropdowns
-  const filteredCars = useMemo(() => {
-    if (!carSearch.trim()) return carOptions;
-    const q = carSearch.toLowerCase();
-    return carOptions.filter((c) =>
-      [c.immatriculation, c.marque, c.modele].filter(Boolean).join(' ').toLowerCase().includes(q)
-    );
-  }, [carOptions, carSearch]);
-
-  const filteredClients = useMemo(() => {
-    if (!clientSearch.trim()) return clientOptions;
-    const q = clientSearch.toLowerCase();
-    return clientOptions.filter((c) =>
-      [c.nom, c.prenom, c.telephone, c.cin, c.cin_numero].filter(Boolean).join(' ').toLowerCase().includes(q)
-    );
-  }, [clientOptions, clientSearch]);
-
-  const filteredSecondary = useMemo(() => {
-    if (!secondarySearch.trim()) return secondaryOptions;
-    const q = secondarySearch.toLowerCase();
-    return secondaryOptions.filter((c) =>
-      [c.nom, c.prenom, c.telephone, c.cin, c.cin_numero].filter(Boolean).join(' ').toLowerCase().includes(q)
-    );
-  }, [secondaryOptions, secondarySearch]);
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (carRef.current && !carRef.current.contains(e.target)) setCarDropdownOpen(false);
-      if (clientRef.current && !clientRef.current.contains(e.target)) setClientDropdownOpen(false);
-      if (secondaryRef.current && !secondaryRef.current.contains(e.target)) setSecondaryDropdownOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-
-
-  const selectedCarName = useMemo(() => {
-
-    if (!selectedCar) {
-
-      return '';
-
-    }
-
-    const name = `${selectedCar.marque || ''} ${selectedCar.modele || ''}`.trim();
-
-    return name || selectedCar.immatriculation || 'véhicule Sélectionné';
-
-  }, [selectedCar]);
-
-
-
-  const selectedClientName = useMemo(() => {
-
-    if (!selectedClient) {
-
-      return '';
-
-    }
-
-    const name = `${selectedClient.nom || ''} ${selectedClient.prenom || ''}`.trim();
-
-    if (name) {
-
-      return name;
-
-    }
-
-    if (selectedClient.telephone) {
-
-      return selectedClient.telephone;
-
-    }
-
-    return 'Client Sélectionné';
-
-  }, [selectedClient]);
-
-
-
-  const secondaryDriverName = useMemo(() => {
-
-    if (!secondaryDriver) {
-
-      return '';
-
-    }
-
-    const name = `${secondaryDriver.nom || ''} ${secondaryDriver.prenom || ''}`.trim();
-
-    if (name) {
-
-      return name;
-
-    }
-
-    if (secondaryDriver.telephone) {
-
-      return secondaryDriver.telephone;
-
-    }
-
-    return 'Conducteur secondaire';
-
-  }, [secondaryDriver]);
-
-
-
-  const carStatusInfo = useMemo(() => {
-
-    if (!selectedCar?.statut) {
-
-      return null;
-
-    }
-
-    const raw = selectedCar.statut.toLowerCase();
-
-    const map = {
-      disponible: { label: 'Disponible', className: 'status-libre' },
-      loue: { label: 'Louée', className: 'status-loue' },
-      louee: { label: 'Louée', className: 'status-loue' },
-      'louée': { label: 'Louée', className: 'status-loue' },
-      reservee: { label: 'Réservée', className: 'status-reserve' },
-      'réservée': { label: 'Réservée', className: 'status-reserve' },
-      reserve: { label: 'Réservée', className: 'status-reserve' },
-      en_cours: { label: 'En cours', className: 'status-reserve' },
-      entretien: { label: 'Entretien', className: 'status-maintenance' },
-      maintenance: { label: 'Maintenance', className: 'status-maintenance' },
-    };
-
-    const match = map[raw];
-
-    if (match) {
-
-      return match;
-
-    }
-
-    return { label: selectedCar.statut, className: 'status-default' };
-
-  }, [selectedCar]);
-
-
-
-  const carQuickFacts = useMemo(() => {
-
-    if (!selectedCar) {
-
-      return [];
-
-    }
-
-    const facts = [];
-
-    if (selectedCar.prix_journalier != null) {
-
-      facts.push({ label: 'Tarif journalier', value: formatMoney(selectedCar.prix_journalier) });
-
-    }
-
-    if (selectedCar.kilometrage != null && selectedCar.kilometrage !== '') {
-
-      const numeric = Number(selectedCar.kilometrage);
-
-      const display = Number.isFinite(numeric)
-
-        ? `${numeric.toLocaleString('fr-MA')} km`
-
-        : `${selectedCar.kilometrage}`;
-
-      facts.push({ label: 'Kilométrage', value: display });
-
-    }
-
-    if (selectedCar.carburant) {
-
-      facts.push({ label: 'Carburant', value: selectedCar.carburant });
-
-    }
-
-    if (selectedCar.categorie) {
-
-      facts.push({ label: 'Catégorie', value: selectedCar.categorie });
-
-    }
-
-    return facts;
-
-  }, [selectedCar]);
-
-
-
-  const clientQuickFacts = useMemo(() => {
-
-    if (!selectedClient) {
-
-      return [];
-
-    }
-
-    const facts = [];
-
-    if (selectedClient.email) {
-
-      facts.push({ label: 'Email', value: selectedClient.email });
-
-    }
-
-    if (selectedClient.cin || selectedClient.cin_numero) {
-
-      const cinValue = selectedClient.cin ?? selectedClient.cin_numero;
-
-      facts.push({ label: 'CIN', value: cinValue });
-
-    }
-
-    if (selectedClient.ville) {
-
-      facts.push({ label: 'Ville', value: selectedClient.ville });
-
-    }
-
-    return facts;
-
-  }, [selectedClient]);
-
-
-
-  const secondaryQuickFacts = useMemo(() => {
-
-    if (!secondaryDriver) {
-
-      return [];
-
-    }
-
-    const facts = [];
-
-    if (secondaryDriver.cin || secondaryDriver.cin_numero) {
-
-      const cinValue = secondaryDriver.cin ?? secondaryDriver.cin_numero;
-
-      facts.push({ label: 'CIN', value: cinValue });
-
-    }
-
-    return facts;
-
-  }, [secondaryDriver]);
-
-
-
-  const renderCarSummary = useCallback((compact = false) => {
-
-    if (!selectedCar) {
-
-      return (
-
-        <div className="selection-empty">Sélectionnez une voiture pour voir les détails.</div>
-
-      );
-
-    }
-
-
-
-    return (
-
-      <div className={`selection-summary ${compact ? 'compact' : ''}`}>
-
-        <div className="summary-title-row">
-
-          <span className="summary-main">{selectedCarName}</span>
-
-          {carStatusInfo && (
-
-            <span className={`status-pill ${carStatusInfo.className}`}>
-
-              {carStatusInfo.label}
-
-            </span>
-
-          )}
-
-        </div>
-
-        {selectedCar.immatriculation && (
-
-          <div className="summary-subtitle">{selectedCar.immatriculation}</div>
-
-        )}
-
-        {carQuickFacts.length > 0 && (
-
-          <div className="summary-list">
-
-            {carQuickFacts.map((item) => (
-
-              <div key={item.label} className="summary-item">
-
-                <span className="summary-key">{item.label}</span>
-
-                <span className="summary-value">{item.value}</span>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        )}
-
-      </div>
-
-    );
-
-  }, [selectedCar, selectedCarName, carStatusInfo, carQuickFacts]);
-
-
-
-  const renderClientSummary = useCallback((compact = false) => {
-
-    if (!selectedClient) {
-
-      return (
-
-        <div className="selection-empty">Sélectionnez un client pour voir les détails.</div>
-
-      );
-
-    }
-
-
-
-    return (
-
-      <div className={`selection-summary ${compact ? 'compact' : ''}`}>
-
-        <div className="summary-title-row">
-
-          <span className="summary-main">{selectedClientName}</span>
-
-        </div>
-
-        {selectedClient.telephone && (
-
-          <div className="summary-subtitle">{selectedClient.telephone}</div>
-
-        )}
-
-        {clientQuickFacts.length > 0 && (
-
-          <div className="summary-list">
-
-            {clientQuickFacts.map((item) => (
-
-              <div key={item.label} className="summary-item">
-
-                <span className="summary-key">{item.label}</span>
-
-                <span className="summary-value">{item.value}</span>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        )}
-
-        {isEdit && !compact && (
-
-          <div className="summary-note subtle">
-
-            Ce titulaire ne peut pas être modifié sur une réservation existante.
-
-          </div>
-
-        )}
-
-      </div>
-
-    );
-
-  }, [selectedClient, selectedClientName, clientQuickFacts, isEdit]);
-
-
-
-  const renderSecondarySummary = useCallback((compact = false, extraClass = '') => {
-
-    if (!secondaryDriver) {
-
-      return (
-
-        <div className="selection-empty">Aucun conducteur secondaire Sélectionné.</div>
-
-      );
-
-    }
-
-
-
-    return (
-
-      <div className={`selection-summary ${compact ? 'compact' : ''} ${extraClass}`.trim()}>
-
-        <div className="summary-title-row">
-
-          <span className="summary-main">{secondaryDriverName}</span>
-
-        </div>
-
-        {secondaryDriver.telephone && (
-
-          <div className="summary-subtitle">{secondaryDriver.telephone}</div>
-
-        )}
-
-        {secondaryQuickFacts.length > 0 && (
-
-          <div className="summary-list">
-
-            {secondaryQuickFacts.map((item) => (
-
-              <div key={item.label} className="summary-item">
-
-                <span className="summary-key">{item.label}</span>
-
-                <span className="summary-value">{item.value}</span>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        )}
-
-      </div>
-
-    );
-
-  }, [secondaryDriver, secondaryDriverName, secondaryQuickFacts]);
-
-
-
-  const hasProlongation = useMemo(
-    () => (parseInt(form.jours_prolongation, 10) || 0) > 0,
-    [form.jours_prolongation],
-  );
-
-
-  // Si l'utilisateur saisit une date de fin, recalculer automatiquement le nombre de jours (fin exclusive)
-  useEffect(() => {
-    if (form.long_duration) {
-      return;
-    }
-
-    if (form.date_debut && form.date_fin) {
-      const diff = computeRentalDays(form.date_debut, form.date_fin);
-      if (Number.isFinite(diff) && diff > 0) {
-        setForm((prev) => {
-          if (parseInt(prev.nombre_jours, 10) === diff) return prev;
-          return { ...prev, nombre_jours: String(diff), jours_prolongation: '0' };
-        });
-      }
-    }
-  }, [form.date_debut, form.date_fin, form.long_duration]);
-
-  // En longue duree: date de fin auto selon la duree choisie et jours auto synchronises.
-  useEffect(() => {
-    if (!form.long_duration || !form.date_debut) {
-      return;
-    }
-
-    const durationMonths = longDurationToMonths(form.long_duration_count, form.long_duration_unit);
-    const contractEnd = addMonthsSafe(form.date_debut, durationMonths);
-    if (!contractEnd) {
-      return;
-    }
-
-    const contractEndIso = contractEnd.toISOString().split('T')[0];
-    const totalDays = computeRentalDays(form.date_debut, contractEndIso);
-
-    if (form.date_fin !== contractEndIso || String(totalDays) !== String(form.nombre_jours)) {
-      setForm((prev) => ({
-        ...prev,
-        date_fin: contractEndIso,
-        nombre_jours: String(Math.max(totalDays, 1)),
-        jours_prolongation: '0',
-      }));
-    }
-  }, [form.long_duration, form.date_debut, form.date_fin, form.nombre_jours, form.long_duration_count, form.long_duration_unit]);
-
-
-
-  const calculatedValues = useMemo(() => {
-
-    const nombreJours = parseInt(form.nombre_jours, 10) || 0;
-
-    const prolongation = parseInt(form.jours_prolongation, 10) || 0;
-
-    let totalJours = Math.max(0, nombreJours + prolongation);
-
-
-
-    let endDate = null;
-
-    if (form.date_debut) {
-
-      if (form.date_fin) {
-
-        const diff = computeRentalDays(form.date_debut, form.date_fin);
-
-        if (Number.isFinite(diff) && diff > 0) {
-          totalJours = diff;
-          endDate = new Date(new Date(form.date_debut).setHours(0, 0, 0, 0) + diff * DAY_MS);
-        }
-
-      }
-
-
-
-      if (!endDate && totalJours > 0) {
-        endDate = new Date(new Date(form.date_debut).setHours(0, 0, 0, 0) + totalJours * DAY_MS);
-      }
-
-    }
-
-
-
-    const tarifSpecial = parseFloat(form.tarif_special);
-    const prixJournalier = parseFloat(form.prix_journalier) || 0;
-
-    let montantTotal = '0.00';
-
-    if (Number.isFinite(tarifSpecial) && tarifSpecial > 0) {
-      // tarif_special = mensuel → multiplier par le nombre de mois si on a des dates
-      if (totalJours > 0) {
-        const months = Math.max(1, Math.ceil(totalJours / 30));
-        montantTotal = (tarifSpecial * months).toFixed(2);
-      } else {
-        montantTotal = tarifSpecial.toFixed(2);
-      }
-    } else if (totalJours > 0 && prixJournalier) {
-      montantTotal = (totalJours * prixJournalier).toFixed(2);
-    }
-
-
-
-    const resteBrut = (parseFloat(montantTotal) || 0) - (parseFloat(form.avance) || 0);
-
-    const resteAPayer = Math.max(0, resteBrut).toFixed(2);
-
-
-
-    return {
-
-      totalJours,
-
-      montantTotal,
-
-      resteAPayer,
-
-      // dateFin as ISO string for short formatting and the Date object for long formatting
-
-      dateFin: endDate ? endDate.toISOString() : null,
-
-      dateFinObject: endDate,
-
-    };
-
-  }, [form.avance, form.billing_mode, form.date_debut, form.date_fin, form.jours_prolongation, form.long_duration, form.long_duration_count, form.long_duration_unit, form.nombre_jours, form.prix_journalier, form.tarif_special]);
-
-
-
-  const paymentProgress = useMemo(() => {
-
-    const total = parseFloat(calculatedValues.montantTotal) || 0;
-
-    if (!total) {
-
-      return 0;
-
-    }
-
-    const avance = Math.max(0, Math.min(total, parseFloat(form.avance) || 0));
-
-    return Math.round((avance / total) * 100);
-
-  }, [calculatedValues.montantTotal, form.avance]);
-
-
-  const paymentLabel = PAYMENT_METHOD_LABELS[form.methode_paiement] || '—';
-  const totalFormatted = formatMoney(calculatedValues.montantTotal);
-  const avanceFormatted = formatMoney(form.avance);
-  const resteFormatted = formatMoney(calculatedValues.resteAPayer);
-
-  const heroSteps = useMemo(() => ([
-    {
-      label: 'Sélection',
-      status: form.voiture && form.client ? 'done' : 'current',
-      detail: form.voiture && form.client ? 'Véhicule et client validés' : 'Choisissez un véhicule et un client',
-    },
-    {
-      label: 'Période',
-      status: form.date_debut ? (calculatedValues.totalJours > 0 ? 'done' : 'current') : 'pending',
-      detail: form.date_debut ? `${Math.max(calculatedValues.totalJours || 0, 1)} jour(s)` : 'Définissez les dates',
-    },
-    {
-      label: 'Paiement',
-      status: (parseFloat(form.avance) || 0) > 0 ? 'done' : 'pending',
-      detail: (parseFloat(form.avance) || 0) > 0 ? `${paymentProgress}% réglé` : 'Configurez le paiement',
-    },
-  ]), [calculatedValues.totalJours, form.avance, form.client, form.date_debut, form.voiture, paymentProgress]);
-
-
-  const completedSteps = heroSteps.filter((step) => step.status === 'done').length;
-  const heroProgress = heroSteps.length ? Math.round((completedSteps / heroSteps.length) * 100) : 0;
-
-
-
-  const formattedStartDateShort = form.date_debut
-
-    ? new Date(form.date_debut).toLocaleDateString('fr-FR')
-
-    : '—';
-
-  const formattedEndDateShort = calculatedValues.dateFin
-    ? new Date(calculatedValues.dateFin).toLocaleDateString('fr-FR')
-    : '—';
-
-
-
-  const formattedEndDateLong = calculatedValues.dateFinObject
-    ? calculatedValues.dateFinObject.toLocaleDateString('fr-FR', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
-    : null;
-
-  const longDurationMilestones = useMemo(() => {
-    if (!form.long_duration || !form.date_debut) {
-      return null;
-    }
-
-    const durationMonths = longDurationToMonths(form.long_duration_count, form.long_duration_unit);
-    const firstMonthEnd = addMonthsSafe(form.date_debut, 1);
-    const contractEnd = addMonthsSafe(form.date_debut, durationMonths);
-    const startDate = new Date(form.date_debut);
-
-    if (!firstMonthEnd || !contractEnd || Number.isNaN(startDate.getTime())) {
-      return null;
-    }
-
-    return {
-      monthlyDay: String(startDate.getDate()).padStart(2, '0'),
-      firstMonthEndLabel: firstMonthEnd.toLocaleDateString('fr-FR'),
-      contractEndLabel: contractEnd.toLocaleDateString('fr-FR'),
-      durationLabel: `${Math.max(parseInt(form.long_duration_count, 10) || 1, 1)} ${form.long_duration_unit === 'MONTHS' ? 'mois' : 'an(s)'}`,
-    };
-  }, [form.long_duration, form.date_debut, form.long_duration_count, form.long_duration_unit]);
-
-  const preventNumberScroll = useCallback((event) => {
-    // Blur input so the mouse wheel no longer adjusts the value
-    event.currentTarget.blur();
-  }, []);
-  
-  const billingModeLabel = form.billing_mode === 'FORFAIT' ? 'Forfait' : 'Journalier';
-
-
-  const handleCarChange = (event) => {
-
-    const carId = event.target.value;
-
-    const targetCar = cars.find((car) => String(car.id) === carId);
-
-    setForm((prev) => ({
-
-      ...prev,
-
-      voiture: carId,
-
-      prix_journalier: targetCar && targetCar.prix_journalier != null
-
-        ? String(targetCar.prix_journalier)
-
-        : prev.prix_journalier,
-
-    }));
-
-    if (errors.voiture) {
-
-      setErrors((prev) => ({ ...prev, voiture: null }));
-
-    }
-
-  };
-
-
-
-  const handleEnableProlongation = () => {
-
-    setForm((prev) => ({
-
-      ...prev,
-
-      jours_prolongation: hasProlongation ? '0' : '1',
-
-    }));
-
-  };
-  
-  const toggleLongDuration = () => {
-    setForm((prev) => {
-      const nextLongDuration = !prev.long_duration;
-
-      if (!nextLongDuration || !prev.date_debut) {
-        return {
-          ...prev,
-          long_duration: nextLongDuration,
-          ...(nextLongDuration ? {} : { date_fin: '' }),
-        };
-      }
-
-      const durationMonths = longDurationToMonths(prev.long_duration_count, prev.long_duration_unit);
-      const contractEnd = addMonthsSafe(prev.date_debut, durationMonths);
-      const contractEndIso = contractEnd ? contractEnd.toISOString().split('T')[0] : '';
-      const totalDays = contractEndIso ? computeRentalDays(prev.date_debut, contractEndIso) : (parseInt(prev.nombre_jours, 10) || 1);
+    if (!selectedClient) return;
+    setExtras((prev) => {
+      const info = extractClientIdentity(selectedClient);
 
       return {
         ...prev,
-        long_duration: true,
-        date_fin: contractEndIso,
-        nombre_jours: String(Math.max(totalDays, 1)),
-        jours_prolongation: '0',
+        locataire_nom: info.nom,
+        locataire_prenom: info.prenom,
+        locataire_telephone: info.telephone,
+        locataire_cin: info.cin,
+        locataire_adresse: info.adresse,
+        locataire_numero_permis: info.numeroPermis,
+        locataire_delivre_le: info.dateDelivrance,
+        locataire_expiration_permis: info.dateExpiration,
+        locataire_passport: info.passport,
       };
+    });
+  }, [selectedClient]);
+
+  useEffect(() => {
+    if (!core.client) {
+      return;
+    }
+    const label = clientLabelById(core.client);
+    if (label && label !== clientQuery) {
+      setClientQuery(label);
+    }
+  }, [clients, core.client]);
+
+  useEffect(() => {
+    if (!core.conducteur_secondaire) {
+      setExtras((prev) => ({ ...prev, ...clearSecondaryFields }));
+      return;
+    }
+
+    if (!selectedSecondaryClient) return;
+    setExtras((prev) => {
+      const info = extractClientIdentity(selectedSecondaryClient);
+
+      return {
+        ...prev,
+        secondaire_nom: info.nom,
+        secondaire_prenom: info.prenom,
+        secondaire_telephone: info.telephone,
+        secondaire_cin: info.cin,
+        secondaire_adresse: info.adresse,
+        secondaire_numero_permis: info.numeroPermis,
+        secondaire_delivre_le: info.dateDelivrance,
+        secondaire_expiration_permis: info.dateExpiration,
+        secondaire_passport: info.passport,
+      };
+    });
+  }, [core.conducteur_secondaire, selectedSecondaryClient]);
+
+  const totals = useMemo(() => {
+    const days = Math.max(1, parseInt(core.nombre_jours, 10) || 1);
+    const price = parseFloat(core.prix_journalier) || 0;
+    const extra = parseFloat(extras.service_extra) || 0;
+    const tva = parseFloat(extras.tva_rate) || 0;
+    const ht = days * price + extra;
+    const tvaValue = (ht * tva) / 100;
+    const ttc = ht + tvaValue;
+    const avance = parseFloat(core.avance) || 0;
+    const reste = Math.max(0, ttc - avance);
+    return { ht, tvaValue, ttc, reste };
+  }, [core.avance, core.nombre_jours, core.prix_journalier, extras.service_extra, extras.tva_rate]);
+
+  const reservationRef = savedReservation?.id || (isEdit ? Number(id) : null);
+
+  const handleCore = (event) => {
+    const { name, value } = event.target;
+    setCore((prev) => {
+      const next = { ...prev, [name]: value };
+
+      if (name === 'date_fin') {
+        const days = computeNombreJours(next.date_debut, next.date_fin);
+        if (days !== null) {
+          next.nombre_jours = String(days);
+        }
+      } else if (name === 'nombre_jours') {
+        const dateFin = computeDateFin(next.date_debut, next.nombre_jours);
+        if (dateFin) {
+          next.date_fin = dateFin;
+        }
+      } else if (name === 'date_debut') {
+        if (next.date_fin) {
+          const days = computeNombreJours(next.date_debut, next.date_fin);
+          if (days !== null) {
+            next.nombre_jours = String(days);
+          }
+        } else if (next.nombre_jours) {
+          const dateFin = computeDateFin(next.date_debut, next.nombre_jours);
+          if (dateFin) {
+            next.date_fin = dateFin;
+          }
+        }
+      }
+
+      return next;
     });
   };
 
+  const handleClientSearchChange = (event) => {
+    const value = event.target.value;
+    setClientQuery(value);
 
-
-  const handleChange = (event) => {
-
-    const { name, value } = event.target;
-
-    if (name === 'nombre_jours' && !form.long_duration && form.date_debut) {
-      // Quand l'utilisateur modifie le nombre de jours manuellement, recalculer date_fin
-      const days = parseInt(value, 10);
-      if (Number.isFinite(days) && days > 0) {
-        const start = new Date(form.date_debut);
-        start.setHours(0, 0, 0, 0);
-        const end = new Date(start.getTime() + days * DAY_MS);
-        setForm((prev) => ({ ...prev, nombre_jours: value, date_fin: end.toISOString().split('T')[0], jours_prolongation: '0' }));
-      } else {
-        setForm((prev) => ({ ...prev, nombre_jours: value }));
-      }
-    } else {
-      setForm((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-
-
-
-    if (errors[name]) {
-
-      setErrors((prev) => ({ ...prev, [name]: null }));
-
-    }
-
-  };
-
-
-
-  const validateForm = useCallback(() => {
-
-    const ensure = (condition, message) => {
-
-      if (!condition) {
-
-        emitGeneralError(message);
-
-        return false;
-
-      }
-
-      return true;
-
-    };
-
-
-
-    if (!ensure(form.voiture && form.client, 'Veuillez sélectionner une voiture et un client.')) return false;
-
-    if (!ensure(form.date_debut, 'Veuillez renseigner la date de début.')) return false;
-
-    if (form.date_fin && form.date_debut && new Date(form.date_fin) < new Date(form.date_debut)) {
-
-      emitGeneralError('La date de fin doit être postérieure ou égale à la date de début.');
-
-      return false;
-
-    }
-
-    if (!ensure(parseInt(form.nombre_jours, 10) > 0, 'Veuillez saisir un nombre de jours valide.')) return false;
-    const hasSpecial = Number.isFinite(parseFloat(form.tarif_special)) && parseFloat(form.tarif_special) > 0;
-    if (!ensure(form.prix_journalier || hasSpecial, 'Veuillez renseigner un prix journalier ou un tarif spécial.')) return false;
-
-    if (hasProlongation && !ensure(parseInt(form.jours_prolongation, 10) > 0, 'Veuillez indiquer le nombre de jours de prolongation.')) return false;
-
-
-
-    const total = parseFloat(calculatedValues.montantTotal) || 0;
-
-    const avance = parseFloat(form.avance) || 0;
-
-    if (avance > total) {
-
-      emitGeneralError("L'avance ne peut pas dépasser le montant total.");
-
-      return false;
-
-    }
-
-
-
-    clearGeneralError();
-
-    return true;
-
-  }, [calculatedValues.montantTotal, clearGeneralError, emitGeneralError, form.avance, form.client, form.date_debut, form.jours_prolongation, form.nombre_jours, form.prix_journalier, form.tarif_special, form.voiture, hasProlongation]);
-
-
-
-  const handleSubmit = async (event) => {
-
-    event.preventDefault();
-
-    if (!validateForm()) {
-
+    const normalized = normalizeText(value);
+    if (!normalized) {
+      setCore((prev) => ({ ...prev, client: '' }));
       return;
-
     }
 
+    const exact = clients.find((client) => getClientSearchAliases(client).includes(normalized));
 
-
-    setLoading(true);
-    let successMessage = '';
-
-    try {
-
-      const payload = {
-
-        voiture: form.voiture ? parseInt(form.voiture, 10) : null,
-
-        client: form.client ? parseInt(form.client, 10) : null,
-
-        conducteur_secondaire: form.conducteur_secondaire
-
-          ? parseInt(form.conducteur_secondaire, 10)
-
-          : null,
-
-        date_debut: form.date_debut,
-
-        heure_depart: form.heure_depart || null,
-
-        date_fin: form.date_fin || null,
-
-        heure_retour: form.heure_retour || null,
-
-        nombre_jours: parseInt(form.nombre_jours, 10) || 1,
-
-        jours_prolongation: parseInt(form.jours_prolongation, 10) || 0,
-
-        prix_journalier: parseFloat(form.prix_journalier) || 0,
-
-        tarif_special: form.tarif_special ? parseFloat(form.tarif_special) : null,
-
-        avance: parseFloat(form.avance) || 0,
-
-        franchise: parseFloat(form.franchise) || 0,
-
-        long_duration: Boolean(form.long_duration),
-
-        billing_mode: form.billing_mode || 'JOURNALIER',
-
-        numero_contrat: form.numero_contrat || '',
-
-        methode_paiement: form.methode_paiement,
-
-        commentaire: form.commentaire,
-
-      };
-      if (isEdit) {
-
-        await apiClient.put(`/reservations/${id}/`, payload);
-
-        // If coming from "Récupérer" flow and heure_retour was filled, mark as returned
-        if (location?.state?.focusRetour && form.heure_retour) {
-          await apiClient.post(`/reservations/${id}/mark-returned/`, {
-            heure_retour: form.heure_retour,
-          });
-          window.dispatchEvent(new Event('jet5:refreshReturns'));
-          window.dispatchEvent(new Event('jet5:refreshSidebarCounts'));
-          successMessage = 'Voiture récupérée avec succès !';
-        } else {
-          successMessage = 'Réservation modifiée avec succès.';
-        }
-
-      } else {
-
-        await apiClient.post('/reservations/', payload);
-
-        successMessage = 'Réservation ajoutée avec succès.';
-
+    let matchedClient = exact;
+    if (!matchedClient) {
+      const candidates = clients.filter((client) => {
+        const aliases = getClientSearchAliases(client);
+        return aliases.some((alias) => alias.includes(normalized));
+      });
+      if (candidates.length === 1) {
+        matchedClient = candidates[0];
       }
-
-
-
-      navigate('/admin/reservations', { state: { successMessage, refresh: Date.now() } });
-
-    } catch (error) {
-
-      console.error('Erreur lors de l\'enregistrement de la réservation :', error);
-
-      const errorData = error.response?.data;
-
-      if (errorData && typeof errorData === 'object') {
-
-        setErrors(errorData);
-
-        const nonField = errorData.non_field_errors || errorData.detail;
-
-        if (nonField) {
-
-          addNotification(Array.isArray(nonField) ? nonField.join(' ') : String(nonField), 'error');
-
-        } else {
-
-          const messageFromFields = Object.values(errorData)
-            .flatMap((v) => (Array.isArray(v) ? v : [v]))
-            .filter(Boolean)
-            .map((v) => String(v))
-            .join(' | ');
-
-          const fallbackMsg = messageFromFields || 'Des erreurs ont été détectées. Veuillez vérifier les champs.';
-
-          addNotification(fallbackMsg, 'error');
-
-        }
-
-      } else {
-
-        const statusText = error.response?.status ? ` (code ${error.response.status})` : '';
-
-        emitGeneralError(`Une erreur inattendue est survenue lors de l'enregistrement${statusText}.`);
-
-      }
-
-    } finally {
-
-      setLoading(false);
-
     }
 
+    if (matchedClient) {
+      setCore((prev) => ({ ...prev, client: String(matchedClient.id) }));
+    }
   };
 
+  const handleExtras = (event) => {
+    const { name, value, type, checked } = event.target;
+    setExtras((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
 
+  const validate = () => {
+    if (!core.voiture || !core.client) {
+      addNotification('Sélectionnez une voiture et un client.', 'warning');
+      return false;
+    }
+    if (!core.date_debut) {
+      addNotification('Date de début obligatoire.', 'warning');
+      return false;
+    }
+    if (!core.prix_journalier) {
+      addNotification('Prix journalier obligatoire.', 'warning');
+      return false;
+    }
+    return true;
+  };
 
-  if (initializing) {
+  const handleSave = async (event) => {
+    event.preventDefault();
+    if (!validate()) return;
 
+    setSaving(true);
+    try {
+      const payload = {
+        voiture: parseInt(core.voiture, 10),
+        client: parseInt(core.client, 10),
+        conducteur_secondaire: core.conducteur_secondaire ? parseInt(core.conducteur_secondaire, 10) : null,
+        date_debut: core.date_debut,
+        heure_depart: core.heure_depart || null,
+        date_fin: core.date_fin || null,
+        heure_retour: core.heure_retour || null,
+        nombre_jours: parseInt(core.nombre_jours, 10) || 1,
+        jours_prolongation: 0,
+        prix_journalier: parseFloat(core.prix_journalier) || 0,
+        tarif_special: null,
+        avance: parseFloat(core.avance) || 0,
+        franchise: parseFloat(core.franchise) || 0,
+        long_duration: false,
+        billing_mode: 'JOURNALIER',
+        numero_contrat: core.numero_contrat || '',
+        methode_paiement: core.methode_paiement || 'CASH',
+        commentaire: buildContractComment(extras),
+      };
+
+      const response = isEdit
+        ? await reservationsService.update(id, payload)
+        : await reservationsService.create(payload);
+
+      setSavedReservation(response?.data || { id: Number(id), ...payload });
+      addNotification('Contrat enregistré. Vous pouvez imprimer.', 'success');
+      navigate('/admin/reservations');
+    } catch (error) {
+      console.error(error);
+      addNotification('Erreur lors de l\'enregistrement du contrat.', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const buildContractPrintHtml = () => {
+    const clientName = `${selectedClient?.nom || extras.locataire_nom || ''} ${selectedClient?.prenom || extras.locataire_prenom || ''}`.trim();
+    const secondaryName = `${selectedSecondaryClient?.nom || extras.secondaire_nom || ''} ${selectedSecondaryClient?.prenom || extras.secondaire_prenom || ''}`.trim();
+    const carName = `${selectedCar?.marque || ''} ${selectedCar?.modele || ''}`.trim();
+    const hasSecondary = Boolean(core.conducteur_secondaire);
+
+    const yesNo = (v) => (v ? 'Oui' : 'Non');
+
+    return `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Contrat de location ${core.numero_contrat || reservationRef || ''}</title>
+<style>
+@page { size: A4; margin: 10mm; }
+body { font-family: Arial, sans-serif; color:#111; font-size:12px; }
+.section { border: 1px solid #ccc; margin-bottom: 8px; }
+.section h3 { margin:0; padding:6px 8px; background:#ef4444; color:white; text-transform:uppercase; font-size:12px; letter-spacing:.08em; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; padding:8px; }
+.row { display:grid; grid-template-columns:180px 1fr; gap:6px; }
+.fact-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; padding:8px; }
+.head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+.box { border:1px solid #666; padding:8px; min-width:220px; }
+.bold { font-weight:700; }
+</style>
+</head>
+<body>
+<div class="head">
+  <div>
+    <div class="bold" style="font-size:20px;">LOCAMAX</div>
+    <div>Location de voitures</div>
+    <div>Téléphone: 05 22 47 47 88</div>
+  </div>
+  <div class="box">
+    <div class="bold">CONTRAT DE LOCATION</div>
+    <div><span class="bold">Numéro:</span> ${core.numero_contrat || reservationRef || '—'}</div>
+    <div><span class="bold">Date:</span> ${formatDate(new Date())}</div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Locataire</h3>
+  <div class="grid">
+    <div class="row"><div>Nom/Prénom</div><div>${clientName || '—'}</div></div>
+    <div class="row"><div>Téléphone</div><div>${selectedClient?.telephone || extras.locataire_telephone || '—'}</div></div>
+    <div class="row"><div>C.I.N</div><div>${extras.locataire_cin || '—'}</div></div>
+    <div class="row"><div>Adresse</div><div>${extras.locataire_adresse || '—'}</div></div>
+    <div class="row"><div>Permis N°</div><div>${extras.locataire_numero_permis || '—'}</div></div>
+    <div class="row"><div>Expiré le</div><div>${formatDate(extras.locataire_expiration_permis)}</div></div>
+    <div class="row"><div>Délivré le</div><div>${formatDate(extras.locataire_delivre_le)}</div></div>
+    <div class="row"><div>Passeport N°</div><div>${extras.locataire_passport || '—'}</div></div>
+  </div>
+</div>
+
+${hasSecondary ? `
+<div class="section">
+  <h3>2ème Conducteur</h3>
+  <div class="grid">
+    <div class="row"><div>Nom/Prénom</div><div>${secondaryName || '—'}</div></div>
+    <div class="row"><div>C.I.N</div><div>${extras.secondaire_cin || '—'}</div></div>
+    <div class="row"><div>Adresse</div><div>${extras.secondaire_adresse || '—'}</div></div>
+    <div class="row"><div>Permis N°</div><div>${extras.secondaire_numero_permis || '—'}</div></div>
+    <div class="row"><div>Expiré le</div><div>${formatDate(extras.secondaire_expiration_permis)}</div></div>
+    <div class="row"><div>Délivré le</div><div>${formatDate(extras.secondaire_delivre_le)}</div></div>
+    <div class="row"><div>Passeport N°</div><div>${extras.secondaire_passport || '—'}</div></div>
+  </div>
+</div>
+` : ''}
+
+<div class="section">
+  <h3>Véhicule</h3>
+  <div class="grid">
+    <div class="row"><div>Immatricule</div><div>${selectedCar?.immatriculation || '—'}</div></div>
+    <div class="row"><div>Marque</div><div>${selectedCar?.marque || '—'}</div></div>
+    <div class="row"><div>Modele</div><div>${selectedCar?.modele || '—'}</div></div>
+    <div class="row"><div>Catégorie</div><div>${selectedCar?.categorie || '—'}</div></div>
+    <div class="row"><div>Date livraison</div><div>${formatDate(extras.livraison_date)} ${extras.livraison_heure || ''}</div></div>
+    <div class="row"><div>KM livraison</div><div>${extras.livraison_km || '—'}</div></div>
+    <div class="row"><div>Lieu livraison</div><div>${extras.livraison_lieu || '—'}</div></div>
+    <div class="row"><div>Date récupération</div><div>${formatDate(extras.recuperation_date || core.date_fin)} ${extras.recuperation_heure || core.heure_retour || ''}</div></div>
+    <div class="row"><div>KM récupération</div><div>${extras.recuperation_km || '—'}</div></div>
+    <div class="row"><div>Lieu récupération</div><div>${extras.recuperation_lieu || '—'}</div></div>
+    <div class="row"><div>Prolongation</div><div>${formatDate(extras.prolongation_date)} ${extras.prolongation_heure || ''}</div></div>
+    <div class="row"><div>KM Prolongation</div><div>${extras.prolongation_km || '—'}</div></div>
+    <div class="row"><div>Lieu Prolongation</div><div>${extras.prolongation_lieu || '—'}</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Départ / Retour</h3>
+  <div class="grid">
+    <div>
+      <div class="bold">Départ</div>
+      <div>Pneu secours: ${yesNo(extras.depart_pneu_secours)}</div>
+      <div>Cric: ${yesNo(extras.depart_cric)}</div>
+      <div>Gilets: ${yesNo(extras.depart_gilets)}</div>
+      <div>Tapis: ${yesNo(extras.depart_tapis)}</div>
+      <div>Rayures: ${yesNo(extras.depart_rayures)}</div>
+      <div>Aucun dommage: ${yesNo(extras.depart_aucun_dommage)}</div>
+      <div>Jauge: ${extras.depart_jauge}</div>
+      <div>Observation: ${extras.depart_observation || '—'}</div>
+    </div>
+    <div>
+      <div class="bold">Retour</div>
+      <div>Pneu secours: ${yesNo(extras.retour_pneu_secours)}</div>
+      <div>Cric: ${yesNo(extras.retour_cric)}</div>
+      <div>Gilets: ${yesNo(extras.retour_gilets)}</div>
+      <div>Tapis: ${yesNo(extras.retour_tapis)}</div>
+      <div>Rayures: ${yesNo(extras.retour_rayures)}</div>
+      <div>Aucun dommage: ${yesNo(extras.retour_aucun_dommage)}</div>
+      <div>Jauge: ${extras.retour_jauge}</div>
+      <div>Observation: ${extras.retour_observation || '—'}</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Facturation</h3>
+  <div class="fact-grid">
+    <div><span class="bold">Tarif/jour TTC</span><br/>${displayMoney(core.prix_journalier)}</div>
+    <div><span class="bold">Durée</span><br/>${core.nombre_jours} jour(s)</div>
+    <div><span class="bold">TVA ${extras.tva_rate}%</span><br/>${displayMoney(totals.tvaValue)}</div>
+    <div><span class="bold">Total TTC</span><br/>${displayMoney(totals.ttc)}</div>
+    <div><span class="bold">Avance</span><br/>${displayMoney(core.avance)}</div>
+    <div><span class="bold">Reste</span><br/>${displayMoney(totals.reste)}</div>
+    <div><span class="bold">Montant Franchise</span><br/>${displayMoney(core.franchise)}</div>
+    <div><span class="bold">Service Extra</span><br/>${displayMoney(extras.service_extra)}</div>
+  </div>
+</div>
+
+<div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+  <div>Signature Agent: ${extras.signature_agent || '__________________'}</div>
+  <div>Signature Client: ${extras.signature_client || '__________________'}</div>
+</div>
+
+<script>window.onload = () => window.print();</script>
+</body>
+</html>`;
+  };
+
+  const handlePrint = () => {
+    if (!reservationRef) {
+      addNotification('Enregistrez le contrat avant impression.', 'warning');
+      return;
+    }
+    const w = window.open('', '_blank', 'width=1200,height=900');
+    if (!w) {
+      addNotification('Veuillez autoriser les popups.', 'warning');
+      return;
+    }
+    w.document.write(buildContractPrintHtml());
+    w.document.close();
+  };
+
+  const handlePdf = async () => {
+    if (!reservationRef) {
+      addNotification('Enregistrez le contrat avant PDF.', 'warning');
+      return;
+    }
+
+    setContractBusy(true);
+    try {
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const lh = 6;
+      let y = 10;
+
+      const line = (label, value) => {
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${label}:`, 12, y);
+        doc.setFont('helvetica', 'normal');
+        doc.text(String(value || '—'), 58, y);
+        y += lh;
+      };
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(15);
+      doc.text('CONTRAT DE LOCATION', 12, y);
+      y += 8;
+
+      line('Numero contrat', core.numero_contrat || reservationRef);
+      line('Date', formatDate(new Date()));
+      y += 2;
+
+      doc.setFont('helvetica', 'bold');
+      doc.text('LOCATAIRE', 12, y);
+      y += lh;
+      line('Nom/Prenom', `${selectedClient?.nom || extras.locataire_nom || ''} ${selectedClient?.prenom || extras.locataire_prenom || ''}`.trim());
+      line('Telephone', selectedClient?.telephone || extras.locataire_telephone || '');
+      line('CIN', extras.locataire_cin);
+      line('Adresse', extras.locataire_adresse);
+      line('Permis N', extras.locataire_numero_permis);
+      line('Expire le', formatDate(extras.locataire_expiration_permis));
+      line('Delivre le', formatDate(extras.locataire_delivre_le));
+      line('Passeport', extras.locataire_passport);
+      y += 2;
+
+      if (core.conducteur_secondaire) {
+        doc.setFont('helvetica', 'bold');
+        doc.text('2EME CONDUCTEUR', 12, y);
+        y += lh;
+        line('Nom/Prenom', `${selectedSecondaryClient?.nom || extras.secondaire_nom || ''} ${selectedSecondaryClient?.prenom || extras.secondaire_prenom || ''}`.trim());
+        line('CIN', extras.secondaire_cin);
+        line('Adresse', extras.secondaire_adresse);
+        line('Permis N', extras.secondaire_numero_permis);
+        line('Expire le', formatDate(extras.secondaire_expiration_permis));
+        line('Delivre le', formatDate(extras.secondaire_delivre_le));
+        line('Passeport', extras.secondaire_passport);
+      }
+
+      if (y > 250) {
+        doc.addPage();
+        y = 12;
+      }
+
+      y += 2;
+      doc.setFont('helvetica', 'bold');
+      doc.text('VEHICULE', 12, y);
+      y += lh;
+      line('Immatricule', selectedCar?.immatriculation || '');
+      line('Marque', selectedCar?.marque || '');
+      line('Modele', selectedCar?.modele || '');
+      line('Categorie', selectedCar?.categorie || '');
+      line('Livraison', `${formatDate(extras.livraison_date)} ${extras.livraison_heure}`.trim());
+      line('KM livraison', extras.livraison_km);
+      line('Lieu livraison', extras.livraison_lieu);
+      line('Recuperation', `${formatDate(extras.recuperation_date || core.date_fin)} ${extras.recuperation_heure || core.heure_retour}`.trim());
+      line('KM recuperation', extras.recuperation_km);
+      line('Lieu recuperation', extras.recuperation_lieu);
+      line('Prolongation', `${formatDate(extras.prolongation_date)} ${extras.prolongation_heure}`.trim());
+      line('KM prolongation', extras.prolongation_km);
+      line('Lieu prolongation', extras.prolongation_lieu);
+
+      y += 2;
+      doc.setFont('helvetica', 'bold');
+      doc.text('FACTURATION', 12, y);
+      y += lh;
+      line('Tarif jour TTC', displayMoney(core.prix_journalier));
+      line('Duree location', `${core.nombre_jours} jour(s)`);
+      line(`TVA ${extras.tva_rate}%`, displayMoney(totals.tvaValue));
+      line('Total TTC', displayMoney(totals.ttc));
+      line('Avance', displayMoney(core.avance));
+      line('Reste', displayMoney(totals.reste));
+      line('Montant franchise', displayMoney(core.franchise));
+      line('Service extra', displayMoney(extras.service_extra));
+
+      y += 4;
+      line('Signature agent', extras.signature_agent || '__________________');
+      line('Signature client', extras.signature_client || '__________________');
+
+      const fileName = `Contrat_${core.numero_contrat || reservationRef}.pdf`;
+      doc.save(fileName);
+    } catch (error) {
+      console.error(error);
+      addNotification('Erreur PDF contrat.', 'error');
+    } finally {
+      setContractBusy(false);
+    }
+  };
+
+  if (loadingInit) {
     return (
-
-      <div className="cars-page add-reservation-modern">
-
+      <div className="contract-page">
         <Loader />
-
       </div>
-
     );
-
   }
 
-
-
   return (
-
-    <div className="cars-page add-reservation-modern">
-
+    <div className="contract-page">
       <PageHeader
-        title={isEdit ? '📝 Modifier la Réservation' : '🚗 Nouvelle Réservation'}
-        subtitle={`Remplissez les informations ci-dessous pour ${isEdit ? 'mettre à jour' : 'créer'} une réservation.`}
+        title={isEdit ? 'Contrat de location - Modification' : 'Contrat de location - Nouveau'}
+        subtitle="Formulaire aligné sur le contrat papier"
         backUrl="/admin/reservations"
       />
 
-
-
-      <div className="modal-container-reservation">
-
-        <div className="modal-card-reservation">
-
-          <div className="reservation-card-header">
-
-            <h2>{isEdit ? 'Modifier la réservation' : 'Nouvelle réservation'}</h2>
-
-            <p>{isEdit ? 'Mettez à jour les informations de la réservation existante.' : 'Enregistrez une nouvelle réservation de location.'}</p>
-
+      <form className="contract-form" onSubmit={handleSave}>
+        <section className="contract-section">
+          <h3>Locataire</h3>
+          <div className="grid-4">
+            <label>
+              Client (compte) *
+              <input
+                type="text"
+                name="client_search"
+                list="clients-options"
+                value={clientQuery}
+                onChange={handleClientSearchChange}
+                placeholder="Saisir ou sélectionner un nom client"
+                autoComplete="off"
+                required
+              />
+              <datalist id="clients-options">
+                {clients.map((client) => (
+                  <option key={client.id} value={`${client.prenom || ''} ${client.nom || ''}`.trim()}>
+                    {client.telephone || ''}
+                  </option>
+                ))}
+              </datalist>
+              {!core.client && (
+                <small className="field-hint">Choisissez un client existant depuis la liste proposée.</small>
+              )}
+            </label>
+            <label>
+              2ème conducteur (compte)
+              <select name="conducteur_secondaire" value={core.conducteur_secondaire} onChange={handleCore}>
+                <option value="">Aucun</option>
+                {clients
+                  .filter((c) => String(c.id) !== String(core.client))
+                  .map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.nom} {client.prenom}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <label>CIN<input name="locataire_cin" value={extras.locataire_cin} onChange={handleExtras} /></label>
+            <label>Adresse<input name="locataire_adresse" value={extras.locataire_adresse} onChange={handleExtras} /></label>
+            <label>Permis N°<input name="locataire_numero_permis" value={extras.locataire_numero_permis} onChange={handleExtras} /></label>
+            <label>Permis expiré le<input type="date" name="locataire_expiration_permis" value={extras.locataire_expiration_permis} onChange={handleExtras} /></label>
+            <label>Permis délivré le<input type="date" name="locataire_delivre_le" value={extras.locataire_delivre_le} onChange={handleExtras} /></label>
+            <label>Passeport N°<input name="locataire_passport" value={extras.locataire_passport} onChange={handleExtras} /></label>
           </div>
+        </section>
 
-          <form className="modern-form" onSubmit={handleSubmit}>
-            <div className="reservation-layout">
-              <div className="reservation-main">
+        <section className="contract-section">
+          <h3>2ème Conducteur</h3>
+          <div className="grid-4">
+            <label>CIN<input name="secondaire_cin" value={extras.secondaire_cin} onChange={handleExtras} disabled={!core.conducteur_secondaire} /></label>
+            <label>Adresse<input name="secondaire_adresse" value={extras.secondaire_adresse} onChange={handleExtras} disabled={!core.conducteur_secondaire} /></label>
+            <label>Permis N°<input name="secondaire_numero_permis" value={extras.secondaire_numero_permis} onChange={handleExtras} disabled={!core.conducteur_secondaire} /></label>
+            <label>Permis expiré le<input type="date" name="secondaire_expiration_permis" value={extras.secondaire_expiration_permis} onChange={handleExtras} disabled={!core.conducteur_secondaire} /></label>
+            <label>Permis délivré le<input type="date" name="secondaire_delivre_le" value={extras.secondaire_delivre_le} onChange={handleExtras} disabled={!core.conducteur_secondaire} /></label>
+            <label>Passeport N°<input name="secondaire_passport" value={extras.secondaire_passport} onChange={handleExtras} disabled={!core.conducteur_secondaire} /></label>
+            {!core.conducteur_secondaire && <small className="field-hint">Optionnel: choisissez un 2ème conducteur (compte) pour activer ces champs.</small>}
+          </div>
+        </section>
 
-                {/* ═══════ CARTE 1 — SÉLECTION ═══════ */}
-                <div className="form-step payment-section">
-                  <div className="step-header"><h3>🚗 Sélection</h3></div>
-                  <div className="form-grid-2" style={{ gap: '24px' }}>
+        <section className="contract-section">
+          <h3>Véhicule / Délais</h3>
+          <div className="grid-4">
+            <label>
+              Voiture (compte) *
+              <select name="voiture" value={core.voiture} onChange={handleCore} required>
+                <option value="">Sélectionner</option>
+                {availableCars.map((car) => (
+                  <option key={car.id} value={car.id}>
+                    {car.immatriculation} - {car.marque} {car.modele}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>N° Contrat<input name="numero_contrat" value={core.numero_contrat} onChange={handleCore} placeholder="Ex: 0000362" /></label>
+            <label>Date début *<input type="date" name="date_debut" value={core.date_debut} onChange={handleCore} required /></label>
+            <label>Heure départ<input type="time" name="heure_depart" value={core.heure_depart} onChange={handleCore} /></label>
+            <label>Date fin<input type="date" name="date_fin" value={core.date_fin} onChange={handleCore} /></label>
+            <label>Heure retour<input type="time" name="heure_retour" value={core.heure_retour} onChange={handleCore} /></label>
 
-                    {/* Voiture — Recherche */}
-                    <div className="form-field">
-                      <label>Voiture <span className="required">*</span></label>
-                      <div className="search-select" ref={carRef}>
-                        <input
-                          type="text"
-                          className="input-enhanced"
-                          placeholder="🔍 Rechercher marque, modèle, immatriculation..."
-                          value={carDropdownOpen ? carSearch : (selectedCar ? `${selectedCar.immatriculation || ''} — ${selectedCar.marque || ''} ${selectedCar.modele || ''}` : '')}
-                          onChange={(e) => { setCarSearch(e.target.value); if (!carDropdownOpen) setCarDropdownOpen(true); }}
-                          onFocus={() => { setCarDropdownOpen(true); setCarSearch(''); }}
-                          autoComplete="off"
-                        />
-                        {form.voiture && !carDropdownOpen && (
-                          <button type="button" className="search-select-clear" onClick={() => { setForm((p) => ({ ...p, voiture: '', prix_journalier: '' })); setCarSearch(''); }}>✕</button>
-                        )}
-                        {carDropdownOpen && (
-                          <div className="search-select-dropdown">
-                            {filteredCars.length === 0 ? (
-                              <div className="search-select-empty">Aucun véhicule trouvé</div>
-                            ) : filteredCars.map((car) => (
-                              <div
-                                key={car.id}
-                                className={`search-select-option ${String(car.id) === String(form.voiture) ? 'selected' : ''}`}
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  const ev = { target: { value: String(car.id) } };
-                                  handleCarChange(ev);
-                                  setCarDropdownOpen(false);
-                                  setCarSearch('');
-                                }}
-                              >
-                                <span className="search-select-opt-label">{car.immatriculation || 'N/A'} — {car.marque || ''} {car.modele || ''}</span>
-                                <span className="search-select-opt-sub">{car.prix_journalier != null ? formatMoney(car.prix_journalier) + ' DH/j' : ''}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      {errors.voiture && <span className="error-text">{errors.voiture}</span>}
-                      {!isEdit && carOptions.length === 0 && (
-                        <small className="field-hint">Aucune voiture libre n'est disponible.</small>
-                      )}
-                      {renderCarSummary(false)}
-                    </div>
+            <label>Nombre jours<input type="number" min="1" name="nombre_jours" value={core.nombre_jours} onChange={handleCore} /></label>
+          </div>
+        </section>
 
-                    {/* Client — Recherche */}
-                    <div className="form-field">
-                      <label>Client <span className="required">*</span></label>
-                      <div className="search-select" ref={clientRef}>
-                        <input
-                          type="text"
-                          className="input-enhanced"
-                          placeholder="🔍 Rechercher nom, prénom, téléphone, CIN..."
-                          value={clientDropdownOpen ? clientSearch : (selectedClient ? `${selectedClient.nom || ''} ${selectedClient.prenom || ''} — ${selectedClient.telephone || ''}` : '')}
-                          onChange={(e) => { setClientSearch(e.target.value); if (!clientDropdownOpen) setClientDropdownOpen(true); }}
-                          onFocus={() => { setClientDropdownOpen(true); setClientSearch(''); }}
-                          disabled={isEdit}
-                          autoComplete="off"
-                        />
-                        {form.client && !clientDropdownOpen && !isEdit && (
-                          <button type="button" className="search-select-clear" onClick={() => { setForm((p) => ({ ...p, client: '' })); setClientSearch(''); }}>✕</button>
-                        )}
-                        {clientDropdownOpen && !isEdit && (
-                          <div className="search-select-dropdown">
-                            {filteredClients.length === 0 ? (
-                              <div className="search-select-empty">Aucun client trouvé</div>
-                            ) : filteredClients.map((client) => (
-                              <div
-                                key={client.id}
-                                className={`search-select-option ${String(client.id) === String(form.client) ? 'selected' : ''}`}
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  setForm((p) => ({ ...p, client: String(client.id) }));
-                                  setClientDropdownOpen(false);
-                                  setClientSearch('');
-                                  if (errors.client) setErrors((p) => ({ ...p, client: null }));
-                                }}
-                              >
-                                <span className="search-select-opt-label">{client.nom || ''} {client.prenom || ''}</span>
-                                <span className="search-select-opt-sub">{client.telephone || ''} {client.cin || client.cin_numero || ''}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      {errors.client && <span className="error-text">{errors.client}</span>}
-                      {isEdit && <small className="field-hint locked-hint">🔒 Non modifiable sur une réservation existante.</small>}
-                      {renderClientSummary(false)}
-                    </div>
-                  </div>
+        <section className="contract-section">
+          <h3>Départ / Out</h3>
+          <div className="grid-4">
+            <label className="check"><input type="checkbox" name="depart_pneu_secours" checked={extras.depart_pneu_secours} onChange={handleExtras} />Pneu de secours</label>
+            <label className="check"><input type="checkbox" name="depart_cric" checked={extras.depart_cric} onChange={handleExtras} />Cric</label>
+            <label className="check"><input type="checkbox" name="depart_gilets" checked={extras.depart_gilets} onChange={handleExtras} />Gilets</label>
+            <label className="check"><input type="checkbox" name="depart_tapis" checked={extras.depart_tapis} onChange={handleExtras} />Tapis</label>
+            <label className="check"><input type="checkbox" name="depart_rayures" checked={extras.depart_rayures} onChange={handleExtras} />Rayures</label>
+            <label className="check"><input type="checkbox" name="depart_aucun_dommage" checked={extras.depart_aucun_dommage} onChange={handleExtras} />Aucun dommage</label>
+            <label>Jauge départ
+              <select name="depart_jauge" value={extras.depart_jauge} onChange={handleExtras}>
+                <option value="E">E</option><option value="1/4">1/4</option><option value="1/2">1/2</option><option value="3/4">3/4</option><option value="F">F</option>
+              </select>
+            </label>
+            <label className="span-2">Observation départ<textarea name="depart_observation" value={extras.depart_observation} onChange={handleExtras} rows="2" /></label>
+          </div>
+        </section>
 
-                  {/* Conducteur secondaire */}
-                  <div className="secondary-block">
-                    <div className="secondary-header">
-                      <span>Conducteur secondaire (optionnel)</span>
-                    </div>
-                    <div className="search-select" ref={secondaryRef}>
-                      <input
-                        type="text"
-                        className="input-enhanced"
-                        placeholder="🔍 Rechercher un conducteur secondaire..."
-                        value={secondaryDropdownOpen ? secondarySearch : (secondaryDriver ? `${secondaryDriver.nom || ''} ${secondaryDriver.prenom || ''}` : '')}
-                        onChange={(e) => { setSecondarySearch(e.target.value); if (!secondaryDropdownOpen) setSecondaryDropdownOpen(true); }}
-                        onFocus={() => { setSecondaryDropdownOpen(true); setSecondarySearch(''); }}
-                        autoComplete="off"
-                      />
-                      {form.conducteur_secondaire && !secondaryDropdownOpen && (
-                        <button type="button" className="search-select-clear" onClick={() => { setForm((p) => ({ ...p, conducteur_secondaire: '' })); setSecondarySearch(''); }}>✕</button>
-                      )}
-                      {secondaryDropdownOpen && (
-                        <div className="search-select-dropdown">
-                          {filteredSecondary.length === 0 ? (
-                            <div className="search-select-empty">Aucun conducteur trouvé</div>
-                          ) : filteredSecondary.map((client) => (
-                            <div
-                              key={client.id}
-                              className={`search-select-option ${String(client.id) === String(form.conducteur_secondaire) ? 'selected' : ''}`}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                setForm((p) => ({ ...p, conducteur_secondaire: String(client.id) }));
-                                setSecondaryDropdownOpen(false);
-                                setSecondarySearch('');
-                              }}
-                            >
-                              <span className="search-select-opt-label">{client.nom || ''} {client.prenom || ''}</span>
-                              <span className="search-select-opt-sub">{client.telephone || ''}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    {secondaryDriver && renderSecondarySummary(false, 'secondary-summary')}
-                  </div>
-                </div>
+        <section className="contract-section">
+          <h3>Retour / In</h3>
+          <div className="grid-4">
+            <label className="check"><input type="checkbox" name="retour_pneu_secours" checked={extras.retour_pneu_secours} onChange={handleExtras} />Pneu de secours</label>
+            <label className="check"><input type="checkbox" name="retour_cric" checked={extras.retour_cric} onChange={handleExtras} />Cric</label>
+            <label className="check"><input type="checkbox" name="retour_gilets" checked={extras.retour_gilets} onChange={handleExtras} />Gilets</label>
+            <label className="check"><input type="checkbox" name="retour_tapis" checked={extras.retour_tapis} onChange={handleExtras} />Tapis</label>
+            <label className="check"><input type="checkbox" name="retour_rayures" checked={extras.retour_rayures} onChange={handleExtras} />Rayures</label>
+            <label className="check"><input type="checkbox" name="retour_aucun_dommage" checked={extras.retour_aucun_dommage} onChange={handleExtras} />Aucun dommage</label>
+            <label>Jauge retour
+              <select name="retour_jauge" value={extras.retour_jauge} onChange={handleExtras}>
+                <option value="E">E</option><option value="1/4">1/4</option><option value="1/2">1/2</option><option value="3/4">3/4</option><option value="F">F</option>
+              </select>
+            </label>
+            <label className="span-2">Observation retour<textarea name="retour_observation" value={extras.retour_observation} onChange={handleExtras} rows="2" /></label>
+          </div>
+        </section>
 
-                {/* ═══════ CARTE 2 — PÉRIODE DE LOCATION ═══════ */}
-                <div className="form-step">
-                  <div className="step-header"><h3>📅 Période de location</h3></div>
-                  <div className="form-grid-2" style={{ gap: '16px' }}>
-                    <div className="form-field">
-                      <FormInput
-                        type="date"
-                        label={<>Date de début <span className="required">*</span></>}
-                        name="date_debut"
-                        value={form.date_debut}
-                        onChange={handleChange}
-                        required
-                        className="input-enhanced"
-                      />
-                      {errors.date_debut && <span className="error-text">{errors.date_debut}</span>}
-                    </div>
-                    <div className="form-field">
-                      <FormInput
-                        type="date"
-                        label="Date de fin (optionnelle)"
-                        name="date_fin"
-                        value={form.date_fin}
-                        onChange={handleChange}
-                        disabled={form.long_duration}
-                        min={form.long_duration ? undefined : form.date_debut || today}
-                        className="input-enhanced"
-                      />
-                      {errors.date_fin && <span className="error-text">{errors.date_fin}</span>}
-                      <small className="field-hint">
-                        {form.long_duration ? 'Calculée automatiquement selon la durée longue durée.' : 'Ajuste automatiquement le nombre de jours.'}
-                      </small>
-                    </div>
-                  </div>
-                  <div className="form-grid-2" style={{ gap: '16px', marginTop: '12px' }}>
-                    <div className="form-field">
-                      <FormInput
-                        type="time"
-                        label="⏰ Heure de départ"
-                        name="heure_depart"
-                        value={form.heure_depart}
-                        onChange={handleChange}
-                        className="input-enhanced"
-                        placeholder="00:00"
-                      />
-                    </div>
-                    <div className="form-field">
-                      <FormInput
-                        type="time"
-                        label="⏰ Heure de retour"
-                        name="heure_retour"
-                        id="heure_retour"
-                        value={form.heure_retour}
-                        onChange={handleChange}
-                        className={`input-enhanced${location?.state?.focusRetour ? ' input-highlight-retour' : ''}`}
-                        placeholder="00:00"
-                        autoFocus={!!location?.state?.focusRetour}
-                      />
-                    </div>
-                  </div>
-                  <div className="form-grid-2" style={{ gap: '16px', marginTop: '12px' }}>
-                    <div className="form-field">
-                      <label>Nombre de jours <span className="required">*</span></label>
-                      <div className="input-with-buttons">
-                        <button type="button" className="btn-decrement" onClick={() => setForm((prev) => {
-                          const days = Math.max(1, (parseInt(prev.nombre_jours, 10) || 1) - 1);
-                          const dateFin = prev.date_debut && !prev.long_duration ? new Date(new Date(prev.date_debut).setHours(0,0,0,0) + days * DAY_MS).toISOString().split('T')[0] : prev.date_fin;
-                          return { ...prev, nombre_jours: String(days), date_fin: dateFin, jours_prolongation: '0' };
-                        })}>-</button>
-                        <input
-                          type="number"
-                          min={1}
-                          name="nombre_jours"
-                          value={form.nombre_jours}
-                          onWheel={preventNumberScroll}
-                          onWheelCapture={preventNumberScroll}
-                          onChange={handleChange}
-                          required
-                          className="input-enhanced input-center"
-                        />
-                        <button type="button" className="btn-increment" onClick={() => setForm((prev) => {
-                          const days = (parseInt(prev.nombre_jours, 10) || 0) + 1;
-                          const dateFin = prev.date_debut && !prev.long_duration ? new Date(new Date(prev.date_debut).setHours(0,0,0,0) + days * DAY_MS).toISOString().split('T')[0] : prev.date_fin;
-                          return { ...prev, nombre_jours: String(days), date_fin: dateFin, jours_prolongation: '0' };
-                        })}>+</button>
-                      </div>
-                      {errors.nombre_jours && <span className="error-text">{errors.nombre_jours}</span>}
-                    </div>
-                    <div className="prolongation-block">
-                      <div className="form-field">
-                        <label>Prolongation (optionnelle)</label>
-                        <div className="prolongation-toggle">
-                          <button type="button" className={`toggle-chip ${hasProlongation ? 'active' : ''}`} onClick={handleEnableProlongation}>
-                            {hasProlongation ? 'Prolongation activée' : 'Ajouter une prolongation'}
-                          </button>
-                          {hasProlongation && (
-                            <FormInput
-                              type="number"
-                              min="1"
-                              name="jours_prolongation"
-                              value={form.jours_prolongation}
-                              onWheel={preventNumberScroll}
-                              onWheelCapture={preventNumberScroll}
-                              onChange={handleChange}
-                              className="input-enhanced"
-                            />
-                          )}
-                        </div>
-                        {errors.jours_prolongation && <span className="error-text">{errors.jours_prolongation}</span>}
-                      </div>
-                    </div>
-                  </div>
+        <section className="contract-section">
+          <h3>Facturation</h3>
+          <div className="grid-4">
+            <label>Tarif jour TTC *<input name="prix_journalier" value={core.prix_journalier} onChange={handleCore} required /></label>
+            <label>TVA (%)<input name="tva_rate" value={extras.tva_rate} onChange={handleExtras} /></label>
+            <label>Avance<input name="avance" value={core.avance} onChange={handleCore} /></label>
+            <label>Franchise<input name="franchise" value={core.franchise} onChange={handleCore} /></label>
+            <label>Service extra<input name="service_extra" value={extras.service_extra} onChange={handleExtras} /></label>
+            <label>Methode paiement
+              <select name="methode_paiement" value={core.methode_paiement} onChange={handleCore}>
+                <option value="CASH">Espèces</option>
+                <option value="CARD">Carte</option>
+                <option value="CHEQUE">Chèque</option>
+                <option value="TPE">TPE</option>
+                <option value="TRANSFER">Virement</option>
+                <option value="OTHER">Autre</option>
+              </select>
+            </label>
+            <label className="readonly">Total HT<input value={displayMoney(totals.ht)} readOnly /></label>
+            <label className="readonly">TVA valeur<input value={displayMoney(totals.tvaValue)} readOnly /></label>
+            <label className="readonly">Total TTC<input value={displayMoney(totals.ttc)} readOnly /></label>
+            <label className="readonly">Reste<input value={displayMoney(totals.reste)} readOnly /></label>
+          </div>
+        </section>
 
-                  {/* Longue durée */}
-                  <div className="form-grid-2" style={{ gap: '16px', marginTop: '12px' }}>
-                    <div className="form-field">
-                      <label>Location longue durée</label>
-                      <div className="prolongation-toggle">
-                        <button type="button" className={`toggle-chip ${form.long_duration ? 'active' : ''}`} onClick={toggleLongDuration}>
-                          {form.long_duration ? 'Longue durée activée' : 'Marquer en longue durée'}
-                        </button>
-                      </div>
-                      {form.long_duration && (
-                        <div className="form-grid-2 responsive-grid-220" style={{ gap: '8px', marginTop: '8px' }}>
-                          <FormInput
-                            type="number"
-                            min="1"
-                            name="long_duration_count"
-                            value={form.long_duration_count}
-                            onWheel={preventNumberScroll}
-                            onWheelCapture={preventNumberScroll}
-                            onChange={handleChange}
-                            className="input-enhanced"
-                          />
-                          <select name="long_duration_unit" value={form.long_duration_unit} onChange={handleChange} className="select-enhanced">
-                            <option value="YEARS">Année(s)</option>
-                            <option value="MONTHS">Mois</option>
-                          </select>
-                        </div>
-                      )}
-                      <small className="field-hint">Durée libre : mois ou années.</small>
-                    </div>
-                  </div>
+        <section className="contract-section">
+          <h3>Signatures / Notes</h3>
+          <div className="grid-4">
+            <label>Signature Agent<input name="signature_agent" value={extras.signature_agent} onChange={handleExtras} /></label>
+            <label>Signature Client<input name="signature_client" value={extras.signature_client} onChange={handleExtras} /></label>
+            <label className="span-2">Notes<textarea name="notes" rows="2" value={extras.notes} onChange={handleExtras} /></label>
+          </div>
+        </section>
 
-                  <div className="info-chips">
-                    <span className="info-chip">📆 {calculatedValues.totalJours} jour(s)</span>
-                    {formattedEndDateShort !== '—' ? (
-                      <span className="info-chip">📅 Fin prévue : {formattedEndDateShort}</span>
-                    ) : (
-                      form.long_duration && <span className="info-chip">📅 Fin ouverte</span>
-                    )}
-                    {form.long_duration && <span className="info-chip">⏳ Longue durée</span>}
-                  </div>
-
-                  {formattedEndDateLong && (
-                    <div className="info-box">
-                      <span className="info-icon">ℹ️</span>
-                      <div className="info-content">
-                        <strong>Date de fin prévue :</strong> {formattedEndDateLong}
-                      </div>
-                    </div>
-                  )}
-
-                  {form.long_duration && longDurationMilestones && (
-                    <div className="info-box">
-                      <span className="info-icon">⏳</span>
-                      <div className="info-content">
-                        <strong>Cycle longue duree ({longDurationMilestones.durationLabel}):</strong> 1er mois se termine le {longDurationMilestones.firstMonthEndLabel}, puis echeance chaque {longDurationMilestones.monthlyDay} du mois jusqu'au {longDurationMilestones.contractEndLabel}.
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* ═══════ CARTE 3 — TARIFICATION ═══════ */}
-                <div className="form-step">
-                  <div className="step-header"><h3>💰 Tarification</h3></div>
-                  <div className="form-grid-2" style={{ gap: '16px' }}>
-                    <div className="form-field">
-                      <label>Mode de facturation</label>
-                      <select name="billing_mode" value={form.billing_mode} onChange={handleChange} className="select-enhanced">
-                        <option value="JOURNALIER">Journalier (prix × jours)</option>
-                        <option value="FORFAIT">Forfait (montant global)</option>
-                      </select>
-                    </div>
-                    <div className="form-field">
-                      <FormInput
-                        label={<span style={{ fontWeight: 'bold' }}>Prix journalier (DH) <span className="required">*</span></span>}
-                        type="text"
-                        inputMode="decimal"
-                        pattern="[0-9]*[.,]?[0-9]*"
-                        name="prix_journalier"
-                        value={form.prix_journalier}
-                        onWheel={preventNumberScroll}
-                        onWheelCapture={preventNumberScroll}
-                        onChange={handleChange}
-                        required
-                        className="input-enhanced price-field"
-                        placeholder="0,00"
-                      />
-                      {errors.prix_journalier && <span className="error-text">{errors.prix_journalier}</span>}
-                    </div>
-                  </div>
-                  <div className="form-grid-2" style={{ gap: '16px', marginTop: '12px' }}>
-                    <div className="form-field">
-                      <FormInput
-                        type="text"
-                        label="💰 Tarif spécial / Forfait (DH)"
-                        inputMode="decimal"
-                        pattern="[0-9]*[.,]?[0-9]*"
-                        name="tarif_special"
-                        value={form.tarif_special}
-                        onWheel={preventNumberScroll}
-                        onWheelCapture={preventNumberScroll}
-                        onChange={handleChange}
-                        placeholder="Optionnel — remplace le calcul auto"
-                        className="input-enhanced price-field"
-                      />
-                      {errors.tarif_special && <span className="error-text">{errors.tarif_special}</span>}
-                      <small className="field-hint">Si renseigné, remplace le calcul (prix × jours). En longue durée, c'est le tarif mensuel.</small>
-                    </div>
-                  </div>
-
-                  <div className="info-chips">
-                    <span className="info-chip">🧮 Mode : {billingModeLabel}</span>
-                    {form.prix_journalier && <span className="info-chip">💰 Total estimé : {totalFormatted}</span>}
-                  </div>
-                </div>
-
-                {/* ═══════ CARTE 4 — PAIEMENT ═══════ */}
-                <div className="form-step">
-                  <div className="step-header"><h3>💳 Paiement</h3></div>
-                  <div className="form-grid-2" style={{ gap: '16px' }}>
-                    <div className="form-field">
-                      <FormInput
-                        type="text"
-                        label="Numéro de contrat"
-                        name="numero_contrat"
-                        value={form.numero_contrat}
-                        onChange={handleChange}
-                        className="input-enhanced"
-                        placeholder="Ex: LOC-2025-00123"
-                      />
-                      <small className="field-hint">Identifiant administratif (optionnel).</small>
-                    </div>
-                    <div className="form-field">
-                      <label>Méthode de paiement</label>
-                      <select name="methode_paiement" value={form.methode_paiement} onChange={handleChange} className="select-enhanced">
-                        <option value="CASH">💵 Espèces</option>
-                        <option value="CARD">💳 Carte Bancaire</option>
-                        <option value="CHEQUE">📋 Chèque</option>
-                        <option value="TPE">💳 TPE</option>
-                        <option value="TRANSFER">🏦 Virement</option>
-                        <option value="OTHER">🗒️ Autre</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="form-grid-2" style={{ gap: '16px', marginTop: '12px' }}>
-                    <div className="form-field">
-                      <FormInput
-                        type="text"
-                        label="Avance (DH)"
-                        inputMode="decimal"
-                        pattern="[0-9]*[.,]?[0-9]*"
-                        max={parseFloat(calculatedValues.montantTotal) || undefined}
-                        name="avance"
-                        value={form.avance}
-                        onWheel={preventNumberScroll}
-                        onWheelCapture={preventNumberScroll}
-                        onChange={handleChange}
-                        className="input-enhanced"
-                      />
-                      {errors.avance && <span className="error-text">{errors.avance}</span>}
-                      <small className="field-hint">Montant déjà perçu auprès du client.</small>
-                    </div>
-                    <div className="form-field">
-                      <FormInput
-                        type="text"
-                        label="Franchise (DH)"
-                        inputMode="decimal"
-                        pattern="[0-9]*[.,]?[0-9]*"
-                        name="franchise"
-                        value={form.franchise}
-                        onWheel={preventNumberScroll}
-                        onWheelCapture={preventNumberScroll}
-                        onChange={handleChange}
-                        className="input-enhanced"
-                      />
-                      <small className="field-hint">Franchise à appliquer (si applicable).</small>
-                    </div>
-                  </div>
-                </div>
-
-                {errors.general && (
-                  <div className="error-banner">
-                    <span className="error-icon">⚠️</span>
-                    {errors.general}
-                  </div>
-                )}
-
-              </div>
-            </div>
-
-            <div className="form-actions-modern">
-
-              <button type="button" className="btn-cancel-modern" onClick={() => navigate('/admin/reservations')}>
-
-                Annuler
-
-              </button>
-
-              <div style={{ flex: 1 }} />
-
-              <button type="submit" className="btn-submit-modern" disabled={loading}>
-
-                {loading ? (
-
-                  <>
-
-                    <span className="spinner" />
-
-                    Enregistrement...
-
-                  </>
-
-                ) : (
-
-                  <>
-
-                    <span className="icon">{isEdit ? '📝' : '📋'}</span>
-
-                    {isEdit ? 'Modifier la Réservation' : 'Créer la Réservation'}
-
-                  </>
-
-                )}
-
-              </button>
-
-            </div>
-
-          </form>
-
+        <div className="contract-actions">
+          <button type="button" className="btn-secondary" onClick={() => navigate('/admin/reservations')}>Retour</button>
+          <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Enregistrement...' : 'Enregistrer Contrat'}</button>
         </div>
-
-      </div>
-
+      </form>
     </div>
-
   );
-
 }
 
-
-
 export default AddReservation;
-

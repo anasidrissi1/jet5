@@ -116,4 +116,10 @@
 
 @media (max-width: 768px) {
   .jet-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .jet-contact-form { padding: 24px 16px; }
+}
+
+@media (max-width: 480px) {
+  .jet-footer-grid { grid-template-columns: 1fr; gap: 24px; }
+  .jet-footer { padding: 40px 0 20px; }
 }

@@ -1,4 +1,4 @@
-/* Professional Cars Page Styles */
+﻿/* Professional Cars Page Styles */
 
 .cars-page {
   padding: var(--spacing-xl);
@@ -188,7 +188,7 @@
 }
 
 .status-louee,
-.status-louée {
+.status-louÃ©e {
   background: var(--warning-light);
   color: var(--warning-color);
 }
@@ -407,7 +407,7 @@
 }
 
 .car-form-card-header {
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
   padding: 20px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -492,7 +492,7 @@
 }
 
 .car-visibility-state.is-private {
-  background: #FFF6CC;
+  background: #EFE5D2;
   color: #7A6000;
 }
 
@@ -526,8 +526,8 @@
 }
 
 .car-visibility-option.active.inactive {
-  border-color: #D4A900;
-  background: linear-gradient(135deg, #D4A900, #B8900A);
+  border-color: #B8923A;
+  background: linear-gradient(135deg, #B8923A, #92712B);
 }
 
 /* ============================================
@@ -576,7 +576,7 @@
 
 .car-summary-item:hover {
   background: var(--bg-hover, #f3f4f6);
-  border-color: var(--primary-color, #D4A900);
+  border-color: var(--primary-color, #B8923A);
   transform: translateX(4px);
 }
 
@@ -610,13 +610,13 @@
 .car-summary-immatriculation {
   font-family: 'Courier New', monospace;
   letter-spacing: 1px;
-  color: var(--primary-color, #D4A900) !important;
+  color: var(--primary-color, #B8923A) !important;
   font-size: 18px !important;
 }
 
 .car-summary-highlight {
-  background: linear-gradient(135deg, #D4A90015 0%, #B8900A15 100%);
-  border-color: var(--primary-color, #D4A900);
+  background: linear-gradient(135deg, #B8923A15 0%, #92712B15 100%);
+  border-color: var(--primary-color, #B8923A);
   border-width: 2px;
 }
 
@@ -641,7 +641,7 @@
 }
 
 .car-summary-badge.status-louee {
-  background: #FFF6CC;
+  background: #EFE5D2;
   color: #7A6000;
 }
 
@@ -677,7 +677,7 @@
   justify-content: center;
   gap: 12px;
   padding: 16px 48px;
-  background: linear-gradient(135deg, #D4A900 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #92712B 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -728,8 +728,8 @@
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  background: #FFFBEB;
-  border: 2px solid #FDE68A;
+  background: #F3EBDC;
+  border: 2px solid #D0B276;
   border-radius: 12px;
   color: #7A6000;
 }
@@ -859,5 +859,6 @@ html[data-theme="dark"] .car-visibility-option {
 html[data-theme="dark"] .car-error-alert {
   background: #7f1d1d;
   border-color: #7A6000;
-  color: #FDE68A;
+  color: #D0B276;
 }
+

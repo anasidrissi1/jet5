@@ -1,9 +1,9 @@
-.dashboard-loading {
+﻿.dashboard-loading {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 60vh;
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
@@ -11,7 +11,7 @@
 .dashboard-error {
   text-align: center;
   padding: var(--spacing-8);
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
@@ -33,14 +33,14 @@
 }
 
 .retry-button:hover {
-  background-color: #B8900A;
+  background-color: #92712B;
 }
 
 .table-loading,
 .table-error,
 .table-empty {
   padding: var(--spacing-8);
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   text-align: center;
 }
@@ -73,7 +73,7 @@
 }
 
 .action-button:hover {
-  background-color: #B8900A;
+  background-color: #92712B;
   transform: translateY(-1px);
 }
 

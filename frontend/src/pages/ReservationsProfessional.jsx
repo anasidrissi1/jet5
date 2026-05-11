@@ -46,9 +46,9 @@ function ReservationsProfessional({
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
   const [carFilter, setCarFilter] = useState(null);
   const [unpaidOnly, setUnpaidOnly] = useState(false);
+  const [financeFilter, setFinanceFilter] = useState('all');
   
   // Retours du jour
   const [returnsToday, setReturnsToday] = useState([]);
@@ -73,7 +73,7 @@ function ReservationsProfessional({
   // Filters and search
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig] = useState({ key: null, direction: 'asc' });
   
   // Pagination désactivée pour afficher toutes les réservations
   const [activeReservation, setActiveReservation] = useState(null);
@@ -95,18 +95,8 @@ function ReservationsProfessional({
       // Nettoyer l'état d'historique pour éviter la réapparition au reload
       try {
         window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-      } catch (e) {
+      } catch {
         // ignore
-      }
-    }
-
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser(payload);
-      } catch (e) {
-        console.error('Error parsing token:', e);
       }
     }
 
@@ -123,7 +113,7 @@ function ReservationsProfessional({
       // Nettoyage immédiat pour éviter réexécution au reload
       try {
         window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-      } catch (_) { /* ignore */ }
+      } catch { /* ignore */ }
       // Différer l'action jusqu'à ce que les réservations soient chargées
       setPendingHeaderAction({ action: headerAction, reservationId });
     }
@@ -133,28 +123,46 @@ function ReservationsProfessional({
   // Fetch all data
   useEffect(() => {
     let mounted = true;
+    const fetchAllPages = async (loader, baseParams = {}) => {
+      const allItems = [];
+      let page = 1;
+      let hasNext = true;
+      const MAX_PAGES = 200;
+
+      while (hasNext && page <= MAX_PAGES) {
+        const response = await loader({ ...baseParams, page, page_size: 100 });
+        const payload = response.data;
+
+        if (Array.isArray(payload)) {
+          return payload;
+        }
+
+        const pageItems = Array.isArray(payload?.results) ? payload.results : [];
+        allItems.push(...pageItems);
+
+        hasNext = Boolean(payload?.next);
+        page += 1;
+      }
+
+      return allItems;
+    };
+
     const fetchAll = async () => {
       setLoading(true);
       setError(null);
       try {
-        const [rRes, cRes, vRes] = await Promise.all([
-          apiClient.get('/reservations/', {
-            params: sourceFilter !== 'all' ? { origin: sourceFilter } : undefined,
-          }),
-          apiClient.get('/clients/'),
-          apiClient.get('/cars/voitures/')
+        const [rList, cList, vList] = await Promise.all([
+          fetchAllPages((params) => apiClient.get('/reservations/', {
+            params: {
+              ...params,
+              ...(sourceFilter !== 'all' ? { origin: sourceFilter } : {}),
+            },
+          })),
+          fetchAllPages((params) => apiClient.get('/clients/', { params })),
+          fetchAllPages((params) => apiClient.get('/cars/voitures/', { params }))
         ]);
 
         if (mounted) {
-          const rPayload = rRes.data;
-          const rList = Array.isArray(rPayload) ? rPayload : rPayload?.results ?? [];
-          
-          const cPayload = cRes.data;
-          const cList = Array.isArray(cPayload) ? cPayload : cPayload?.results ?? [];
-          
-          const vPayload = vRes.data;
-          const vList = Array.isArray(vPayload) ? vPayload : vPayload?.results ?? [];
-
           setReservations(rList || []);
           setClients(cList || []);
           setCars(vList || []);
@@ -221,10 +229,31 @@ function ReservationsProfessional({
   ]), []);
 
   const refreshReservations = async () => {
-    const rRes = await apiClient.get('/reservations/', {
-      params: sourceFilter !== 'all' ? { origin: sourceFilter } : undefined,
-    });
-    const rList = Array.isArray(rRes.data) ? rRes.data : rRes.data?.results ?? [];
+    const allItems = [];
+    let page = 1;
+    let hasNext = true;
+    const MAX_PAGES = 200;
+
+    while (hasNext && page <= MAX_PAGES) {
+      const rRes = await apiClient.get('/reservations/', {
+        params: {
+          page,
+          page_size: 100,
+          ...(sourceFilter !== 'all' ? { origin: sourceFilter } : {}),
+        },
+      });
+      const payload = rRes.data;
+      if (Array.isArray(payload)) {
+        setReservations(payload);
+        return;
+      }
+
+      allItems.push(...(Array.isArray(payload?.results) ? payload.results : []));
+      hasNext = Boolean(payload?.next);
+      page += 1;
+    }
+
+    const rList = allItems;
     setReservations(rList);
   };
 
@@ -311,13 +340,6 @@ function ReservationsProfessional({
     if (!cleanComment) return marker;
 
     return `${cleanComment}\n${marker}`.trim();
-  };
-
-  const appendOnlineNote = (commentaire, note) => {
-    const cleanComment = stripOnlineStatusMarkers(commentaire);
-    const timestamp = new Date().toLocaleString('fr-FR');
-    const noteLine = `[ONLINE_NOTE ${timestamp}] ${note}`;
-    return cleanComment ? `${cleanComment}\n${noteLine}` : noteLine;
   };
 
   const getClientContactInfo = (reservation) => {
@@ -772,18 +794,15 @@ function ReservationsProfessional({
       if (hasTargetDate) payload.date_fin = paModal.targetDate;
       if (hasAdvance) payload.advance_amount = Number(paModal.advanceAmount);
 
-      let updatedReservation = paModal.reservation;
-
       try {
-        const updateRes = await apiClient.post(`/reservations/${paModal.reservation.id}/pa-update/`, payload);
-        updatedReservation = updateRes?.data?.reservation || paModal.reservation;
+        await apiClient.post(`/reservations/${paModal.reservation.id}/pa-update/`, payload);
       } catch (primaryErr) {
         if (primaryErr?.response?.status !== 404) {
           throw primaryErr;
         }
 
         // Fallback for environments where pa-update is not yet deployed.
-        updatedReservation = await applyLegacyPAFallback();
+        await applyLegacyPAFallback();
       }
 
       addNotification('Mise à jour P/A enregistrée avec succès.', 'success');
@@ -892,6 +911,43 @@ function ReservationsProfessional({
     return Math.max(1, diffDays);
   };
 
+  const getFinancialAmounts = (reservation) => {
+    const total = Math.max(
+      toNumber(
+        reservation?.montant_total ??
+        reservation?.total_amount ??
+        reservation?.payment_amount
+      ),
+      0
+    );
+
+    const paidRaw =
+      reservation?.montant_encaisse ??
+      reservation?.paid_amount ??
+      reservation?.avance ??
+      reservation?.paiement?.paid_amount;
+
+    const paid = Math.min(total, Math.max(toNumber(paidRaw), 0));
+
+    const remainingRaw =
+      reservation?.reste_a_payer ??
+      reservation?.remaining_amount ??
+      reservation?.paiement?.remaining;
+
+    const remaining = Number.isFinite(Number(remainingRaw))
+      ? Math.min(total, Math.max(toNumber(remainingRaw), 0))
+      : Math.max(total - paid, 0);
+
+    return { total, paid, remaining };
+  };
+
+  const handleFinanceCardClick = (nextFilter) => {
+    if (isOnlineView) return;
+    setFinanceFilter((prev) => (prev === nextFilter ? 'all' : nextFilter));
+    setStatusFilter('all');
+    setUnpaidOnly(false);
+  };
+
   // Filter and sort reservations
   const filteredReservations = useMemo(() => {
     let filtered = reservations;
@@ -904,10 +960,18 @@ function ReservationsProfessional({
     // Filtre impayés
     if (unpaidOnly) {
       filtered = filtered.filter(r => {
-        const total = Number(r.montant_total) || 0;
-        const paid = Math.min(total, Number(r.avance) || 0);
-        const rest = Math.max(total - paid, 0);
-        return rest > 0;
+        const { remaining } = getFinancialAmounts(r);
+        return remaining > 0;
+      });
+    }
+
+    // Filtre financier via cartes statistiques
+    if (!isOnlineView && financeFilter !== 'all') {
+      filtered = filtered.filter((reservation) => {
+        const { paid, remaining } = getFinancialAmounts(reservation);
+        if (financeFilter === 'cash') return paid > 0;
+        if (financeFilter === 'not_collected') return remaining > 0;
+        return true;
       });
     }
 
@@ -972,7 +1036,7 @@ function ReservationsProfessional({
     }
 
     return filtered;
-  }, [reservations, statusFilter, search, sortConfig, clientMap, carMap, carFilter, unpaidOnly, isOnlineView]);
+  }, [reservations, statusFilter, search, sortConfig, clientMap, carMap, carFilter, unpaidOnly, financeFilter, isOnlineView]);
 
   // Pagination supprimée: on affiche toutes les réservations filtrées
   const displayedReservations = filteredReservations;
@@ -1009,7 +1073,9 @@ function ReservationsProfessional({
       active: 0,
       upcoming: 0,
       monthRevenue: 0,
-      totalRevenue: 0
+      totalRevenue: 0,
+      cashAmount: 0,
+      notCollectedAmount: 0,
     };
 
     if (!reservations || reservations.length === 0) {
@@ -1027,8 +1093,10 @@ function ReservationsProfessional({
         acc.active += 1;
       }
 
-      const total = Number(reservation.montant_total) || 0;
+      const { total, paid, remaining } = getFinancialAmounts(reservation);
       acc.totalRevenue += total;
+      acc.cashAmount += paid;
+      acc.notCollectedAmount += remaining;
 
       if (reservation.date_debut) {
         const startDate = new Date(reservation.date_debut);
@@ -1062,9 +1130,17 @@ function ReservationsProfessional({
     if (!reservation) return;
 
     try {
-      await apiClient.delete(`/reservations/${reservation.id}/`);
+      try {
+        await apiClient.post(`/reservations/${reservation.id}/move_to_trash/`);
+      } catch (trashErr) {
+        if (trashErr?.response?.status === 404) {
+          await apiClient.delete(`/reservations/${reservation.id}/`);
+        } else {
+          throw trashErr;
+        }
+      }
       setReservations(prev => prev.filter(r => r.id !== reservation.id));
-      addNotification('Réservation supprimée avec succès', 'success');
+      addNotification('Réservation déplacée vers la corbeille', 'success');
     } catch (err) {
       console.error('Erreur suppression réservation:', err);
       const message = err.response?.data?.detail || "Impossible de supprimer la réservation";
@@ -1185,7 +1261,7 @@ function ReservationsProfessional({
           <p className="page-subtitle">
             {subtitle || (isOnlineView
               ? `${stats.newCount} nouvelle${stats.newCount > 1 ? 's' : ''} demande${stats.newCount > 1 ? 's' : ''} - ${stats.urgentCount} urgente${stats.urgentCount > 1 ? 's' : ''} - ${stats.confirmedCount} confirmee${stats.confirmedCount > 1 ? 's' : ''}`
-              : `${stats.active} active${stats.active > 1 ? 's' : ''} - ${stats.upcoming} à venir (7j) - ${stats.monthRevenue.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD ce mois`)}
+              : `${stats.active} active${stats.active > 1 ? 's' : ''} - ${stats.upcoming} à venir (7j) - Caisse: ${stats.cashAmount.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD - Non encaissé: ${stats.notCollectedAmount.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`)}
           </p>
         </div>
 
@@ -1221,24 +1297,46 @@ function ReservationsProfessional({
           </div>
         </div>
 
-        <div className="stat-card stat-revenue">
+        <div
+          className={`stat-card stat-revenue ${!isOnlineView ? 'is-clickable' : ''} ${!isOnlineView && financeFilter === 'cash' ? 'is-selected' : ''}`}
+          onClick={!isOnlineView ? () => handleFinanceCardClick('cash') : undefined}
+          role={!isOnlineView ? 'button' : undefined}
+          tabIndex={!isOnlineView ? 0 : undefined}
+          onKeyDown={!isOnlineView ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleFinanceCardClick('cash');
+            }
+          } : undefined}
+        >
           <div className="stat-content">
-            <div className="stat-label">{isOnlineView ? 'Demandes contactées' : 'Revenus du Mois'}</div>
+            <div className="stat-label">{isOnlineView ? 'Demandes contactées' : 'Montant en caisse'}</div>
             <div className="stat-value">
               {isOnlineView
                 ? stats.contactedCount
-                : `${stats.monthRevenue.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`}
+                : `${stats.cashAmount.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`}
             </div>
           </div>
         </div>
 
-        <div className="stat-card stat-total">
+        <div
+          className={`stat-card stat-total ${!isOnlineView ? 'is-clickable' : ''} ${!isOnlineView && financeFilter === 'not_collected' ? 'is-selected' : ''}`}
+          onClick={!isOnlineView ? () => handleFinanceCardClick('not_collected') : undefined}
+          role={!isOnlineView ? 'button' : undefined}
+          tabIndex={!isOnlineView ? 0 : undefined}
+          onKeyDown={!isOnlineView ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleFinanceCardClick('not_collected');
+            }
+          } : undefined}
+        >
           <div className="stat-content">
-            <div className="stat-label">{isOnlineView ? 'Demandes confirmées' : 'Revenus Total'}</div>
+            <div className="stat-label">{isOnlineView ? 'Demandes confirmées' : 'Montant non encaissé'}</div>
             <div className="stat-value">
               {isOnlineView
                 ? stats.confirmedCount
-                : `${stats.totalRevenue.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`}
+                : `${stats.notCollectedAmount.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`}
             </div>
           </div>
         </div>
@@ -1274,7 +1372,7 @@ function ReservationsProfessional({
           )}
         </div>
 
-        {(carFilter || unpaidOnly) && (
+        {(carFilter || unpaidOnly || financeFilter !== 'all') && (
           <div className="filter-badges">
             {carFilter && (
               <span className="filter-chip">
@@ -1286,10 +1384,20 @@ function ReservationsProfessional({
                 Impayés uniquement
               </span>
             )}
+            {financeFilter === 'cash' && (
+              <span className="filter-chip">
+                Contrats encaissés
+              </span>
+            )}
+            {financeFilter === 'not_collected' && (
+              <span className="filter-chip">
+                Contrats non encaissés
+              </span>
+            )}
             <button
               type="button"
               className="filter-clear"
-              onClick={() => { setCarFilter(null); setUnpaidOnly(false); }}
+              onClick={() => { setCarFilter(null); setUnpaidOnly(false); setFinanceFilter('all'); }}
             >
               Réinitialiser
             </button>
@@ -1468,7 +1576,7 @@ function ReservationsProfessional({
                       <th className="col-period">Période</th>
                       <th className="col-total text-right">Montant total</th>
                       <th className="col-contract text-center">N° Contrat</th>
-                      <th className="col-franchise text-center">Franchise</th>
+                      <th className="col-franchise text-center">Reste</th>
                       <th className="col-origin text-center">Origine</th>
                       <th className="col-status text-center">Statut</th>
                       <th className="col-actions">Actions</th>
@@ -1500,9 +1608,8 @@ function ReservationsProfessional({
                       const amountTotal = computedTotal
                         ? `${computedTotal.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`
                         : '-';
-                      const franchiseValue = reservation.franchise
-                        ? `${parseFloat(reservation.franchise).toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`
-                        : '-';
+                      const { remaining } = getFinancialAmounts(reservation);
+                      const remainingValue = `${remaining.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} MAD`;
                       const contractNumber = reservation.numero_contrat || '—';
 
                       return (
@@ -1529,7 +1636,7 @@ function ReservationsProfessional({
                             <span className="contract-text">{contractNumber}</span>
                           </td>
                           <td className="col-franchise text-center">
-                            <span className="amount-text muted">{franchiseValue}</span>
+                            <span className="amount-text muted">{remainingValue}</span>
                           </td>
                           <td className="col-origin text-center">
                             <span className={getOriginClassName(reservation)}>{getOriginLabel(reservation)}</span>

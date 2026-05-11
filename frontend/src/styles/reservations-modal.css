@@ -1,4 +1,4 @@
-.reservation-modal-overlay {
+﻿.reservation-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.75);
@@ -70,7 +70,7 @@
 .reservation-modal-section h3 {
   margin: 0 0 18px 0;
   font-size: 18px;
-  color: #FDE68A;
+  color: #D0B276;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -110,7 +110,7 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-/* Période & Durée */
+/* PÃ©riode & DurÃ©e */
 .summary-period-info {
   display: flex;
   flex-direction: column;
@@ -148,7 +148,7 @@
 
 .date-arrow {
   font-size: 20px;
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .duration-stats {
@@ -175,7 +175,7 @@
 .duration-value {
   font-size: 16px;
   font-weight: 700;
-  color: #FDE68A;
+  color: #D0B276;
 }
 
 .duration-item.total .duration-value {
@@ -277,7 +277,7 @@
 .summary-badge.status-en_cours {
   background: rgba(59, 130, 246, 0.2);
   border-color: rgba(59, 130, 246, 0.4);
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .summary-badge.status-planifiee {
@@ -289,7 +289,7 @@
 .summary-badge.status-annulee {
   background: rgba(245, 196, 0, 0.2);
   border-color: rgba(245, 196, 0, 0.4);
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .summary-hint.error {
@@ -326,7 +326,7 @@
   border: 1px solid rgba(129, 140, 248, 0.35);
   font-size: 13px;
   font-weight: 700;
-  color: #FDE68A;
+  color: #D0B276;
 }
 
 .summary-list {
@@ -347,7 +347,7 @@
 
 .summary-list-row.strong {
   font-weight: 600;
-  color: #FDE68A;
+  color: #D0B276;
 }
 
 .summary-list-label {
@@ -433,7 +433,7 @@
 
 .summary-history-remise {
   font-size: 12px;
-  color: #facc15;
+  color: #D4B061;
 }
 
 .reservation-empty {
@@ -511,7 +511,7 @@
 
 .reservation-modal-close-btn {
   border: none;
-  background: linear-gradient(135deg, #D4A900 0%, #F5C400 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #C8A24A 100%);
   color: white;
   font-weight: 600;
   padding: 12px 26px;
@@ -609,7 +609,7 @@
 }
 
 .modal-card.light {
-  background: #ffffff;
+  background: var(--bg-card);
   color: #0f172a;
   border-color: #e2e8f0;
   box-shadow: 0 30px 60px rgba(2, 6, 23, 0.3);
@@ -674,7 +674,7 @@
 .modal-icon.danger {
   background: rgba(244, 63, 94, 0.2);
   border: 1px solid rgba(244, 63, 94, 0.45);
-  color: #FDE68A;
+  color: #D0B276;
   box-shadow: 0 12px 30px rgba(244, 63, 94, 0.25);
 }
 
@@ -779,13 +779,13 @@
 }
 
 .modal-form-group .input {
-  background: #fff;
+  background: var(--bg-card);
   color: #0f172a;
   border-color: #d1d5db;
 }
 
 .modal-form-group .input:focus {
-  border-color: #B8900A;
+  border-color: #92712B;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
@@ -813,3 +813,4 @@
     align-items: stretch;
   }
 }
+

@@ -1,5 +1,5 @@
-.quick-actions {
-  background: #ffffff;
+﻿.quick-actions {
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: var(--spacing-4);
   margin-bottom: var(--spacing-6);
@@ -44,7 +44,7 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: var(--radius);
   margin-bottom: var(--spacing-2);
 }

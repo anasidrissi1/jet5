@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    ADD CAR - STYLE MODERNE MODE SOMBRE
    ============================================ */
 
@@ -37,8 +37,8 @@
 
 .btn-back-car:hover {
   transform: translateX(-4px);
-  border-color: #D4A900;
-  color: #D4A900;
+  border-color: #B8923A;
+  color: #B8923A;
 }
 
 /* Modal Container */
@@ -63,7 +63,7 @@
 
 /* Card Header */
 .car-card-header {
-  background: linear-gradient(135deg, #F5C400 0%, #D4A900 100%);
+  background: linear-gradient(135deg, #C8A24A 0%, #B8923A 100%);
   padding: 32px;
   color: white;
 }
@@ -107,7 +107,7 @@
 
 .car-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #F5C400, #D4A900);
+  background: linear-gradient(90deg, #C8A24A, #B8923A);
   transition: width 0.3s;
 }
 
@@ -132,7 +132,7 @@
 }
 
 .car-step-circle.active {
-  background: linear-gradient(135deg, #F5C400, #D4A900);
+  background: linear-gradient(135deg, #C8A24A, #B8923A);
   color: white;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
@@ -148,7 +148,7 @@
 }
 
 .car-step-label.active {
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .car-step-label.inactive {
@@ -202,7 +202,7 @@
 .car-form-input:focus,
 .car-form-select:focus,
 .car-form-textarea:focus {
-  border-color: #D4A900;
+  border-color: #B8923A;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
@@ -239,12 +239,12 @@
 }
 
 .car-status-option:hover {
-  border-color: #D4A900;
+  border-color: #B8923A;
   transform: translateY(-2px);
 }
 
 .car-status-option.selected {
-  border-color: #D4A900;
+  border-color: #B8923A;
   background: rgba(99, 102, 241, 0.1);
 }
 
@@ -282,7 +282,7 @@
 }
 
 .car-color-option.selected {
-  border-color: #D4A900;
+  border-color: #B8923A;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
@@ -328,7 +328,7 @@
 .btn-car-next,
 .btn-car-submit {
   padding: 12px 32px;
-  background: linear-gradient(135deg, #F5C400 0%, #D4A900 100%);
+  background: linear-gradient(135deg, #C8A24A 0%, #B8923A 100%);
   border: none;
   border-radius: 10px;
   color: white;
@@ -351,20 +351,20 @@
 
 /* Validation */
 .car-validation-error {
-  color: #D4A900;
+  color: #B8923A;
   font-size: 13px;
   margin-top: 6px;
   display: block;
 }
 
 .car-field-error {
-  border-color: #D4A900 !important;
+  border-color: #B8923A !important;
 }
 
 /* Error Message */
 .car-error-message {
-  background: #FFF6CC;
-  border: 2px solid #D4A900;
+  background: #EFE5D2;
+  border: 2px solid #B8923A;
   color: #7A6000;
   padding: 16px;
   border-radius: 10px;
@@ -399,7 +399,7 @@
   }
 }
 
-/* Résumé sombre */
+/* RÃ©sumÃ© sombre */
 .car-summary-card {
   margin-top: 24px;
   padding: 20px 22px;
@@ -443,7 +443,7 @@
   color: #22c55e;
 }
 
-/* Succès création véhicule */
+/* SuccÃ¨s crÃ©ation vÃ©hicule */
 .car-success-overlay {
   padding: 32px;
 }
@@ -508,7 +508,7 @@
 }
 
 .car-success-value.highlight {
-  color: #F5C400;
+  color: #C8A24A;
 }
 
 .car-success-actions {
@@ -623,3 +623,4 @@
     align-items: stretch;
   }
 }
+

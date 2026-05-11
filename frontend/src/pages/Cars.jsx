@@ -22,22 +22,9 @@ function Cars() {
   
   // Sécurise l'initialisation de cars pour éviter les erreurs
   const [cars, setCars] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
-  const [user, setUser] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [statusFilter, setStatusFilter] = useState('all');
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser(payload);
-      } catch (e) {}
-    }
-  }, []);
 
   useEffect(() => {
     fetchCars(); // Charge les voitures à chaque affichage de la page
@@ -77,15 +64,33 @@ function Cars() {
   ]);
 
   async function fetchCars() {
-    setLoading(true);
     try {
-      const carsResponse = await apiClient.get('/cars/voitures/');
+      const fetchAllCars = async () => {
+        const allItems = [];
+        let page = 1;
+        let hasNext = true;
+        const MAX_PAGES = 200;
 
-      const voitures = Array.isArray(carsResponse.data?.results)
-        ? carsResponse.data.results
-        : Array.isArray(carsResponse.data)
-          ? carsResponse.data
-          : [];
+        while (hasNext && page <= MAX_PAGES) {
+          const carsResponse = await apiClient.get('/cars/voitures/', {
+            params: { page, page_size: 100 },
+          });
+          const payload = carsResponse.data;
+
+          if (Array.isArray(payload)) {
+            return payload;
+          }
+
+          const pageItems = Array.isArray(payload?.results) ? payload.results : [];
+          allItems.push(...pageItems);
+          hasNext = Boolean(payload?.next);
+          page += 1;
+        }
+
+        return allItems;
+      };
+
+      const voitures = await fetchAllCars();
 
       const enhancedCars = voitures.map((car) => {
         const normalizedStatus = (car.statut || '').toLowerCase();
@@ -124,7 +129,6 @@ function Cars() {
       setError('Impossible de charger les voitures');
       setCars([]);
     } finally {
-      setLoading(false);
     }
   }
 

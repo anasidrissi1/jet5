@@ -1,4 +1,4 @@
-/* ===== CLIENTS PROFESSIONAL PAGE ===== */
+﻿/* ===== CLIENTS PROFESSIONAL PAGE ===== */
 
 .clients-professional-page {
   padding: 24px;
@@ -447,12 +447,12 @@
 }
 
 .btn-delete {
-  background: #FFF6CC;
-  color: #B8900A;
+  background: #EFE5D2;
+  color: #92712B;
 }
 
 .btn-delete:hover {
-  background: #B8900A;
+  background: #92712B;
   color: white;
   transform: translateY(-1px);
 }
@@ -582,12 +582,12 @@
 }
 
 .btn-delete-table {
-  background: #FFF6CC;
-  color: #B8900A;
+  background: #EFE5D2;
+  color: #92712B;
 }
 
 .btn-delete-table:hover {
-  background: #B8900A;
+  background: #92712B;
   color: white;
 }
 
@@ -768,3 +768,4 @@
 .clients-table tbody tr {
   animation: fadeIn 0.3s ease-out;
 }
+

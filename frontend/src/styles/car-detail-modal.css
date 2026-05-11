@@ -1,4 +1,4 @@
-/* Car detail modal */
+﻿/* Car detail modal */
 .car-detail-overlay {
   padding: 32px;
 }
@@ -55,7 +55,7 @@
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #0ea5e9 0%, #B8900A 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #92712B 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,7 +108,7 @@
 .car-detail-status.status-reserve {
   background: rgba(59, 130, 246, 0.18);
   border-color: rgba(59, 130, 246, 0.35);
-  color: #D4A900;
+  color: #B8923A;
 }
 
 .car-detail-status.status-maintenance {
@@ -126,7 +126,7 @@
 .car-detail-status.status-default {
   background: rgba(100, 116, 139, 0.16);
   border-color: rgba(100, 116, 139, 0.32);
-  color: #FDE68A;
+  color: #D0B276;
 }
 
 .car-detail-metrics {
@@ -305,7 +305,7 @@
 }
 
 .car-detail-action.primary {
-  background: linear-gradient(135deg, #D4A900 0%, #F5C400 100%);
+  background: linear-gradient(135deg, #B8923A 0%, #C8A24A 100%);
   color: #ffffff;
   box-shadow: 0 10px 26px rgba(99, 102, 241, 0.35);
 }
@@ -378,3 +378,4 @@ html[data-theme="dark"] .car-detail-close:hover {
   background: rgba(99, 102, 241, 0.28);
   border-color: rgba(99, 102, 241, 0.4);
 }
+

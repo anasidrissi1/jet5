@@ -1,4 +1,4 @@
-/* ===== CARS PROFESSIONAL PAGE ===== */
+﻿/* ===== CARS PROFESSIONAL PAGE ===== */
 
 .cars-professional-page {
   padding: 24px;
@@ -14,7 +14,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  background: #ffffff;
+  background: var(--bg-card);
   padding: 24px;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -72,7 +72,7 @@
 
 .view-btn.active {
   background: #f5f5f5;
-  color: #B8900A;
+  color: #92712B;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
@@ -118,7 +118,7 @@
 /* ===== SEARCH SECTION ===== */
 .search-section {
   margin-bottom: 24px;
-  background: #ffffff;
+  background: var(--bg-card);
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -224,7 +224,7 @@
 }
 
 .car-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -374,7 +374,7 @@
 }
 
 .status-louee,
-.status-louée {
+.status-louÃ©e {
   background: #fef3c7;
   color: #92400e;
 }
@@ -385,8 +385,8 @@
 }
 
 .status-hors_service {
-  background: #FFF6CC;
-  color: #B8900A;
+  background: #EFE5D2;
+  color: #92712B;
 }
 
 /* Price Display */
@@ -449,19 +449,19 @@
 }
 
 .btn-delete {
-  background: #FFF6CC;
-  color: #B8900A;
+  background: #EFE5D2;
+  color: #92712B;
 }
 
 .btn-delete:hover {
-  background: #B8900A;
+  background: #92712B;
   color: white;
   transform: translateY(-1px);
 }
 
 /* ===== PROFESSIONAL TABLE VIEW ===== */
 .cars-table-container {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 0 0 16px 16px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -610,12 +610,12 @@
 }
 
 .btn-delete-action {
-  background: #FFF6CC;
-  color: #B8900A;
+  background: #EFE5D2;
+  color: #92712B;
 }
 
 .btn-delete-action:hover {
-  background: #B8900A;
+  background: #92712B;
   color: white;
   transform: translateY(-1px);
 }
@@ -708,12 +708,12 @@
 }
 
 .btn-delete-table {
-  background: #FFF6CC;
-  color: #B8900A;
+  background: #EFE5D2;
+  color: #92712B;
 }
 
 .btn-delete-table:hover {
-  background: #B8900A;
+  background: #92712B;
   color: white;
 }
 
@@ -724,7 +724,7 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 48px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -894,9 +894,9 @@
 }
 
 .status-urgent {
-  background: #FFF6CC;
-  color: #B8900A;
-  border: 1px solid #FDE68A;
+  background: #EFE5D2;
+  color: #92712B;
+  border: 1px solid #D0B276;
 }
 
 .status-proche {
@@ -916,3 +916,4 @@
   color: #6b7280;
   border: 1px solid #d1d5db;
 }
+

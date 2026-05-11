@@ -20,10 +20,13 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
+    if (document.body) {
+      document.body.setAttribute('data-theme', theme);
+    }
 
     try {
       window.localStorage.setItem('jet5-theme', theme);
-    } catch (e) {
+    } catch {
       // ignore storage errors
     }
   }, [theme]);

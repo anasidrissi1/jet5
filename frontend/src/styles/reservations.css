@@ -1,4 +1,4 @@
-/* Reservations Page Styles */
+﻿/* Reservations Page Styles */
 
 .reservations-page {
   padding: 20px;
@@ -55,7 +55,7 @@
 }
 
 .reservations-body {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 10px;
   padding: 12px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -115,7 +115,7 @@
 }
 
 .status-annule {
-  background: #D4A900;
+  background: #B8923A;
 }
 
 .reservations-loading,
@@ -127,9 +127,9 @@
 }
 
 .reservations-error {
-  color: #D4A900;
-  background-color: #FFFBEB;
-  border: 1px solid #FDE68A;
+  color: #B8923A;
+  background-color: #F3EBDC;
+  border: 1px solid #D0B276;
   border-radius: 8px;
   margin: 20px 0;
 }
@@ -141,7 +141,7 @@
 }
 
 .btn-edit {
-  background: #D4A900;
+  background: #B8923A;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -153,11 +153,11 @@
 }
 
 .btn-edit:hover {
-  background: #B8900A;
+  background: #92712B;
 }
 
 .btn-delete {
-  background: #D4A900;
+  background: #B8923A;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -169,7 +169,7 @@
 }
 
 .btn-delete:hover {
-  background: #B8900A;
+  background: #92712B;
 }
 
 .btn:disabled {
@@ -189,7 +189,7 @@
 .pagination button {
   padding: 8px 16px;
   border: 1px solid #e6e9ef;
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -301,12 +301,13 @@
 
 /* Focus states for accessibility */
 .search-input:focus {
-  border-color: #D4A900;
+  border-color: #B8923A;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .btn-edit:focus,
 .btn-delete:focus {
-  outline: 2px solid #D4A900;
+  outline: 2px solid #B8923A;
   outline-offset: 2px;
 }
+

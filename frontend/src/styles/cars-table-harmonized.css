@@ -1,4 +1,4 @@
-/* Style tableau harmonisé comme l'exemple du screen */
+﻿/* Style tableau harmonisÃ© comme l'exemple du screen */
 .cars-table {
   width: 100%;
   border-collapse: separate;
@@ -6,7 +6,7 @@
   background: none;
 }
 .cars-table thead tr {
-  background: linear-gradient(90deg, #FCD34D 0%, #D4A900 100%);
+  background: linear-gradient(90deg, #FCD34D 0%, #B8923A 100%);
   color: #fff;
 }
 .cars-table th {
@@ -88,3 +88,4 @@
     margin-right: 4px;
   }
 }
+
