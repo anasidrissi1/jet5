@@ -17,6 +17,11 @@ class ContratLocation(models.Model):
         ('FORFAIT', 'Forfait'),
     )
 
+    TARIF_SPECIAL_UNITE_CHOICES = (
+        ('SEMAINE', 'Par semaine'),
+        ('MOIS', 'Par mois'),
+    )
+
     PAYMENT_METHOD_CHOICES = (
         ("CASH", "Espèces"),
         ("CARD", "Carte"),
@@ -53,6 +58,7 @@ class ContratLocation(models.Model):
     prix_journalier = models.DecimalField(max_digits=10, decimal_places=2, help_text="Prix par jour")
     jours_prolongation = models.PositiveIntegerField(default=0, blank=True, help_text="Jours d'extension de location")
     tarif_special = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, help_text="Montant total personnalisé (écrase le calcul automatique)")
+    tarif_special_unite = models.CharField(max_length=20, choices=TARIF_SPECIAL_UNITE_CHOICES, default='MOIS', help_text="Unité du tarif spécial (par semaine ou par mois)")
     montant_total = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     date_fin = models.DateField(null=True, blank=True)
     heure_retour = models.TimeField(null=True, blank=True, help_text="Heure de retour/récupération")
@@ -99,12 +105,15 @@ class ContratLocation(models.Model):
 
         # Calcul du montant total
         if self.tarif_special is not None and self.tarif_special > 0:
-            if self.date_debut and self.date_fin:
-                # tarif_special = montant mensuel → multiplier par le nombre de mois
+            if total_jours:
                 from math import ceil
-                delta = self.date_fin - self.date_debut
-                months = max(1, ceil(delta.days / 30))
-                self.montant_total = self.tarif_special * months
+
+                if self.tarif_special_unite == 'SEMAINE':
+                    periods = max(1, ceil(total_jours / 7))
+                else:
+                    periods = max(1, ceil(total_jours / 30))
+
+                self.montant_total = self.tarif_special * periods
             else:
                 # Pas de dates complètes → utiliser tel quel
                 self.montant_total = self.tarif_special

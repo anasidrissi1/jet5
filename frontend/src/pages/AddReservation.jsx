@@ -95,6 +95,7 @@ const initialCore = {
   heure_retour: '',
   nombre_jours: '1',
   prix_journalier: '',
+  tarif_special: '',
   avance: '0',
   franchise: '0',
   numero_contrat: '',
@@ -204,6 +205,12 @@ const computeDateFin = (dateDebut, nombreJours) => {
   const end = new Date(start);
   end.setDate(end.getDate() + days);
   return end.toISOString().slice(0, 10);
+};
+
+const computeSpecialPeriods = (days) => {
+  const safeDays = Math.max(1, parseInt(days, 10) || 1);
+  // Tarif special applique par mois
+  return Math.max(1, Math.ceil(safeDays / 30));
 };
 
 const parseContractData = (comment) => {
@@ -336,6 +343,7 @@ function AddReservation() {
             heure_retour: r.heure_retour || '',
             nombre_jours: r.nombre_jours != null ? String(r.nombre_jours) : '1',
             prix_journalier: r.prix_journalier != null ? String(r.prix_journalier) : '',
+            tarif_special: r.tarif_special != null ? String(r.tarif_special) : '',
             avance: r.avance != null ? String(r.avance) : '0',
             franchise: r.franchise != null ? String(r.franchise) : '0',
             numero_contrat: r.numero_contrat != null ? String(r.numero_contrat) : '',
@@ -416,15 +424,19 @@ function AddReservation() {
   const totals = useMemo(() => {
     const days = Math.max(1, parseInt(core.nombre_jours, 10) || 1);
     const price = parseFloat(core.prix_journalier) || 0;
+    const special = parseFloat(core.tarif_special) || 0;
+    const hasSpecialTariff = special > 0;
+    const specialPeriods = hasSpecialTariff ? computeSpecialPeriods(days) : 0;
+    const locationBase = hasSpecialTariff ? special * specialPeriods : days * price;
     const extra = parseFloat(extras.service_extra) || 0;
     const tva = parseFloat(extras.tva_rate) || 0;
-    const ht = days * price + extra;
+    const ht = locationBase + extra;
     const tvaValue = (ht * tva) / 100;
     const ttc = ht + tvaValue;
     const avance = parseFloat(core.avance) || 0;
     const reste = Math.max(0, ttc - avance);
-    return { ht, tvaValue, ttc, reste };
-  }, [core.avance, core.nombre_jours, core.prix_journalier, extras.service_extra, extras.tva_rate]);
+    return { ht, tvaValue, ttc, reste, hasSpecialTariff, specialPeriods };
+  }, [core.avance, core.nombre_jours, core.prix_journalier, core.tarif_special, extras.service_extra, extras.tva_rate]);
 
   const reservationRef = savedReservation?.id || (isEdit ? Number(id) : null);
 
@@ -495,6 +507,8 @@ function AddReservation() {
   };
 
   const validate = () => {
+    const specialTariff = parseFloat(core.tarif_special) || 0;
+
     if (!core.voiture || !core.client) {
       addNotification('Sélectionnez une voiture et un client.', 'warning');
       return false;
@@ -503,7 +517,7 @@ function AddReservation() {
       addNotification('Date de début obligatoire.', 'warning');
       return false;
     }
-    if (!core.prix_journalier) {
+    if (specialTariff <= 0 && !core.prix_journalier) {
       addNotification('Prix journalier obligatoire.', 'warning');
       return false;
     }
@@ -516,6 +530,9 @@ function AddReservation() {
 
     setSaving(true);
     try {
+      const specialTariff = parseFloat(core.tarif_special) || 0;
+      const hasSpecialTariff = specialTariff > 0;
+
       const payload = {
         voiture: parseInt(core.voiture, 10),
         client: parseInt(core.client, 10),
@@ -526,12 +543,13 @@ function AddReservation() {
         heure_retour: core.heure_retour || null,
         nombre_jours: parseInt(core.nombre_jours, 10) || 1,
         jours_prolongation: 0,
-        prix_journalier: parseFloat(core.prix_journalier) || 0,
-        tarif_special: null,
+        prix_journalier: hasSpecialTariff ? 0 : (parseFloat(core.prix_journalier) || 0),
+        tarif_special: hasSpecialTariff ? specialTariff : null,
+        tarif_special_unite: 'MOIS',
         avance: parseFloat(core.avance) || 0,
         franchise: parseFloat(core.franchise) || 0,
         long_duration: false,
-        billing_mode: 'JOURNALIER',
+        billing_mode: hasSpecialTariff ? 'FORFAIT' : 'JOURNALIER',
         numero_contrat: core.numero_contrat || '',
         methode_paiement: core.methode_paiement || 'CASH',
         commentaire: buildContractComment(extras),
@@ -671,8 +689,10 @@ ${hasSecondary ? `
 <div class="section">
   <h3>Facturation</h3>
   <div class="fact-grid">
-    <div><span class="bold">Tarif/jour TTC</span><br/>${displayMoney(core.prix_journalier)}</div>
+    <div><span class="bold">Tarif applique</span><br/>${totals.hasSpecialTariff ? displayMoney(core.tarif_special) : displayMoney(core.prix_journalier)}</div>
+    <div><span class="bold">Mode</span><br/>${totals.hasSpecialTariff ? 'Special (par mois)' : 'Journalier'}</div>
     <div><span class="bold">Durée</span><br/>${core.nombre_jours} jour(s)</div>
+    ${totals.hasSpecialTariff ? `<div><span class="bold">Periodes facturees</span><br/>${totals.specialPeriods}</div>` : '<div><span class="bold"></span><br/></div>'}
     <div><span class="bold">TVA ${extras.tva_rate}%</span><br/>${displayMoney(totals.tvaValue)}</div>
     <div><span class="bold">Total TTC</span><br/>${displayMoney(totals.ttc)}</div>
     <div><span class="bold">Avance</span><br/>${displayMoney(core.avance)}</div>
@@ -788,8 +808,12 @@ ${hasSecondary ? `
       doc.setFont('helvetica', 'bold');
       doc.text('FACTURATION', 12, y);
       y += lh;
-      line('Tarif jour TTC', displayMoney(core.prix_journalier));
+      line('Tarif applique', totals.hasSpecialTariff ? displayMoney(core.tarif_special) : displayMoney(core.prix_journalier));
+      line('Mode', totals.hasSpecialTariff ? 'Special (par mois)' : 'Journalier');
       line('Duree location', `${core.nombre_jours} jour(s)`);
+      if (totals.hasSpecialTariff) {
+        line('Periodes facturees', totals.specialPeriods);
+      }
       line(`TVA ${extras.tva_rate}%`, displayMoney(totals.tvaValue));
       line('Total TTC', displayMoney(totals.ttc));
       line('Avance', displayMoney(core.avance));
@@ -952,7 +976,28 @@ ${hasSecondary ? `
         <section className="contract-section">
           <h3>Facturation</h3>
           <div className="grid-4">
-            <label>Tarif jour TTC *<input name="prix_journalier" value={core.prix_journalier} onChange={handleCore} required /></label>
+            <label>
+              Tarif jour TTC {totals.hasSpecialTariff ? '' : '*'}
+              <input
+                name="prix_journalier"
+                value={core.prix_journalier}
+                onChange={handleCore}
+                required={!totals.hasSpecialTariff}
+                disabled={totals.hasSpecialTariff}
+              />
+            </label>
+            <label>
+              Tarif special
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                name="tarif_special"
+                value={core.tarif_special}
+                onChange={handleCore}
+                placeholder="Ex: 5000"
+              />
+            </label>
             <label>TVA (%)<input name="tva_rate" value={extras.tva_rate} onChange={handleExtras} /></label>
             <label>Avance<input name="avance" value={core.avance} onChange={handleCore} /></label>
             <label>Franchise<input name="franchise" value={core.franchise} onChange={handleCore} /></label>

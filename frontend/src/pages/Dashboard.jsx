@@ -1,234 +1,214 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import MonthSelector from '../components/common/MonthSelector';
-import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
-import { dashboardService } from '../services/dashboardService';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
-import '../styles/DashboardNew.css';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import apiClient from '../api/apiClient';
+import '../styles/planning-dashboard.css';
+
+const extractList = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+  if (Array.isArray(payload.results)) return payload.results;
+  if (Array.isArray(payload.data)) return payload.data;
+  if (Array.isArray(payload.items)) return payload.items;
+  return [];
+};
 
 function Dashboard() {
-  const navigate = useNavigate();
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [cars, setCars] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [data, setData] = useState({
-    stats: {
-      revenus_mois: 0,
-      depenses_mois: 0,
-      benefice_net: 0,
-      voitures_disponibles: 0,
-      total_voitures: 0,
-    },
-    reservations: { retours_aujourdhui: [] },
-    paiements: { total_en_attente: 0, nombre_en_attente: 0, items: [] },
-    alerts: [],
-    chart: [],
-  });
 
+  // Récupérer voitures et réservations
   useEffect(() => {
     let active = true;
 
-    async function loadDashboard() {
+    async function loadData() {
       setLoading(true);
       setError(null);
       try {
-        const payload = await dashboardService.getAllStats(selectedMonth, selectedYear);
+        const [carsRes, resvRes] = await Promise.all([
+          apiClient.get('/cars/voitures/'),
+          apiClient.get('/reservations/?ordering=-date_debut&limit=1000'),
+        ]);
+
         if (!active) return;
-        setData({
-          stats: payload.stats || data.stats,
-          reservations: payload.reservations || { retours_aujourdhui: [] },
-          paiements: payload.paiements || { total_en_attente: 0, nombre_en_attente: 0, items: [] },
-          alerts: Array.isArray(payload.alerts) ? payload.alerts : [],
-          chart: Array.isArray(payload.chart) ? payload.chart : [],
-        });
-      } catch {
-        if (!active) return;
-        setError('Impossible de charger le dashboard pour le moment.');
+
+        console.log('carsRes.data:', carsRes.data);
+        console.log('carsRes:', carsRes);
+
+        const carsList = extractList(carsRes.data);
+        const reservationsList = extractList(resvRes.data);
+
+        console.log('✓ Cars loaded:', carsList.length, 'items');
+        console.log('✓ Reservations loaded:', reservationsList.length, 'items');
+
+        setCars(carsList);
+        setReservations(reservationsList);
+      } catch (err) {
+        if (active) {
+          console.error('✗ Dashboard error:', err);
+          setError(err.message || 'Erreur lors du chargement du planning');
+        }
       } finally {
         if (active) setLoading(false);
       }
     }
 
-    loadDashboard();
+    loadData();
     return () => {
       active = false;
     };
-  }, [selectedMonth, selectedYear]);
+  }, []);
 
-  const onMonthChange = (month, year) => {
-    setSelectedMonth(month);
-    setSelectedYear(year);
+  // Calculer les jours du mois
+  const daysInMonth = (month, year) => new Date(year, month, 0).getDate();
+  const days = Array.from({ length: daysInMonth(selectedMonth, selectedYear) }, (_, i) => i + 1);
+
+  // Vérifier si une voiture est réservée à une date donnée
+  const isCarReservedOnDate = (carId, day) => {
+    return reservations.some((rsv) => {
+      if (rsv.voiture !== carId) return false;
+      const startDate = new Date(rsv.date_debut);
+      const endDate = new Date(rsv.date_fin);
+      const checkDate = new Date(selectedYear, selectedMonth - 1, day);
+      return checkDate >= startDate && checkDate <= endDate;
+    });
   };
 
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat('fr-MA', {
-      style: 'currency',
-      currency: 'MAD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(Number(value || 0));
+  // Vérifier si jour = aujourd'hui
+  const isTodayDate = (day) => {
+    return (
+      day === today.getDate() &&
+      selectedMonth === today.getMonth() + 1 &&
+      selectedYear === today.getFullYear()
+    );
+  };
 
-  if (loading) return <DashboardSkeleton />;
+  const handlePrevMonth = () => {
+    if (selectedMonth === 1) {
+      setSelectedMonth(12);
+      setSelectedYear(selectedYear - 1);
+    } else {
+      setSelectedMonth(selectedMonth - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (selectedMonth === 12) {
+      setSelectedMonth(1);
+      setSelectedYear(selectedYear + 1);
+    } else {
+      setSelectedMonth(selectedMonth + 1);
+    }
+  };
+
+  const monthName = new Date(selectedYear, selectedMonth - 1).toLocaleDateString('fr-MA', {
+    month: 'long',
+    year: 'numeric',
+  });
+
+  const headerSubtitle = `${cars.length} vehicules - ${reservations.length} reservations`;
+
+  const renderHeader = () => (
+    <div className="planning-header">
+      <div className="planning-header-left">
+        <h1 className="planning-title">
+          <span className="planning-title-icon" aria-hidden="true">PL</span>
+          Planning des Reservations
+        </h1>
+        <p className="planning-subtitle">{headerSubtitle}</p>
+      </div>
+      <div className="month-navigation">
+        <button className="nav-btn" onClick={handlePrevMonth} title="Mois precedent">
+          <ChevronLeft size={20} />
+        </button>
+        <span className="current-month">{monthName}</span>
+        <button className="nav-btn" onClick={handleNextMonth} title="Mois suivant">
+          <ChevronRight size={20} />
+        </button>
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <div className="planning-dashboard">
+        {renderHeader()}
+        <div className="loading-spinner">Chargement...</div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
-      <div className="dashboard-new">
-        <div className="dashboard-new-header">
-          <div>
-            <h1>Tableau de Bord</h1>
-            <p>{error}</p>
-          </div>
-        </div>
+      <div className="planning-dashboard">
+        {renderHeader()}
+        <p className="error-message">Erreur: {error}</p>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-new">
-      <div className="dashboard-new-header">
-        <div>
-          <h1>Tableau de Bord</h1>
-          <p>Vue instantanee avec endpoint agrege unique.</p>
-        </div>
-        <MonthSelector month={selectedMonth} year={selectedYear} onChange={onMonthChange} />
-      </div>
+    <div className="planning-dashboard">
+      {renderHeader()}
 
-      <div className="kpis-grid">
-        <div className="kpi-card kpi-revenus">
-          <div className="kpi-content">
-            <div className="kpi-label">Revenus du mois</div>
-            <div className="kpi-value">{formatCurrency(data.stats.revenus_mois)}</div>
-          </div>
-        </div>
-
-        <div className="kpi-card kpi-depenses">
-          <div className="kpi-content">
-            <div className="kpi-label">Depenses du mois</div>
-            <div className="kpi-value">{formatCurrency(data.stats.depenses_mois)}</div>
-          </div>
-        </div>
-
-        <div className={`kpi-card ${data.stats.benefice_net >= 0 ? 'kpi-benefice-positive' : 'kpi-benefice-negative'}`}>
-          <div className="kpi-content">
-            <div className="kpi-label">Benefice net</div>
-            <div className="kpi-value">{formatCurrency(data.stats.benefice_net)}</div>
-          </div>
-        </div>
-
-        <div className="kpi-card kpi-voitures">
-          <div className="kpi-content">
-            <div className="kpi-label">Voitures disponibles</div>
-            <div className="kpi-value">{data.stats.voitures_disponibles}/{data.stats.total_voitures}</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="graph-section">
-        <div className="graph-card">
-          <div className="graph-header">
-            <h2>Evolution Financiere</h2>
-          </div>
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={data.chart} margin={{ top: 20, right: 16, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-              <XAxis dataKey="mois" stroke="var(--text-secondary)" />
-              <YAxis stroke="var(--text-secondary)" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'var(--bg-card)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '8px',
-                  color: 'var(--text-primary)',
-                }}
-              />
-              <Bar dataKey="revenus" fill="var(--color-success)" name="Revenus" />
-              <Bar dataKey="depenses" fill="var(--color-danger)" name="Depenses" />
-              <Bar dataKey="benefice" fill="var(--color-info)" name="Benefice" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="info-grid">
-        <div className="info-column">
-          <div className="info-card">
-            <div className="info-card-header">
-              <h3>Retours aujourd'hui</h3>
-              <span className="info-badge">{data.reservations.retours_aujourdhui.length}</span>
-            </div>
-            <div className="info-card-body">
-              {data.reservations.retours_aujourdhui.length === 0 ? (
-                <div className="info-empty">Aucun retour aujourd'hui</div>
-              ) : (
-                <div className="retours-list">
-                  {data.reservations.retours_aujourdhui.map((retour) => (
-                    <div
-                      key={retour.reservation_id}
-                      className="retour-item"
-                      onClick={() => navigate(`/admin/reservations/edit/${retour.reservation_id}`)}
-                    >
-                      <div className="retour-info">
-                        <div className="retour-voiture">{retour.voiture}</div>
-                        <div className="retour-client">{retour.client}</div>
-                      </div>
-                      <div className="retour-action">→</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="info-column">
-          <div className="info-card paiements-card">
-            <div className="info-card-header">
-              <h3>Paiements en attente</h3>
-              <span className="info-badge warning-badge">{data.paiements.nombre_en_attente}</span>
-            </div>
-            <div className="info-card-body">
-              <div className="paiements-total">
-                <div className="paiements-total-label">Total a encaisser</div>
-                <div className="paiements-total-value">{formatCurrency(data.paiements.total_en_attente)}</div>
-                <button className="btn-paiements" onClick={() => navigate('/admin/payments')}>
-                  Voir les details →
-                </button>
+      <div className="planning-wrapper">
+        <div className="planning-table">
+          <div className="planning-header-row">
+            <div className="planning-car-cell sticky-header">Vehicule</div>
+            {days.map((day) => (
+              <div
+                key={`header-${day}`}
+                className={`planning-day-header ${isTodayDate(day) ? 'today' : ''}`}
+              >
+                {day}
               </div>
-            </div>
+            ))}
           </div>
 
-          <div className="info-card">
-            <div className="info-card-header">
-              <h3>Alertes urgentes</h3>
-              <span className="info-badge alert-badge">{data.alerts.length}</span>
+          {cars.map((car) => (
+            <div key={car.id} className="planning-row">
+              <div className="planning-car-cell sticky">
+                <div className="car-name">{car.marque} {car.modele}</div>
+                <div className="car-id">#{car.immatriculation}</div>
+              </div>
+              {days.map((day) => {
+                const isReserved = isCarReservedOnDate(car.id, day);
+                const isToday = isTodayDate(day);
+                return (
+                  <div
+                    key={`${car.id}-${day}`}
+                    className={`planning-day-cell ${isReserved ? 'reserved' : 'free'} ${
+                      isToday ? 'today' : ''
+                    }`}
+                    title={
+                      isReserved
+                        ? `Réservée le ${day}/${selectedMonth}/${selectedYear}`
+                        : `Disponible le ${day}/${selectedMonth}/${selectedYear}`
+                    }
+                  />
+                );
+              })}
             </div>
-            <div className="info-card-body">
-              {data.alerts.length === 0 ? (
-                <div className="info-empty">Aucune alerte</div>
-              ) : (
-                <div className="alertes-list">
-                  {data.alerts.slice(0, 6).map((alert) => (
-                    <div key={`${alert.type}-${alert.id || alert.date_expiration}`} className={`alerte-item alerte-${alert.type}`}>
-                      <div className="alerte-info">
-                        <div className="alerte-title">{alert.titre}</div>
-                        <div className="alerte-detail">{alert.voiture}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="planning-legend">
+        <div className="legend-item">
+          <div className="legend-color free" />
+          <span>Disponible</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color reserved" />
+          <span>Réservée</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color today" />
+          <span>Aujourd'hui</span>
         </div>
       </div>
     </div>

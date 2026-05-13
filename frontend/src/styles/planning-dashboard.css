@@ -1,0 +1,448 @@
+.planning-dashboard {
+  padding: 24px;
+  background: var(--bg-secondary, #0f1115);
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.planning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: var(--bg-card, #111318);
+  border: 1px solid var(--border-color, #232733);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md, 0 10px 24px rgba(0, 0, 0, 0.22));
+  padding: 20px 24px;
+}
+
+.planning-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planning-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary, #ffffff);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.planning-title-icon {
+  font-size: 1.85rem;
+  line-height: 1;
+}
+
+.planning-subtitle {
+  margin: 0;
+  color: var(--text-secondary, #a8b0c0);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.month-navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-tertiary, #171a22);
+  border: 1px solid var(--border-color, #2b313f);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--jet-gold, #d4af37);
+  color: #1a1a1a;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.nav-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.current-month {
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+  min-width: 200px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  text-transform: capitalize;
+}
+
+.loading-spinner {
+  color: var(--text-secondary, #b0b0b0);
+  padding: 32px 8px;
+}
+
+.error-message {
+  color: #ff6b6b;
+  padding: 16px;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 8px;
+}
+
+/* Planning Table */
+.planning-wrapper {
+  overflow: auto;
+  border: 1px solid var(--border-color, #2b313f);
+  border-radius: 16px;
+  background: var(--bg-card, #141821);
+  flex: 1;
+  min-height: 360px;
+  max-height: calc(100vh - 320px);
+}
+
+.planning-table {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Header Row */
+.planning-header-row {
+  display: flex;
+  background: var(--jet-surface, #181818);
+  border-bottom: 2px solid var(--jet-border, #2c2c2c);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.planning-day-header {
+  flex: 0 0 60px;
+  padding: 16px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--jet-text, #ffffff);
+  border-right: 1px solid var(--jet-border, #2c2c2c);
+  font-size: 0.85rem;
+  position: relative;
+}
+
+.planning-day-header.today {
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--jet-gold, #d4af37);
+  font-weight: 700;
+}
+
+.planning-day-header.today::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--jet-gold, #d4af37);
+}
+
+/* Sticky Car Column */
+.sticky-header {
+  position: sticky;
+  left: 0;
+  z-index: 11;
+  background: var(--jet-surface, #181818);
+  flex: 0 0 200px;
+  border-right: 2px solid var(--jet-border, #2c2c2c);
+}
+
+/* Data Rows */
+.planning-row {
+  display: flex;
+  border-bottom: 1px solid var(--jet-border, #2c2c2c);
+  transition: background 0.2s ease;
+}
+
+.planning-row:hover {
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.planning-car-cell {
+  flex: 0 0 200px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--jet-text, #ffffff);
+  background: var(--jet-surface, #181818);
+  border-right: 2px solid var(--jet-border, #2c2c2c);
+  font-family: 'Poppins', sans-serif;
+}
+
+.planning-car-cell.sticky {
+  position: sticky;
+  left: 0;
+  z-index: 9;
+}
+
+.car-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.car-id {
+  font-size: 0.75rem;
+  color: var(--jet-text-muted, #b0b0b0);
+  font-family: 'Courier New', monospace;
+}
+
+.planning-day-cell {
+  flex: 0 0 60px;
+  height: 60px;
+  border-right: 1px solid var(--jet-border, #2c2c2c);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.planning-day-cell.free {
+  background: var(--jet-card, #1e1e1e);
+}
+
+.planning-day-cell.free:hover {
+  background: var(--jet-surface, #181818);
+  border-right-color: var(--jet-gold, #d4af37);
+}
+
+.planning-day-cell.reserved {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.planning-day-cell.reserved:hover {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.planning-day-cell.today {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.2) 100%);
+  border-left: 3px solid var(--jet-gold, #d4af37);
+  border-right: 1px solid var(--jet-border, #2c2c2c);
+}
+
+.planning-day-cell.today.reserved {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  border-left: 3px solid var(--jet-gold, #d4af37);
+}
+
+/* Legend */
+.planning-legend {
+  display: flex;
+  gap: 32px;
+  justify-content: flex-start;
+  padding: 24px;
+  background: var(--jet-surface, #181818);
+  border-radius: 12px;
+  border: 1px solid var(--jet-border, #2c2c2c);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  color: var(--jet-text, #ffffff);
+}
+
+.legend-color {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--jet-border, #2c2c2c);
+}
+
+.legend-color.free {
+  background: var(--jet-card, #1e1e1e);
+}
+
+.legend-color.reserved {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+.legend-color.today {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.2) 100%);
+  border: 2px solid var(--jet-gold, #d4af37);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .planning-dashboard {
+    padding: 20px 16px;
+  }
+
+  .planning-header {
+    padding: 16px;
+  }
+
+  .planning-title {
+    font-size: 1.75rem;
+  }
+
+  .planning-day-cell {
+    flex: 0 0 50px;
+    height: 50px;
+  }
+
+  .planning-day-header {
+    flex: 0 0 50px;
+    padding: 12px 4px;
+    font-size: 0.75rem;
+  }
+
+  .planning-car-cell {
+    flex: 0 0 160px;
+    padding: 12px 10px;
+  }
+
+  .car-name {
+    font-size: 0.85rem;
+  }
+
+  .car-id {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .planning-dashboard {
+    padding: 16px 12px;
+  }
+
+  .planning-header {
+    top: 0;
+    padding: 14px 12px;
+  }
+
+  .planning-title {
+    font-size: 1.35rem;
+  }
+
+  .planning-subtitle {
+    font-size: 0.82rem;
+  }
+
+  .planning-day-cell {
+    flex: 0 0 40px;
+    height: 40px;
+  }
+
+  .planning-day-header {
+    flex: 0 0 40px;
+    padding: 10px 2px;
+    font-size: 0.65rem;
+  }
+
+  .planning-car-cell {
+    flex: 0 0 120px;
+    padding: 10px 8px;
+  }
+
+  .car-name {
+    font-size: 0.75rem;
+  }
+
+  .car-id {
+    font-size: 0.6rem;
+  }
+
+  .month-navigation {
+    gap: 10px;
+    padding: 10px 12px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .current-month {
+    min-width: 140px;
+    font-size: 0.9rem;
+  }
+
+  .planning-legend {
+    gap: 20px;
+    padding: 16px;
+  }
+
+  .legend-item {
+    font-size: 0.85rem;
+  }
+
+  .legend-color {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .planning-dashboard {
+    padding: 12px 8px;
+  }
+
+  .planning-title {
+    font-size: 1.08rem;
+  }
+
+  .planning-title-icon {
+    font-size: 1.15rem;
+  }
+
+  .planning-day-cell {
+    flex: 0 0 32px;
+    height: 32px;
+  }
+
+  .planning-day-header {
+    flex: 0 0 32px;
+    padding: 8px 2px;
+    font-size: 0.6rem;
+  }
+
+  .planning-car-cell {
+    flex: 0 0 100px;
+    padding: 8px 6px;
+  }
+
+  .car-name {
+    font-size: 0.65rem;
+  }
+
+  .car-id {
+    font-size: 0.55rem;
+  }
+
+  .planning-wrapper {
+    border-radius: 8px;
+    max-height: calc(100vh - 290px);
+  }
+
+  .planning-legend {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+}

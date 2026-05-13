@@ -23,12 +23,8 @@ apiClient.interceptors.request.use(
     if (!config.url?.includes('/accounts/login') && !config.url?.includes('/accounts/refresh')) {
       const token = localStorage.getItem('token');
       if (token && token !== 'undefined' && token !== 'null' && token.trim() !== '') {
-        if (typeof config.headers?.set === 'function') {
-          config.headers.set('Authorization', `Bearer ${token}`);
-        } else {
-          config.headers = config.headers || {};
-          config.headers.Authorization = `Bearer ${token}`;
-        }
+        config.headers = config.headers || {};
+        config.headers['Authorization'] = `Bearer ${token}`;
       }
     }
     return config;
