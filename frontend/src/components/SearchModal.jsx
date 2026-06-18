@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/apiClient';
 import './SearchModal.css';
@@ -14,6 +14,23 @@ const SearchModal = ({ isOpen, onClose }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+
+  const handleSelectResult = useCallback((result) => {
+    switch (result.type) {
+      case 'client':
+        navigate(`/admin/clients/edit/${result.data.id}`);
+        break;
+      case 'voiture':
+        navigate(`/admin/cars/edit/${result.data.id}`);
+        break;
+      case 'reservation':
+        navigate(`/admin/reservations/edit/${result.data.id}`);
+        break;
+      default:
+        break;
+    }
+    onClose();
+  }, [navigate, onClose]);
 
   // Focus input quand le modal s'ouvre
   useEffect(() => {
@@ -79,22 +96,7 @@ const SearchModal = ({ isOpen, onClose }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, results, selectedIndex]);
-
-  const handleSelectResult = (result) => {
-    switch (result.type) {
-      case 'client':
-        navigate(`/admin/clients/edit/${result.data.id}`);
-        break;
-      case 'voiture':
-        navigate(`/admin/cars/edit/${result.data.id}`);
-        break;
-      case 'reservation':
-        navigate(`/admin/reservations/edit/${result.data.id}`);
-        break;
-    }
-    onClose();
-  };
+  }, [isOpen, results, selectedIndex, handleSelectResult, onClose]);
 
   const totalResults = results.clients.length + results.voitures.length + results.reservations.length;
 

@@ -1,25 +1,18 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../styles/searchbar.css';
 
 const SearchBar = ({ onSearch, placeholder = 'Rechercher...', delay = 300 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  
-  const debouncedSearch = useCallback(
-    (() => {
-      let timeoutId;
-      return (value) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          onSearch(value);
-        }, delay);
-      };
-    })(),
-    [onSearch, delay]
-  );
-  
+  const debounceRef = useRef(null);
+
   useEffect(() => {
-    debouncedSearch(searchTerm);
-  }, [searchTerm, debouncedSearch]);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onSearch(searchTerm);
+    }, delay);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [searchTerm, onSearch, delay]);
 
   return (
     <div className="search-container">

@@ -60,7 +60,7 @@ const registerUnlockHandlers = (context, onUnlocked) => {
   const tryResume = async () => {
     try {
       await context.resume();
-    } catch (error) {
+    } catch {
       return;
     }
 

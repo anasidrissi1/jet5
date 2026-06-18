@@ -72,7 +72,7 @@ class ClientRequestViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         client_request = serializer.save()
         
-        # Créer une notification pour l'agent
+        # Créer une notification pour l'équipe
         Notification.objects.create(
             type='inscription_client',
             message=f"Nouvelle demande d'inscription : {client_request.nom} {client_request.prenom}",

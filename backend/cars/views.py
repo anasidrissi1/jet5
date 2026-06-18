@@ -25,15 +25,12 @@ def _parse_date(date_str):
 
 
 def _get_public_cars_queryset():
-    """Expose admin-managed cars on the public site with a safe fallback.
-
-    If at least one car is explicitly marked public, only those cars are shown.
-    Otherwise, all cars except hors service are exposed so the public site stays
-    linked to the admin inventory out of the box.
-    """
-    base_qs = Voiture.objects.exclude(statut='hors_service').order_by('-date_ajout')
-    public_qs = base_qs.filter(is_public=True)
-    return public_qs if public_qs.exists() else base_qs
+    """Expose only cars explicitly marked public on the customer site."""
+    return (
+        Voiture.objects.filter(is_public=True)
+        .exclude(statut='hors_service')
+        .order_by('-date_ajout')
+    )
 
 class VoitureViewSet(viewsets.ModelViewSet):
     serializer_class = VoitureSerializer
@@ -81,7 +78,7 @@ class VoitureViewSet(viewsets.ModelViewSet):
             ).values_list('voiture_id', flat=True).distinct()
 
             # Garder uniquement les voitures disponibles et sans contrat actif
-            return qs.filter(statut__in=['libre', 'disponible']).exclude(id__in=active_voitures)
+            return qs.filter(statut='libre').exclude(id__in=active_voitures)
         return qs
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny], url_path='public')
@@ -98,7 +95,7 @@ class VoitureViewSet(viewsets.ModelViewSet):
 
         # Filtre basique sur statut "libre" si pas de dates
         if not start_date or not end_date:
-            qs = qs.filter(statut__in=['libre', 'disponible'])
+            qs = qs.filter(statut='libre')
 
         # Filtre ville/categorie/transmission/price
         if city and hasattr(qs.model, 'ville'):
@@ -127,7 +124,7 @@ class VoitureViewSet(viewsets.ModelViewSet):
         # Annoter is_available (true si statut libre/disponible et pas bloqué par dates)
         cars = []
         for car in qs:
-            is_free_status = str(getattr(car, 'statut', '')).lower() in ['libre', 'disponible', 'available', 'free']
+            is_free_status = str(getattr(car, 'statut', '')).lower() == 'libre'
             cars.append((car, is_free_status))
 
         data = []
@@ -147,7 +144,7 @@ class VoitureViewSet(viewsets.ModelViewSet):
         except Voiture.DoesNotExist:
             return Response({'detail': 'Voiture introuvable ou non publique.'}, status=404)
 
-        is_free_status = str(getattr(car, 'statut', '')).lower() in ['libre', 'disponible', 'available', 'free']
+        is_free_status = str(getattr(car, 'statut', '')).lower() == 'libre'
         data = PublicVoitureSerializer(car).data
         data['is_available'] = is_free_status
         return Response(data)

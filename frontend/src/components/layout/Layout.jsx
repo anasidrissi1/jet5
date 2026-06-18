@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import AlertNotification from '../AlertNotification';
@@ -9,6 +9,8 @@ import { useNotification } from '../../contexts/NotificationContext';
 import '../../styles/layout.css';
 
 function Layout() {
+  const location = useLocation();
+  const isDashboardPage = /\/admin\/dashboard\/?$/.test(location.pathname);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -121,7 +123,7 @@ function Layout() {
           onSearchClick={() => setSearchOpen(true)}
           notificationsFeed={notificationsFeed}
         />
-        <div className="page-content">
+        <div className={`page-content${isDashboardPage ? ' page-content--dashboard' : ''}`}>
           <Outlet />
         </div>
       </div>

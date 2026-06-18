@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import logo from "../../assets/jet5logo.png";
@@ -29,19 +29,19 @@ function Sidebar({ isOpen, onClose }) {
   const [onlineReservationsCount, setOnlineReservationsCount] = useState(0);
   const [unreadContactsCount, setUnreadContactsCount] = useState(0);
 
-  const parseISODate = (value) => {
+  const parseISODate = useCallback((value) => {
     if (!value) return null;
     const date = new Date(`${value}T00:00:00`);
     return Number.isNaN(date.getTime()) ? null : date;
-  };
+  }, []);
 
-  const parseOnlineStatusMarker = (comment) => {
+  const parseOnlineStatusMarker = useCallback((comment) => {
     const ONLINE_STATUS_REGEX = /\[ONLINE_STATUS:(new|contacted|confirmed|refused)\]/;
     const match = String(comment || '').match(ONLINE_STATUS_REGEX);
     return match ? match[1] : null;
-  };
+  }, []);
 
-  const getOnlineStatusKey = (reservation) => {
+  const getOnlineStatusKey = useCallback((reservation) => {
     const markerStatus = parseOnlineStatusMarker(reservation.commentaire);
     const startDate = parseISODate(reservation.date_debut);
     const now = new Date();
@@ -52,9 +52,9 @@ function Sidebar({ isOpen, onClose }) {
     if (startDate && startDate < today) return 'expired';
     if (markerStatus === 'contacted') return 'contacted';
     return 'new';
-  };
+  }, [parseOnlineStatusMarker, parseISODate]);
 
-  const fetchSidebarCounts = async () => {
+  const fetchSidebarCounts = useCallback(async () => {
     try {
       const [reservationsRes, contactsRes] = await Promise.all([
         apiClient.get("/reservations/", { params: { origin: "en_ligne" } }),
@@ -73,16 +73,16 @@ function Sidebar({ isOpen, onClose }) {
         ? contactsData
         : contactsData?.results ?? [];
       setUnreadContactsCount(cList.filter((m) => !m.is_read).length || 0);
-    } catch (e) {
+    } catch {
       // échec silencieux dans le menu
     }
-  };
+  }, [getOnlineStatusKey]);
 
   useEffect(() => {
     fetchSidebarCounts();
     const interval = setInterval(fetchSidebarCounts, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchSidebarCounts]);
 
   useEffect(() => {
     const handler = () => {
@@ -90,7 +90,7 @@ function Sidebar({ isOpen, onClose }) {
     };
     window.addEventListener('jet5:refreshSidebarCounts', handler);
     return () => window.removeEventListener('jet5:refreshSidebarCounts', handler);
-  }, []);
+  }, [fetchSidebarCounts]);
 
   useEffect(() => {
     setOpenSections((prev) => ({
@@ -203,14 +203,17 @@ function Sidebar({ isOpen, onClose }) {
           </button>
           {openSections.locations && (
             <div className="nav-submenu" id="sidebar-section-locations">
-              <Link to="/admin/reservations" className={`nav-subitem ${isActive('/admin/reservations') ? 'active' : ''}`} onClick={handleLinkClick}>
+              <Link to="/admin/reservations" className={`nav-subitem ${location.pathname === '/admin/reservations' ? 'active' : ''}`} onClick={handleLinkClick}>
                 <span className="subitem-label">Réservations Actives</span>
               </Link>
-              <Link to="/admin/reservations/online" className={`nav-subitem ${isActive('/admin/reservations/online') ? 'active' : ''}`} onClick={handleLinkClick}>
+              <Link to="/admin/reservations/online" className={`nav-subitem ${location.pathname === '/admin/reservations/online' ? 'active' : ''}`} onClick={handleLinkClick}>
                 <span className="subitem-label">Réservations en ligne</span>
                 {onlineReservationsCount > 0 && (
                   <span className="nav-badge">{onlineReservationsCount}</span>
                 )}
+              </Link>
+              <Link to="/admin/reservations/historique" className={`nav-subitem ${location.pathname === '/admin/reservations/historique' ? 'active' : ''}`} onClick={handleLinkClick}>
+                <span className="subitem-label">Historique</span>
               </Link>
               <Link to="/admin/contact-messages" className={`nav-subitem ${isActive('/admin/contact-messages') ? 'active' : ''}`} onClick={handleLinkClick}>
                 <span className="subitem-label">Contact</span>

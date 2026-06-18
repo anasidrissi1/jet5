@@ -65,7 +65,7 @@ Le QR code sera généré dans : `/var/www/JET5/backend/media/qr_codes/inscripti
 
 ## 📊 Suivi des demandes :
 
-Les agents peuvent voir toutes les demandes dans :
+Les demandes d'inscription sont visibles dans :
 **Dashboard → Clients → Demandes en attente**
 
 Chaque demande peut être :

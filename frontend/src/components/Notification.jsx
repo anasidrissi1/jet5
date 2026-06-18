@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNotification } from '../contexts/NotificationContext';
 import '../styles/notification.css';
 
@@ -15,6 +15,16 @@ const Notification = ({
     ? (Number.isFinite(duration) ? duration : null)
     : (duration === null ? null : 5000);
 
+  const handleClose = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      if (id) {
+        removeNotification(id);
+      }
+    }, 300); // Match animation duration
+  }, [id, removeNotification]);
+
   useEffect(() => {
     if (effectiveDuration && isVisible) {
       const timer = setTimeout(() => {
@@ -23,17 +33,7 @@ const Notification = ({
 
       return () => clearTimeout(timer);
     }
-  }, [effectiveDuration, isVisible]);
-
-  const handleClose = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      if (id) {
-        removeNotification(id);
-      }
-    }, 300); // Match animation duration
-  };
+  }, [effectiveDuration, isVisible, handleClose]);
 
   if (!isVisible) return null;
 

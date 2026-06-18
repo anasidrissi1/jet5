@@ -17,6 +17,7 @@ class PublicVoitureSerializer(serializers.ModelSerializer):
 
     is_available = serializers.BooleanField(read_only=True)
     images = VoitureImageSerializer(many=True, read_only=True)
+    image_url = serializers.SerializerMethodField()
     categorie_label = serializers.CharField(source='get_categorie_display', read_only=True)
     transmission_label = serializers.CharField(source='get_transmission_display', read_only=True)
 
@@ -24,11 +25,25 @@ class PublicVoitureSerializer(serializers.ModelSerializer):
         model = Voiture
         fields = [
             'id', 'marque', 'modele', 'immatriculation', 'couleur', 'kilometrage',
-            'prix_journalier', 'statut', 'image_principale', 'images', 'is_available',
+            'prix_journalier', 'statut', 'image_principale', 'image_url', 'images', 'is_available',
             'is_popular',
             'categorie', 'categorie_label', 'transmission', 'transmission_label',
             'carburant', 'annee', 'description', 'nombre_places', 'equipements',
         ]
+
+    def get_image_url(self, obj):
+        image_field = obj.image_principale
+        if not image_field:
+            first_gallery = obj.images.first()
+            if first_gallery and first_gallery.image:
+                image_field = first_gallery.image
+            else:
+                return None
+        request = self.context.get('request')
+        url = image_field.url
+        if request:
+            return request.build_absolute_uri(url)
+        return url
 
 
 # ----------------- VOITURE -----------------

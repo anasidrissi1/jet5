@@ -304,27 +304,24 @@ class ContratLocationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def historique(self, request):
         """Liste des réservations terminées et payées (historique)"""
-        from payments.models import Payment
-        from django.db.models import Sum
-        
         today = date.today()
-        
-        # Réservations terminées (date passée) et complètement payées
+
         reservations = ContratLocation.objects.filter(
             is_deleted=False,
-            date_fin__lt=today
-        ).order_by('-date_fin')
-        
-        # Filtrer celles qui sont complètement payées
+            date_fin__lt=today,
+        ).select_related('voiture', 'client', 'payment').order_by('-date_fin')
+
         historique_list = []
         for reservation in reservations:
-            total_paye = Payment.objects.filter(
-                reservation=reservation
-            ).aggregate(Sum('montant'))['montant__sum'] or 0
-            
-            if total_paye >= reservation.montant_total:
+            payment = getattr(reservation, 'payment', None)
+            if not payment or payment.is_deleted:
+                continue
+
+            total_covered = (payment.paid_amount or Decimal('0.00')) + (payment.forgiven_amount or Decimal('0.00'))
+            montant_total = reservation.montant_total or Decimal('0.00')
+            if total_covered >= montant_total:
                 historique_list.append(reservation)
-        
+
         serializer = self.get_serializer(historique_list, many=True)
         return Response(serializer.data)
     

@@ -38,7 +38,7 @@ function RevisionForm({ onChange, initialData = null }) {
       }
       didInitRef.current = true;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [initialData]);
 
   // Calculer les totaux

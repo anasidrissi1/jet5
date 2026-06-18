@@ -14,7 +14,6 @@
   --color-violet: #B8923A;
 
   --primary-color: var(--color-teal);
-  --on-accent: #111827;
   --success-color: var(--color-success);
   --warning-color: var(--color-warning);
   --danger-color: var(--color-danger);
@@ -83,21 +82,42 @@
   --gradient-info: linear-gradient(135deg, #D4B061 0%, #B8923A 100%);
   --gradient-violet: linear-gradient(135deg, #D4B061 0%, #B8923A 100%);
 
-  /* Cross-component semantic surfaces */
-  --surface-panel: #EEF1F5;
-  --surface-info-bg: rgba(59, 130, 246, 0.12);
-  --surface-info-border: rgba(96, 165, 250, 0.4);
-  --surface-success-bg: rgba(34, 197, 94, 0.12);
-  --surface-success-border: rgba(74, 222, 128, 0.35);
-  --surface-warning-bg: rgba(200, 162, 74, 0.14);
-  --surface-warning-border: rgba(184, 146, 58, 0.36);
-  --surface-danger-bg: rgba(200, 162, 74, 0.16);
-  --surface-danger-border: rgba(146, 113, 43, 0.42);
-  --surface-muted-bg: rgba(148, 163, 184, 0.18);
-  --surface-muted-border: rgba(148, 163, 184, 0.28);
-  --focus-ring: var(--color-info);
+  /* Admin light palette — soft contrast, easy on the eyes */
+  color-scheme: light;
+  --bg-primary: #F3F5F8;
+  --bg-secondary: #ECEFF3;
+  --bg-card: #FFFFFF;
+  --bg-hover: #E8EDF3;
+  --bg-tertiary: #F0F3F7;
+
+  --border-color: #D8DEE6;
+  --border-hover: rgba(184, 146, 58, 0.38);
+
+  --text-primary: #243447;
+  --text-secondary: #5A6B7D;
+  --text-tertiary: #7B8794;
+  --on-accent: #1F2937;
+
+  --surface-panel: #F0F3F7;
+  --dashboard-table-header-bg: #F7F9FC;
+  --dashboard-table-row-bg: #FFFFFF;
+  --dashboard-table-car-bg: #F4F7FB;
+  --dashboard-table-header-text: #243447;
+  --dashboard-table-border: #D8DEE6;
+  --surface-info-bg: #EEF4FF;
+  --surface-info-border: #C7D7F0;
+  --surface-success-bg: #ECFDF3;
+  --surface-success-border: #BBF7D0;
+  --surface-warning-bg: #F7F0E3;
+  --surface-warning-border: #D4BC82;
+  --surface-danger-bg: #F9F1E3;
+  --surface-danger-border: #D4BC82;
+  --surface-muted-bg: #ECEFF3;
+  --surface-muted-border: #D8DEE6;
+  --focus-ring: #B8923A;
 }
 
+/* Public site only — dark theme when PublicLayout sets data-theme="dark" */
 html[data-theme="dark"] {
   color-scheme: dark;
   --bg-primary: #0A0A0A;
@@ -119,40 +139,16 @@ html[data-theme="dark"] {
   --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 10px 20px rgba(0, 0, 0, 0.35);
   --surface-panel: rgba(15, 23, 42, 0.72);
+  --dashboard-table-header-bg: rgba(24, 30, 45, 0.98);
+  --dashboard-table-row-bg: #0f121b;
+  --dashboard-table-car-bg: #11151f;
+  --dashboard-table-header-text: #ffffff;
+  --dashboard-table-border: #1f2430;
 }
 
-html[data-theme="light"] {
+html[data-theme="light"],
+html:not([data-theme="dark"]) {
   color-scheme: light;
-  --bg-primary: #E9EDF2;
-  --bg-secondary: #E2E7EE;
-  --bg-card: #EEF2F7;
-  --bg-hover: #DEE4EC;
-  --bg-tertiary: #E3E8EF;
-
-  --border-color: #CCD4DF;
-  --border-hover: rgba(184, 146, 58, 0.42);
-
-  --text-primary: #0F172A;
-  --text-secondary: #1F2937;
-  --text-tertiary: #374151;
-  --on-accent: #111827;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 16px 30px rgba(0, 0, 0, 0.1);
-  --surface-panel: #E8EDF4;
-  --surface-info-bg: #ECEFF5;
-  --surface-info-border: #CFD7E2;
-  --surface-success-bg: #ECFDF3;
-  --surface-success-border: #BBF7D0;
-  --surface-warning-bg: #F3EBDC;
-  --surface-warning-border: #D0B276;
-  --surface-danger-bg: #EFE5D2;
-  --surface-danger-border: #C8A25D;
-  --surface-muted-bg: #E3E8EF;
-  --surface-muted-border: #CCD4DF;
-  --focus-ring: #B8923A;
 }
 
 /* ========== GLOBAL STYLES ========== */
@@ -637,224 +633,324 @@ tbody tr:last-child td {
 }
 
 /* ========== LIGHT MODE HARD OVERRIDES ========== */
-html[data-theme="light"] .header,
-html[data-theme="light"] .sidebar-professional,
-html[data-theme="light"] .table-container,
-html[data-theme="light"] .card,
-html[data-theme="light"] .modal,
-html[data-theme="light"] .kpi-card {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .header,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .sidebar-professional,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .table-container,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .card,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .modal,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .kpi-card {
   background: var(--bg-card);
   color: var(--text-primary);
   border-color: var(--border-color);
 }
 
-html[data-theme="light"] .header-search,
-html[data-theme="light"] .nav-submenu,
-html[data-theme="light"] .search-input-wrapper,
-html[data-theme="light"] .search-shortcut {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .header-search,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .nav-submenu,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-input-wrapper,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-shortcut {
   background: var(--bg-tertiary);
   border-color: var(--border-color);
   color: var(--text-primary);
 }
 
-html[data-theme="light"] .search-modal {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-modal {
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-xl);
 }
 
-html[data-theme="light"] .search-overlay {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-overlay {
   background: rgba(17, 24, 39, 0.28);
 }
 
-html[data-theme="light"] .search-header,
-html[data-theme="light"] .results-header {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-header,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .results-header {
   border-color: var(--border-color);
   background: var(--bg-tertiary);
   color: var(--text-primary);
 }
 
-html[data-theme="light"] .search-input,
-html[data-theme="light"] .search-icon,
-html[data-theme="light"] .search-hint,
-html[data-theme="light"] .search-empty,
-html[data-theme="light"] .empty-hint,
-html[data-theme="light"] .results-header h3 {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-input,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-icon,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-hint,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-empty,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .empty-hint,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .results-header h3 {
   color: var(--text-secondary);
 }
 
-html[data-theme="light"] p,
-html[data-theme="light"] label,
-html[data-theme="light"] li,
-html[data-theme="light"] td,
-html[data-theme="light"] .nav-label,
-html[data-theme="light"] .subitem-label,
-html[data-theme="light"] .search-placeholder,
-html[data-theme="light"] .header-subtitle,
-html[data-theme="light"] .kpi-label,
-html[data-theme="light"] .kpi-sub {
+html[data-theme="light"],
+html:not([data-theme="dark"]) p,
+html[data-theme="light"],
+html:not([data-theme="dark"]) label,
+html[data-theme="light"],
+html:not([data-theme="dark"]) li,
+html[data-theme="light"],
+html:not([data-theme="dark"]) td,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .nav-label,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .subitem-label,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-placeholder,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .header-subtitle,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .kpi-label,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .kpi-sub {
   color: var(--text-primary);
 }
 
-html[data-theme="light"] small,
-html[data-theme="light"] .muted,
-html[data-theme="light"] .text-muted,
-html[data-theme="light"] .empty-hint,
-html[data-theme="light"] .search-hint,
-html[data-theme="light"] .search-empty {
+html[data-theme="light"],
+html:not([data-theme="dark"]) small,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .muted,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .text-muted,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .empty-hint,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-hint,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-empty {
   color: var(--text-secondary) !important;
 }
 
-html[data-theme="light"] .result-item {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .result-item {
   background: var(--bg-card);
   color: var(--text-primary) !important;
   border: 1px solid var(--border-color);
 }
 
-html[data-theme="light"] .result-item:hover,
-html[data-theme="light"] .result-item:focus-visible {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .result-item:hover,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .result-item:focus-visible {
   background: var(--bg-hover);
   color: var(--text-primary) !important;
   box-shadow: var(--shadow-md);
 }
 
-html[data-theme="light"] .result-item.selected {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .result-item.selected {
   background: var(--surface-warning-bg);
   color: var(--text-primary) !important;
   box-shadow: inset 0 0 0 2px rgba(245, 196, 0, 0.45);
 }
 
-html[data-theme="light"] .result-icon {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .result-icon {
   background: var(--bg-tertiary);
   color: var(--text-primary);
   box-shadow: none;
 }
 
-html[data-theme="light"] .cars-table thead tr {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table thead tr {
   background: var(--gradient-teal);
   color: var(--on-accent);
 }
 
-html[data-theme="light"] table thead,
-html[data-theme="light"] table thead tr,
-html[data-theme="light"] .data-table thead tr,
-html[data-theme="light"] .table-header-sticky thead th,
-html[data-theme="light"] .reservations-table-wrapper .data-table thead tr,
-html[data-theme="light"] .reservations-table-wrapper .table-header-sticky thead th,
-html[data-theme="light"] .payments-table thead th,
-html[data-theme="light"] .clients-table thead,
-html[data-theme="light"] .cars-table-pro thead,
-html[data-theme="light"] .rentabilite-table thead,
-html[data-theme="light"] .monthly-table thead,
-html[data-theme="light"] .admin-contact-messages-table th,
-html[data-theme="light"] .notifications-table thead th,
-html[data-theme="light"] .table-autorisation thead tr,
-html[data-theme="light"] .car-details-table thead {
+html[data-theme="light"],
+html:not([data-theme="dark"]) table thead,
+html[data-theme="light"],
+html:not([data-theme="dark"]) table thead tr,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .data-table thead tr,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .table-header-sticky thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .reservations-table-wrapper .data-table thead tr,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .reservations-table-wrapper .table-header-sticky thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .payments-table thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .clients-table thead,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table-pro thead,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .rentabilite-table thead,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .monthly-table thead,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .admin-contact-messages-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .notifications-table thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .table-autorisation thead tr,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .car-details-table thead {
   background: var(--gradient-teal) !important;
 }
 
-html[data-theme="light"] table thead th,
-html[data-theme="light"] table th,
-html[data-theme="light"] .data-table th,
-html[data-theme="light"] .table-header-sticky thead th,
-html[data-theme="light"] .reservations-table-wrapper .data-table th,
-html[data-theme="light"] .reservations-table-wrapper .table-header-sticky thead th,
-html[data-theme="light"] .payments-table thead th,
-html[data-theme="light"] .clients-table th,
-html[data-theme="light"] .cars-table-pro th,
-html[data-theme="light"] .rentabilite-table th,
-html[data-theme="light"] .monthly-table th,
-html[data-theme="light"] .admin-contact-messages-table th,
-html[data-theme="light"] .notifications-table thead th,
-html[data-theme="light"] .table-autorisation th,
-html[data-theme="light"] .car-details-table th {
+html[data-theme="light"],
+html:not([data-theme="dark"]) table thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .data-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .table-header-sticky thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .reservations-table-wrapper .data-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .reservations-table-wrapper .table-header-sticky thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .payments-table thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .clients-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table-pro th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .rentabilite-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .monthly-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .admin-contact-messages-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .notifications-table thead th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .table-autorisation th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .car-details-table th {
   color: var(--on-accent) !important;
   border-bottom-color: rgba(17, 24, 39, 0.15) !important;
 }
 
-html[data-theme="light"] .cars-table th,
-html[data-theme="light"] .cars-table td {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table th,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table td {
   color: var(--text-primary);
   border-bottom-color: var(--border-color);
 }
 
-html[data-theme="light"] .cars-table tr:hover {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table tr:hover {
   background: var(--bg-hover);
 }
 
-html[data-theme="light"] .cars-table .plate-badge {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table .plate-badge {
   background: var(--bg-tertiary);
   color: var(--text-secondary);
 }
 
-html[data-theme="light"] input,
-html[data-theme="light"] select,
-html[data-theme="light"] textarea,
-html[data-theme="light"] .input {
+html[data-theme="light"],
+html:not([data-theme="dark"]) input,
+html[data-theme="light"],
+html:not([data-theme="dark"]) select,
+html[data-theme="light"],
+html:not([data-theme="dark"]) textarea,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .input {
   background: var(--bg-card);
   color: var(--text-primary);
   border-color: var(--border-color);
 }
 
-html[data-theme="light"] th {
+html[data-theme="light"],
+html:not([data-theme="dark"]) th {
   color: var(--on-accent);
 }
 
 /* Cars page: force light containers/background like other admin pages */
-html[data-theme="light"] .cars-page {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-page {
   background: var(--bg-primary) !important;
 }
 
-html[data-theme="light"] .cars-header {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-header {
   background: var(--bg-card) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border-color) !important;
   box-shadow: var(--shadow-md) !important;
 }
 
-html[data-theme="light"] .cars-subtitle,
-html[data-theme="light"] .cars-sub {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-subtitle,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-sub {
   color: var(--text-secondary) !important;
 }
 
-html[data-theme="light"] .cars-actions-bar,
-html[data-theme="light"] .cars-table-section,
-html[data-theme="light"] .cars-body {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-actions-bar,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table-section,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-body {
   background: var(--bg-card) !important;
   border: 1px solid var(--border-color) !important;
   box-shadow: var(--shadow-md) !important;
 }
 
-html[data-theme="light"] .cars-search-bar,
-html[data-theme="light"] .cars-status-filter,
-html[data-theme="light"] .search-input,
-html[data-theme="light"] .filter-select {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-search-bar,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-status-filter,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .search-input,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .filter-select {
   background: var(--bg-card) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border-color) !important;
 }
 
-html[data-theme="light"] .cars-stat-card {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-stat-card {
   background: var(--bg-card) !important;
   border: 1px solid var(--border-color) !important;
   box-shadow: var(--shadow-md) !important;
 }
 
-html[data-theme="light"] .cars-stat-label,
-html[data-theme="light"] .cars-stat-value,
-html[data-theme="light"] .cars-stat-detail,
-html[data-theme="light"] .cars-table td,
-html[data-theme="light"] .plate-badge {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-stat-label,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-stat-value,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-stat-detail,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .cars-table td,
+html[data-theme="light"],
+html:not([data-theme="dark"]) .plate-badge {
   color: var(--text-primary) !important;
 }
 
-html[data-theme="light"] .plate-badge {
+html[data-theme="light"],
+html:not([data-theme="dark"]) .plate-badge {
   background: var(--bg-tertiary) !important;
 }
 
 /* Light mode: harmonize card containers across admin pages */
-html[data-theme="light"] :is(
+html[data-theme="light"],
+html:not([data-theme="dark"]) :is(
   .table-card,
   .graph-card,
   .info-card,
@@ -883,7 +979,8 @@ html[data-theme="light"] :is(
   box-shadow: var(--shadow-md) !important;
 }
 
-html[data-theme="light"] :is(
+html[data-theme="light"],
+html:not([data-theme="dark"]) :is(
   .info-card-header h3,
   .return-card-title,
   .notification-detail-card h2,
@@ -894,7 +991,8 @@ html[data-theme="light"] :is(
   color: var(--text-primary) !important;
 }
 
-html[data-theme="light"] :is(
+html[data-theme="light"],
+html:not([data-theme="dark"]) :is(
   .info-card-body,
   .return-card-client,
   .return-card-plate,

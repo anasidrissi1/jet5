@@ -1,0 +1,12 @@
+-r requirements.txt
+
+# Optional dev / notebook tooling (not needed in production)
+ipython==9.8.0
+ipykernel==7.1.0
+jupyter_client==8.6.3
+jupyter_core==5.9.1
+matplotlib==3.10.7
+pandas==2.3.3
+scikit-learn==1.7.2
+scipy==1.16.3
+debugpy==1.8.17

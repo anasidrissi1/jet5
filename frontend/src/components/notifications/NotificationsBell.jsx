@@ -16,9 +16,8 @@ function NotificationsBell({ feed }) {
 
   const urgentNotifications = feed?.urgentNotifications ?? [];
   const unreadNotifications = feed?.unreadNotifications ?? [];
-  const notifications = feed?.notifications ?? [];
+  const notifications = useMemo(() => feed?.notifications ?? [], [feed]);
   const markNotificationAsRead = feed?.markNotificationAsRead;
-  const markNotificationsAsRead = feed?.markNotificationsAsRead;
   const loading = feed?.loading;
 
   const unreadCount = unreadNotifications.length;

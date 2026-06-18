@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import apiClient from '../../api/apiClient';
+import { notificationsService } from '../../services/api';
 import Loader from '../../components/Loader';
-import '../../styles/pages.css';
 import './styles.css';
 
 const FieldRow = ({ label, children }) => (
@@ -32,7 +31,7 @@ const NotificationDetail = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await apiClient.get(`/notifications/${id}/`);
+        const res = await notificationsService.get(id);
         setNotification(res.data);
         setError(null);
       } catch (err) {
@@ -49,7 +48,7 @@ const NotificationDetail = () => {
     if (!notification || notification.est_lue) return;
     setIsProcessing(true);
     try {
-      await apiClient.patch(`/notifications/${id}/`, { est_lue: true });
+      await notificationsService.markRead(id);
       setNotification((prev) => ({ ...prev, est_lue: true }));
     } catch (err) {
       console.error(err);
@@ -62,7 +61,7 @@ const NotificationDetail = () => {
     if (!window.confirm('Supprimer cette notification ?')) return;
     setIsProcessing(true);
     try {
-      await apiClient.delete(`/notifications/${id}/`);
+      await notificationsService.delete(id);
       navigate('/admin/notifications');
     } catch (err) {
       console.error(err);

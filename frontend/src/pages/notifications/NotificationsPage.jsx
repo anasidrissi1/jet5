@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNotification } from "../../contexts/NotificationContext";
 import Loader from "../../components/Loader";
-import apiClient from "../../api/apiClient";
+import { notificationsService } from "../../services/api";
 import useNotificationsData from "./hooks/useNotificationsData";
 import NotificationsHeader from "./components/NotificationsHeader";
 import NotificationsSummary from "./components/NotificationsSummary";
 import NotificationsFilters from "./components/NotificationsFilters";
 import NotificationsTable from "./components/NotificationsTable";
-import "../../styles/pages.css";
-import "../../styles/cars.css";
 import "../../styles/autorisations.css";
 import "./styles.css";
 
@@ -136,7 +134,7 @@ const NotificationsPage = () => {
 
     setIsProcessing(true);
     try {
-      await apiClient.post("/notifications/generer/");
+      await notificationsService.generate();
       await refresh();
       addNotification("Notifications générées avec succès", "success");
     } catch (err) {
@@ -150,7 +148,7 @@ const NotificationsPage = () => {
   const handleMarkAsRead = async (id) => {
     setIsProcessing(true);
     try {
-      await apiClient.patch(`/notifications/${id}/`, { est_lue: true });
+      await notificationsService.markRead(id);
       await refresh();
       addNotification("Notification marquée comme lue", "success");
     } catch (err) {
@@ -185,7 +183,7 @@ const NotificationsPage = () => {
 
     setIsProcessing(true);
     try {
-      await apiClient.delete(`/notifications/${pendingDelete.id}/`);
+      await notificationsService.delete(pendingDelete.id);
       await refresh();
       addNotification("Notification supprimée", "success");
     } catch (err) {

@@ -14,6 +14,7 @@
   position: sticky;
   top: 0;
   z-index: 950;
+  flex-shrink: 0;
   overflow: visible;
   backdrop-filter: blur(6px);
 }
@@ -253,12 +254,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  border: 1px solid rgba(245, 196, 0, 0.35);
-  background: linear-gradient(90deg, #0A0A0A, #1a1a1a);
-  color: #C8A24A;
+  border: 1px solid var(--surface-warning-border);
+  background: var(--surface-warning-bg);
+  color: var(--text-primary);
   border-radius: var(--radius-lg);
   padding: 0.45rem 0.75rem;
-  box-shadow: 0 6px 18px rgba(245, 196, 0, 0.15);
+  box-shadow: var(--shadow-sm);
 }
 
 .returns-banner__top {
@@ -280,8 +281,8 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #C8A24A;
-  box-shadow: 0 0 0 4px rgba(245, 196, 0, 0.2);
+  background: var(--primary-color);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-color) 20%, transparent);
   animation: pulse-alert 1.6s ease-in-out infinite;
   flex-shrink: 0;
 }
@@ -289,22 +290,22 @@
 .returns-banner__count {
   font-weight: var(--font-weight-bold);
   font-size: 0.82rem;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .returns-banner__subtitle {
   font-size: 0.75rem;
-  color: #FFE066;
+  color: var(--text-secondary);
 }
 
 .returns-banner__cta {
-  color: #C8A24A;
+  color: #6f5722;
   font-weight: var(--font-weight-semibold);
   font-size: 0.78rem;
   padding: 0.3rem 0.7rem;
-  border: 1px solid rgba(245, 196, 0, 0.4);
+  border: 1px solid var(--surface-warning-border);
   border-radius: var(--radius-full);
-  background: rgba(245, 196, 0, 0.08);
+  background: #FFFFFF;
   white-space: nowrap;
   transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
 }
@@ -410,13 +411,15 @@
 
 @media (max-width: 768px) {
   .header {
-    padding: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    gap: 0.4rem;
   }
 
   .header-row {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
+
   .header-actions {
     width: 100%;
     justify-content: space-between;
@@ -426,12 +429,25 @@
 
   .header-left {
     width: 100%;
+    min-width: 0;
   }
 
   .header-title-block {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     justify-content: flex-start;
-    gap: 0.65rem;
+    gap: 0.5rem;
+  }
+
+  .header-subtitle {
+    display: none;
+  }
+
+  .header-title h1 {
+    font-size: 1.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .header-quick-actions {

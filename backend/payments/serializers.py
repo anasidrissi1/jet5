@@ -13,8 +13,13 @@ class PaymentHistorySerializer(serializers.ModelSerializer):
         fields = ['id', 'amount', 'forgiven_amount', 'method', 'created_at', 'created_by', 'created_by_name', 'notes']
 
 class PaymentSerializer(serializers.ModelSerializer):
-    reservation_id = serializers.PrimaryKeyRelatedField(source="reservation", queryset=Reservation.objects.all())
+    reservation_id = serializers.PrimaryKeyRelatedField(source="reservation", read_only=True)
     reservation_total = serializers.SerializerMethodField(read_only=True)
+    reservation_date_debut = serializers.DateField(source="reservation.date_debut", read_only=True)
+    reservation_date_fin = serializers.DateField(source="reservation.date_fin", read_only=True)
+    voiture_marque = serializers.CharField(source="reservation.voiture.marque", read_only=True)
+    voiture_modele = serializers.CharField(source="reservation.voiture.modele", read_only=True)
+    voiture_immatriculation = serializers.CharField(source="reservation.voiture.immatriculation", read_only=True)
     paid_amount = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
     forgiven_amount = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
     remaining = serializers.SerializerMethodField(read_only=True)
@@ -33,8 +38,10 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = [
-            "id", "reference", "reservation_id", "client_name", "client_id", "amount", 
-            "method", "status", "date", "paid_at", "created_at", "reservation_total", 
+            "id", "reference", "reservation_id", "client_name", "client_id", "amount",
+            "method", "status", "date", "paid_at", "created_at", "reservation_total",
+            "reservation_date_debut", "reservation_date_fin",
+            "voiture_marque", "voiture_modele", "voiture_immatriculation",
             "paid_amount", "forgiven_amount", "remaining", "invoice_url",
             "monthly_amount", "next_due_date", "months_due", "expected_paid",
             "remaining_to_catch_up", "is_overdue",
@@ -137,19 +144,24 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
         attrs["_advance_decimal"] = advance
         return attrs
 
+    def validate_reservation(self, reservation):
+        existing = Payment.objects.filter(reservation=reservation, is_deleted=False).first()
+        if existing and existing.paid_amount > Decimal("0.00"):
+            raise serializers.ValidationError(
+                "Un paiement avec acompte existe déjà pour cette réservation. Utilisez la page de modification."
+            )
+        return reservation
+
     def create(self, validated_data):
         reservation = validated_data["reservation"]
         method = validated_data.get("method", "CARD")
         total = validated_data.pop("_reservation_total")
         advance = validated_data.pop("_advance_decimal", Decimal("0.00"))
+        user = self.context.get("request").user if self.context.get("request") else None
 
-        # Determine status and paid_at depending on advance
         if advance >= total:
             status = "PAID"
             paid_at = timezone.now()
-        elif advance > Decimal("0.00"):
-            status = "PENDING"
-            paid_at = None
         else:
             status = "PENDING"
             paid_at = None
@@ -158,26 +170,39 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
         client_name = f"{client.nom} {client.prenom}"
         client_id = client.id
 
-        payment = Payment.objects.create(
-            reservation=reservation,
-            amount=total,
-            method=method,
-            status=status,
-            paid_at=paid_at,
-            paid_amount=advance,
-            client_name=client_name,
-            client_id=client_id,
-            created_by=self.context.get("request").user if self.context.get("request") else None,
-        )
+        existing = Payment.objects.filter(reservation=reservation, is_deleted=False).first()
+        if existing:
+            existing.amount = total
+            existing.method = method
+            existing.status = status
+            existing.paid_at = paid_at
+            existing.paid_amount = advance
+            existing.client_name = client_name
+            existing.client_id = client_id
+            if user:
+                existing.created_by = user
+            existing.save()
+            payment = existing
+        else:
+            payment = Payment.objects.create(
+                reservation=reservation,
+                amount=total,
+                method=method,
+                status=status,
+                paid_at=paid_at,
+                paid_amount=advance,
+                client_name=client_name,
+                client_id=client_id,
+                created_by=user,
+            )
 
-        # Créer l'entrée d'historique pour l'avance initiale
-        if advance > 0:
+        if advance > 0 and not payment.history.filter(notes="Acompte initial").exists():
             PaymentHistory.objects.create(
                 payment=payment,
                 amount=advance,
                 method=method,
-                created_by=self.context.get("request").user if self.context.get("request") else None,
-                notes="Acompte initial"
+                created_by=user,
+                notes="Acompte initial",
             )
 
         return payment

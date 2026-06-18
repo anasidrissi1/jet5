@@ -1,13 +1,11 @@
 from decimal import Decimal
 import logging
 from django.utils import timezone
-from django.db.models import Sum, Q, F, Case, When, Value, DecimalField
+from django.db.models import Sum
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
 
 from .models import Payment, PaymentHistory
 from .serializers import PaymentSerializer, PaymentCreateSerializer, PaymentHistorySerializer
@@ -15,14 +13,9 @@ from .utils import generate_invoice_pdf
 
 logger = logging.getLogger(__name__)
 
-class IsAdminOrReadOnly(IsAuthenticated):
-    def has_permission(self, request, view):
-        if request.method in ['GET', 'HEAD', 'OPTIONS']:
-            return True
-        return request.user and request.user.is_authenticated
 
 class PaymentViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Retourne uniquement les paiements actifs (non supprimés)"""
@@ -46,7 +39,10 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         payment = serializer.save()
-        payment.generate_and_attach_invoice(generate_invoice_pdf)
+        try:
+            payment.generate_and_attach_invoice(generate_invoice_pdf)
+        except Exception:
+            logger.exception("Invoice generation failed for payment %s", payment.pk)
         return payment
 
     @action(detail=True, methods=["get"], url_path="invoice", permission_classes=[IsAuthenticated])
@@ -157,33 +153,25 @@ class PaymentViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="advance-details")
     def advance_details(self, request, pk=None):
         payment = self.get_object()
-        history = payment.history.all().order_by('created_at')
-
-        # Calculer le montant initial (premier paiement)
-        initial_amount = payment.paid_amount
-        for h in history:
-            initial_amount -= h.amount
+        history = list(payment.history.all().order_by('created_at'))
 
         advance_details = []
-
-        # Ajouter le montant initial
-        if initial_amount > 0:
+        for index, entry in enumerate(history):
             advance_details.append({
-                "type": "initial",
-                "amount": initial_amount,
-                "date": payment.created_at.isoformat(),
-                "method": payment.method,
-                "notes": "Paiement initial"
+                "type": "initial" if index == 0 else "addition",
+                "amount": entry.amount,
+                "date": entry.created_at.isoformat(),
+                "method": entry.method,
+                "notes": entry.notes or ("Paiement initial" if index == 0 else "Ajout de paiement"),
             })
 
-        # Ajouter chaque ajout
-        for h in history:
+        if not history and payment.paid_amount > 0:
             advance_details.append({
-                "type": "addition",
-                "amount": h.amount,
-                "date": h.created_at.isoformat(),
-                "method": h.method,
-                "notes": h.notes or "Ajout de paiement"
+                "type": "initial",
+                "amount": payment.paid_amount,
+                "date": payment.created_at.isoformat(),
+                "method": payment.method,
+                "notes": "Paiement initial",
             })
 
         return Response({
@@ -198,7 +186,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
         # Get all active reservations
         reservations = ContratLocation.objects.filter(
-            statut__in=['en_cours', 'termine', 'en_attente', 'confirme']
+            statut__in=['planifiee', 'en_cours', 'termine']
         ).select_related('client', 'voiture').prefetch_related('payment').order_by('-date_debut')
 
         summary_data = []

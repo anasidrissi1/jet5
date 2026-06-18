@@ -33,7 +33,7 @@ export const generateInvoicePDF = async (invoiceData) => {
         reader.onload = () => resolve(reader.result);
         reader.readAsDataURL(blob);
       });
-    } catch (e) {
+    } catch {
       return null;
     }
   };
@@ -71,10 +71,8 @@ export const generateInvoicePDF = async (invoiceData) => {
   doc.setFontSize(9);
   doc.text(`Casablanca le : ${new Date(invoiceDate).toLocaleDateString('fr-FR')}`, 150, 30);
 
-  // Facture N° et ICE client sous le logo
-  const invoiceNumber = reservation.facture_number || reservation.invoice_number || reservation.id || '';
+  // Facture and ICE client under the logo
   doc.setFontSize(10);
-  // invoice number removed from visual output as requested
   if (client?.ice) doc.text(`ICE Client : ${client.ice}`, 20, 56);
 
   // Encadré client (droite)
@@ -344,16 +342,5 @@ export const generateInvoicePDF = async (invoiceData) => {
     }
     return n.toString();
   };
-
-const getStatusLabel = (status) => {
-  const statusMap = {
-    'en_cours': 'En cours',
-    'confirmee': 'Confirmee',
-    'en_attente': 'En attente',
-    'termine': 'Terminee',
-    'annule': 'Annulee'
-  };
-  return statusMap[status?.toLowerCase()] || status || 'Inconnu';
-};
 
 export default generateInvoicePDF;

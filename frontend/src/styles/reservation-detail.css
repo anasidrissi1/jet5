@@ -1,8 +1,8 @@
-﻿/* Reservation Detail Page Styles */
-.reservation-detail-page {
+﻿.reservation-detail-page {
   display: flex;
   justify-content: center;
   padding: var(--spacing-lg, 24px);
+  background: var(--bg-primary);
 }
 
 .reservation-detail-card {
@@ -53,7 +53,7 @@
 }
 
 .reservation-detail-section {
-  background: var(--bg-secondary);
+  background: var(--bg-hover);
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 20px;
@@ -64,11 +64,11 @@
 }
 
 .reservation-detail-section.metadata {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
   border-color: var(--border-color);
 }
 
-.reservation-detail-section .section-title {
+.section-title {
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 700;
@@ -97,13 +97,13 @@
 
 .reservation-detail-value {
   flex: 1;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
   padding: 10px 14px;
   border-radius: 10px;
   color: var(--text-primary);
   font-size: 1rem;
   font-weight: 600;
+  border: 1px solid var(--border-color);
 }
 
 .reservation-detail-value.highlight-success {
@@ -121,11 +121,10 @@
 .reservation-detail-value.highlight-info {
   background: rgba(59, 130, 246, 0.15);
   border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #B8923A;
+  color: #3b82f6;
 }
 
-/* Status badges */
-.reservation-detail-page .status-badge {
+.status-badge {
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
@@ -135,37 +134,36 @@
   text-transform: capitalize;
 }
 
-.reservation-detail-page .status-badge.status-green {
+.status-badge.status-green {
   background: rgba(16, 185, 129, 0.2);
   border: 1px solid rgba(16, 185, 129, 0.4);
   color: #10b981;
 }
 
-.reservation-detail-page .status-badge.status-blue {
+.status-badge.status-blue {
   background: rgba(59, 130, 246, 0.2);
   border: 1px solid rgba(59, 130, 246, 0.4);
-  color: #B8923A;
+  color: #3b82f6;
 }
 
-.reservation-detail-page .status-badge.status-purple {
+.status-badge.status-purple {
   background: rgba(168, 85, 247, 0.2);
   border: 1px solid rgba(168, 85, 247, 0.4);
   color: #a855f7;
 }
 
-.reservation-detail-page .status-badge.status-red {
-  background: rgba(245, 196, 0, 0.2);
-  border: 1px solid rgba(245, 196, 0, 0.4);
-  color: #B8923A;
+.status-badge.status-red {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
 }
 
-.reservation-detail-page .status-badge.status-gray {
+.status-badge.status-gray {
   background: rgba(148, 163, 184, 0.2);
   border: 1px solid rgba(148, 163, 184, 0.4);
   color: #94a3b8;
 }
 
-/* Payment summary grid */
 .payment-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -179,23 +177,8 @@
   justify-content: center;
   padding: 20px;
   border-radius: 12px;
-  background: var(--bg-card);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-}
-
-.payment-summary-item.main {
-  background: rgba(99, 102, 241, 0.15);
-  border-color: rgba(99, 102, 241, 0.3);
-}
-
-.payment-summary-item.success {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-.payment-summary-item.warning {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.3);
 }
 
 .payment-summary-label {
@@ -207,29 +190,12 @@
   margin-bottom: 8px;
 }
 
-.payment-summary-item.success .payment-summary-label {
-  color: rgba(110, 231, 183, 0.8);
-}
-
-.payment-summary-item.warning .payment-summary-label {
-  color: rgba(252, 211, 77, 0.8);
-}
-
 .payment-summary-value {
   font-size: 1.4rem;
   font-weight: 800;
   color: var(--text-primary);
 }
 
-.payment-summary-item.success .payment-summary-value {
-  color: #10b981;
-}
-
-.payment-summary-item.warning .payment-summary-value {
-  color: #f59e0b;
-}
-
-/* Payment history list */
 .payment-history-list {
   display: flex;
   flex-direction: column;
@@ -240,7 +206,7 @@
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  background: var(--bg-card);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 14px 18px;
@@ -248,7 +214,7 @@
 }
 
 .payment-history-item:hover {
-  border-color: rgba(99, 102, 241, 0.35);
+  border-color: var(--border-hover);
 }
 
 .payment-history-icon {
@@ -257,8 +223,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(99, 102, 241, 0.2);
-  border: 1px solid rgba(129, 140, 248, 0.3);
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 20px;
 }
@@ -295,7 +261,7 @@
 
 .payment-history-amount {
   font-weight: 800;
-  color: #10b981;
+  color: var(--color-success);
   font-size: 1rem;
 }
 
@@ -306,8 +272,8 @@
 
 .payment-history-remise {
   font-size: 0.85rem;
-  color: #D4B061;
-  background: rgba(250, 204, 21, 0.1);
+  color: var(--color-warning);
+  background: rgba(217, 119, 6, 0.1);
   padding: 4px 10px;
   border-radius: 6px;
 }
@@ -316,16 +282,15 @@
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.05em;
-  color: #2dd4bf;
-  background: rgba(20, 184, 166, 0.12);
-  border-color: rgba(45, 212, 191, 0.3);
+  color: var(--color-success);
+  background: rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.3);
 }
 
-/* Notes panel */
 .reservation-message-panel {
   grid-column: 1 / -1;
-  background: var(--surface-info-bg);
-  border: 1px solid var(--surface-info-border);
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
   padding: 18px;
   border-radius: 12px;
   color: var(--text-primary);
@@ -340,38 +305,32 @@
   color: var(--text-primary);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .reservation-detail-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .reservation-detail-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .reservation-detail-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
-  
-  .payment-summary-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .reservation-detail-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-  
-  .reservation-detail-label {
-    min-width: auto;
-  }
-  
-  .reservation-detail-value {
-    width: 100%;
-  }
+/* ========== THEME-SPECIFIC OVERRIDES ========== */
+
+.payment-summary-item.main {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+.payment-summary-item.success {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.36);
+}
+
+.payment-summary-item.warning {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.payment-summary-item.main .payment-summary-value {
+  color: var(--color-danger);
+}
+
+.payment-summary-item.success .payment-summary-value {
+  color: var(--color-success);
+}
+
+.payment-summary-item.warning .payment-summary-value {
+  color: var(--color-warning);
 }
 

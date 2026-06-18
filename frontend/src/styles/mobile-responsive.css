@@ -74,13 +74,79 @@
     overflow-x: hidden;
   }
 
+  /* Admin mobile : plein écran sans scroll de page (comme desktop) */
+  html:has(.app-layout.is-mobile),
+  html:has(.app-layout.is-mobile) body,
+  html:has(.app-layout.is-mobile) #root {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
   .app-layout {
-    min-height: 100dvh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .main-content {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .page-content {
     width: 100%;
     padding-top: 0.65rem !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .page-content--dashboard {
+    overflow: hidden;
+    padding-top: 0.5rem !important;
+  }
+
+  /* Pages admin : éviter min-height 100vh (double scroll) */
+  .cars-page,
+  .cars-professional-page,
+  .clients-professional-page,
+  .page-shell,
+  :is(.dashboard-new, .reservations-professional-page, .payments-page, .rentabilite-page) {
+    min-height: 0 !important;
+  }
+
+  /* Dashboard mobile compact */
+  .dashboard-page-subtitle,
+  .planning-hero-card p {
+    display: none;
+  }
+
+  .dashboard-page-title {
+    font-size: 1.1rem !important;
+  }
+
+  .dashboard-page-header {
+    padding: 0.55rem 0.65rem !important;
+    border-radius: 0.65rem !important;
+  }
+
+  .planning-hero-card {
+    padding: 0.45rem 0.65rem !important;
+  }
+
+  .planning-hero-card h2 {
+    font-size: 0.95rem !important;
+    margin: 0;
+  }
+
+  .planning-legend {
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-planning {
+    gap: 0.4rem;
   }
 
   /* Layout principal */
@@ -88,16 +154,23 @@
     padding: 8px !important;
   }
 
-  /* Boutons header */
-  .header-actions {
+  /* Boutons d'action des pages (pas le header global) */
+  .cars-header .header-actions,
+  .clients-header .header-actions,
+  .reservations-header .header-actions,
+  .rentabilite-header .header-actions,
+  .page-header .header-actions {
     flex-direction: column;
     width: 100%;
     gap: 8px;
   }
 
-  .header-actions button,
-  .header-actions .btn-primary,
-  .btn-add-new {
+  .cars-header .header-actions button,
+  .clients-header .header-actions button,
+  .page-header .header-actions button,
+  .page-header .header-actions .btn-primary,
+  .cars-header .btn-add-new,
+  .clients-header .btn-add-new {
     width: 100%;
     justify-content: center;
     padding: 12px 16px;

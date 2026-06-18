@@ -1,12 +1,4 @@
-const API_PREFIX = "/media/";
-
-function absoluteMediaUrl(path) {
-  if (!path || typeof path !== "string") return "";
-  if (/^https?:\/\//i.test(path)) return path;
-
-  const normalized = path.startsWith("/") ? path : `/${path}`;
-  return normalized.includes(API_PREFIX) ? normalized : `${API_PREFIX}${path}`;
-}
+import { buildMediaUrl } from '../config/env';
 
 export function normalizePublicCars(payload) {
   if (Array.isArray(payload)) return payload;
@@ -15,33 +7,35 @@ export function normalizePublicCars(payload) {
 }
 
 export function getCarName(car) {
-  if (!car || typeof car !== "object") return "Voiture";
-  const marque = car.marque || "";
-  const modele = car.modele || "";
+  if (!car || typeof car !== 'object') return 'Voiture';
+  const marque = car.marque || '';
+  const modele = car.modele || '';
   const full = `${marque} ${modele}`.trim();
-  return full || car.nom || "Voiture";
+  return full || car.nom || 'Voiture';
 }
 
 export function getCarImage(car) {
-  if (!car || typeof car !== "object") return "";
+  if (!car || typeof car !== 'object') return '';
 
   const candidates = [
     car.image_url,
+    car.image_principale,
     car.image,
     car.photo,
     car.photo_url,
     car.cover,
     car.couverture,
+    Array.isArray(car.images) ? car.images[0]?.image : null,
   ];
 
-  const first = candidates.find((value) => typeof value === "string" && value.trim() !== "");
-  if (!first) return "";
+  const first = candidates.find((value) => typeof value === 'string' && value.trim() !== '');
+  if (!first) return '';
 
-  return absoluteMediaUrl(first.trim());
+  return buildMediaUrl(first.trim());
 }
 
 export function mapPublicCar(car) {
-  if (!car || typeof car !== "object") {
+  if (!car || typeof car !== 'object') {
     return null;
   }
 
@@ -51,14 +45,14 @@ export function mapPublicCar(car) {
   return {
     id: String(car.id),
     name,
-    category: car.categorie_label || car.categorie || "-",
+    category: car.categorie_label || car.categorie || '-',
     price: Number(car.prix_journalier || 0),
-    description: car.description || "",
+    description: car.description || '',
     image,
-    seats: car.nombre_places || "-",
-    transmission: car.transmission_label || car.transmission || "-",
-    fuel: car.carburant || "-",
-    power: car.puissance || "-",
+    seats: car.nombre_places || '-',
+    transmission: car.transmission_label || car.transmission || '-',
+    fuel: car.carburant || '-',
+    power: car.puissance || '-',
     isPopular: Boolean(car.is_popular),
     isAvailable: Boolean(car.is_available),
   };

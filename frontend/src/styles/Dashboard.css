@@ -5,14 +5,289 @@
   margin: 0 auto;
 }
 
-/* Dashboard Header */
-.dashboard-header {
+.dashboard-planning {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow: hidden;
+}
+
+.dashboard-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid var(--border-color);
+  gap: 1rem;
+  margin-bottom: 0;
+  background: var(--bg-card);
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  position: static;
+  top: auto;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.dashboard-page-header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-page-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dashboard-page-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.dashboard-page-header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.planning-hero-card {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.85rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.planning-hero-card h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.planning-hero-card p {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.planning-legend {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  align-items: center;
+  padding: 0.55rem 0.85rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.planning-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.planning-legend .dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.dot-disponible {
+  background: var(--dashboard-table-row-bg);
+  border: 1px solid var(--dashboard-table-border);
+}
+
+.dot-reserve {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+.dot-aujourdhui {
+  background: rgba(200, 162, 74, 0.28);
+  border: 2px solid #c8a24a;
+}
+
+.planning-table-shell {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 0;
+  border: 1px solid var(--dashboard-table-border);
+  border-radius: 0.85rem;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.planning-table-scroller {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: auto;
+}
+
+.planning-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.planning-table th,
+.planning-table td {
+  padding: 0.45rem 0.35rem;
+  border: 1px solid var(--dashboard-table-border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.76rem;
+}
+
+.planning-table th {
+  text-align: center;
+}
+
+.planning-table td {
+  background: var(--dashboard-table-row-bg);
+}
+
+.planning-table .planning-col-car {
+  min-width: 200px;
+  width: 200px;
+  text-align: left;
+}
+
+.planning-table .planning-col-day {
+  min-width: 2.15rem;
+  width: 2.15rem;
+}
+
+.planning-col-day.is-today {
+  background: rgba(200, 162, 74, 0.18);
+  color: #c8a24a;
+  font-weight: 700;
+}
+
+.planning-car-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.planning-car-meta strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
+.planning-car-meta span {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.planning-cell-text {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.planning-table th {
+  position: sticky;
+  top: 0;
+  background: var(--dashboard-table-header-bg);
+  z-index: 20;
+  text-align: center;
+  color: var(--dashboard-table-header-text);
+  border-color: var(--dashboard-table-border);
+}
+
+.planning-table td {
+  text-align: center;
+  color: var(--text-primary);
+  border-color: var(--dashboard-table-border);
+}
+
+.planning-table td.planning-col-car,
+.planning-table th.planning-col-car {
+  position: sticky;
+  left: 0;
+  z-index: 21;
+  min-width: 200px;
+  width: 200px;
+  text-align: left;
+  background: var(--dashboard-table-car-bg);
+}
+
+.planning-table thead th.planning-col-car {
+  z-index: 22;
+}
+
+.planning-table tr:hover td {
+  filter: brightness(1.03);
+}
+
+.planning-cell {
+  cursor: default;
+  transition: filter 0.15s ease;
+}
+
+.planning-cell.status-disponible {
+  background: var(--dashboard-table-row-bg);
+}
+
+.planning-cell.status-reserve {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: #ffffff;
+}
+
+.planning-cell.status-aujourdhui {
+  background: rgba(200, 162, 74, 0.22);
+  box-shadow: inset 0 0 0 2px rgba(200, 162, 74, 0.65);
+}
+
+.planning-cell.status-reserve:hover,
+.planning-cell.status-aujourdhui:hover {
+  cursor: pointer;
+  filter: brightness(1.05);
+}
+
+.dashboard-planning--loading {
+  align-items: center;
+  justify-content: center;
 }
 
 .dashboard-title {
@@ -653,6 +928,31 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+  }
+
+  .dashboard-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-page-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .planning-table-shell {
+    min-height: 0;
+  }
+
+  .planning-table .planning-col-car {
+    min-width: 150px;
+    width: 150px;
+  }
+
+  .planning-table td.planning-col-car,
+  .planning-table th.planning-col-car {
+    min-width: 150px;
+    width: 150px;
   }
 
   .kpi-grid {

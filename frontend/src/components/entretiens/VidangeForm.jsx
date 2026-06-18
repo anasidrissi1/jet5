@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 
 function VidangeForm({ onChange, initialData = null }) {
   const [vidange, setVidange] = useState({
@@ -15,28 +14,27 @@ function VidangeForm({ onChange, initialData = null }) {
   });
 
   const isInitialized = useRef(false);
-  const { isDarkMode } = useTheme();
 
-  const sectionCardBg = isDarkMode ? 'rgba(15, 23, 42, 0.9)' : 'var(--bg-card)';
-  const sectionHuileBorder = isDarkMode ? '2px solid rgba(45, 212, 191, 0.5)' : '2px solid #10b981';
-  const sectionHuileTitle = isDarkMode ? '#5eead4' : '#065f46';
-  const sectionFiltresBorder = isDarkMode ? '2px solid rgba(99, 102, 241, 0.55)' : '2px solid #D4A900';
-  const sectionFiltresTitle = isDarkMode ? '#FCD34D' : '#4338ca';
-  const labelColor = isDarkMode ? '#FDE68A' : '#374151';
-  const requiredColor = isDarkMode ? '#FDE68A' : '#D4A900';
-  const inputBorderColor = isDarkMode ? 'rgba(148, 163, 184, 0.35)' : '#d1d5db';
-  const inputBackground = isDarkMode ? 'rgba(15, 23, 42, 0.88)' : '#ffffff';
-  const inputTextColor = isDarkMode ? '#e2e8f0' : '#1f2937';
-  const inputFocusBorder = isDarkMode ? '#34d399' : '#D4A900';
-  const inputBoxShadow = isDarkMode ? '0 0 0 3px rgba(52, 211, 153, 0.18)' : '0 0 0 3px rgba(59, 130, 246, 0.1)';
-  const checkboxAccent = isDarkMode ? '#a855f7' : '#D4A900';
-  const activeFilterBg = isDarkMode ? 'rgba(76, 29, 149, 0.24)' : 'var(--bg-hover)';
+  const sectionCardBg = 'var(--bg-card)';
+  const sectionHuileBorder = '2px solid #10b981';
+  const sectionHuileTitle = '#065f46';
+  const sectionFiltresBorder = '2px solid #D4A900';
+  const sectionFiltresTitle = '#4338ca';
+  const labelColor = '#374151';
+  const requiredColor = '#D4A900';
+  const inputBorderColor = '#d1d5db';
+  const inputBackground = '#ffffff';
+  const inputTextColor = '#1f2937';
+  const inputFocusBorder = '#D4A900';
+  const inputBoxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+  const checkboxAccent = '#D4A900';
+  const activeFilterBg = 'var(--bg-hover)';
   const inactiveFilterBg = sectionCardBg;
-  const filterBorderDefault = isDarkMode ? '2px solid rgba(148, 163, 184, 0.35)' : '2px solid var(--border-color)';
-  const summaryBackground = isDarkMode ? 'rgba(15, 23, 42, 0.8)' : 'var(--bg-card)';
-  const summaryBorder = isDarkMode ? '1px solid rgba(148, 163, 184, 0.35)' : '1px solid var(--border-color)';
-  const summaryLabelColor = isDarkMode ? '#94a3b8' : 'var(--text-secondary)';
-  const summaryValueColor = isDarkMode ? '#f8fafc' : 'var(--text-primary)';
+  const filterBorderDefault = '2px solid var(--border-color)';
+  const summaryBackground = 'var(--bg-card)';
+  const summaryBorder = '1px solid var(--border-color)';
+  const summaryLabelColor = 'var(--text-secondary)';
+  const summaryValueColor = 'var(--text-primary)';
 
   const sharedInputStyle = {
     width: '100%',
@@ -223,7 +221,7 @@ function VidangeForm({ onChange, initialData = null }) {
         padding: '20px',
         background: sectionCardBg,
         marginBottom: '20px',
-        boxShadow: isDarkMode ? '0 20px 40px rgba(2, 6, 23, 0.55)' : '0 12px 28px rgba(16, 185, 129, 0.12)'
+        boxShadow: '0 12px 28px rgba(16, 185, 129, 0.12)'
       }}>
         <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '15px', color: sectionHuileTitle }}>
           💧 Huile Moteur
@@ -281,7 +279,7 @@ function VidangeForm({ onChange, initialData = null }) {
         </div>
 
         {totals.totalHuile > 0 && (
-          <div style={{ marginTop: '10px', padding: '10px', background: isDarkMode ? 'rgba(34, 197, 94, 0.14)' : 'var(--bg-hover)', borderRadius: '6px', color: isDarkMode ? '#bbf7d0' : 'var(--text-primary)' }}>
+          <div style={{ marginTop: '10px', padding: '10px', background: 'var(--bg-hover)', borderRadius: '6px', color: 'var(--text-primary)' }}>
             <strong>Sous-total huile:</strong> {totals.totalHuile.toFixed(2)} MAD
           </div>
         )}
@@ -293,7 +291,7 @@ function VidangeForm({ onChange, initialData = null }) {
         borderRadius: '10px',
         padding: '20px',
         background: sectionCardBg,
-        boxShadow: isDarkMode ? '0 24px 50px rgba(17, 24, 39, 0.55)' : '0 16px 32px rgba(99, 102, 241, 0.12)'
+        boxShadow: '0 16px 32px rgba(99, 102, 241, 0.12)'
       }}>
         <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '15px', color: sectionFiltresTitle }}>
           🔧 Filtres (Optionnels)
@@ -449,7 +447,7 @@ function VidangeForm({ onChange, initialData = null }) {
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '15px',
-          boxShadow: isDarkMode ? '0 18px 44px rgba(2, 6, 23, 0.6)' : '0 10px 28px rgba(15, 118, 110, 0.1)'
+          boxShadow: '0 10px 28px rgba(15, 118, 110, 0.1)'
         }}>
           <div>
             <div style={{ fontSize: '12px', color: summaryLabelColor }}>Huile</div>

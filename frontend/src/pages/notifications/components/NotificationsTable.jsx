@@ -58,7 +58,7 @@ const NotificationsTable = ({ items, totalItems, onMarkAsRead, onDelete, isBusy 
                   if (text.includes(key)) return map[key];
                 }
                 // fallback to first token
-                const token = text.split(/[_\s\-]+/)[0];
+                const token = text.split(/[_\s-]+/)[0];
                 return token || text.substring(0, 12);
               };
 

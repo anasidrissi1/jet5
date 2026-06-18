@@ -1,11 +1,14 @@
-from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
+import logging
+
 from .models import Notification
 from .serializers import NotificationSerializer
-from .utils import generer_toutes_notifications  # whatsapp functions removed
+from .utils import generer_toutes_notifications
+
+logger = logging.getLogger(__name__)
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -23,7 +26,8 @@ class NotificationViewSet(viewsets.ModelViewSet):
                 'success': True,
                 'message': 'Notifications générées avec succès'
             }, status=status.HTTP_200_OK)
-        except Exception as e:
+        except Exception as exc:
+            logger.exception('Notification generation failed: %s', exc)
             return Response({
                 'success': False,
                 'message': 'Failed to generate notifications'

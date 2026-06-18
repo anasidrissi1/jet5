@@ -1,48 +1,24 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 
-const ThemeContext = createContext();
+const ThemeContext = createContext({ theme: 'light', isDarkMode: false });
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within ThemeProvider');
-  }
-  return context;
-};
+export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'dark';
-    const stored = window.localStorage.getItem('jet5-theme');
-    return stored === 'light' || stored === 'dark' ? stored : 'dark';
-  });
-
   useEffect(() => {
     const root = document.documentElement;
-    root.setAttribute('data-theme', theme);
-    if (document.body) {
-      document.body.setAttribute('data-theme', theme);
-    }
+    root.setAttribute('data-theme', 'light');
+    document.body?.setAttribute('data-theme', 'light');
 
     try {
-      window.localStorage.setItem('jet5-theme', theme);
+      window.localStorage.setItem('jet5-theme', 'light');
     } catch {
       // ignore storage errors
     }
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  const value = {
-    theme,
-    isDarkMode: theme === 'dark',
-    toggleTheme,
-  };
+  }, []);
 
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme: 'light', isDarkMode: false }}>
       {children}
     </ThemeContext.Provider>
   );

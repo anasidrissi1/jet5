@@ -9,36 +9,35 @@ import { useNotification } from './contexts/NotificationContext';
 import './App.css';
 
 const Login = lazy(() => import('./pages/Login'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Cars = lazy(() => import('./pages/Cars'));
-const CarDetails = lazy(() => import('./pages/CarDetails'));
-const AddCar = lazy(() => import('./pages/AddCar'));
-const Clients = lazy(() => import('./pages/Clients'));
-const AddClient = lazy(() => import('./pages/AddClient'));
-const EditClient = lazy(() => import('./pages/EditClient'));
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
+const Cars = lazy(() => import('./pages/admin/Cars'));
+const CarDetails = lazy(() => import('./pages/admin/CarDetails'));
+const AddCar = lazy(() => import('./pages/admin/AddCar'));
+const Clients = lazy(() => import('./pages/admin/Clients'));
+const AddClient = lazy(() => import('./pages/admin/AddClient'));
+const EditClient = lazy(() => import('./pages/admin/EditClient'));
 const ClientInscription = lazy(() => import('./pages/ClientInscription'));
-const Reservations = lazy(() => import('./pages/ReservationsProfessional'));
-const ReservationsOnline = lazy(() => import('./pages/ReservationsOnline'));
-const AddReservation = lazy(() => import('./pages/AddReservation'));
-const ReservationDetail = lazy(() => import('./pages/ReservationDetail'));
-const Payments = lazy(() => import('./pages/Payments'));
-const AddPayment = lazy(() => import('./pages/AddPayment'));
-const EditPayment = lazy(() => import('./pages/EditPayment'));
-const Autorisations = lazy(() => import('./pages/Autorisations'));
-const AddAutorisation = lazy(() => import('./pages/AddAutorisation'));
-const Assurances = lazy(() => import('./pages/Assurances'));
-const AddAssurance = lazy(() => import('./pages/AddAssurance'));
-const Entretiens = lazy(() => import('./pages/Entretiens'));
-const AddEntretien = lazy(() => import('./pages/AddEntretien'));
-const EntretienDetail = lazy(() => import('./pages/EntretiensDetail'));
-const VisitesTechniques = lazy(() => import('./pages/VisitesTechniques'));
-const AddVisiteTechnique = lazy(() => import('./pages/AddVisiteTechnique'));
-const RentabiliteVoitures = lazy(() => import('./pages/RentabiliteVoitures'));
-const Agents = lazy(() => import('./pages/Agents'));
-const AddAgent = lazy(() => import('./pages/AddAgent'));
-const Notifications = lazy(() => import('./pages/Notifications'));
+const Reservations = lazy(() => import('./pages/admin/ReservationsProfessional'));
+const ReservationsOnline = lazy(() => import('./pages/admin/ReservationsOnline'));
+const AddReservation = lazy(() => import('./pages/admin/AddReservation'));
+const ReservationDetail = lazy(() => import('./pages/admin/ReservationDetail'));
+const Payments = lazy(() => import('./pages/admin/Payments'));
+const AddPayment = lazy(() => import('./pages/admin/AddPayment'));
+const EditPayment = lazy(() => import('./pages/admin/EditPayment'));
+const Autorisations = lazy(() => import('./pages/admin/Autorisations'));
+const AddAutorisation = lazy(() => import('./pages/admin/AddAutorisation'));
+const Assurances = lazy(() => import('./pages/admin/Assurances'));
+const AddAssurance = lazy(() => import('./pages/admin/AddAssurance'));
+const Entretiens = lazy(() => import('./pages/admin/Entretiens'));
+const AddEntretien = lazy(() => import('./pages/admin/AddEntretien'));
+const EntretienDetail = lazy(() => import('./pages/admin/EntretiensDetail'));
+const VisitesTechniques = lazy(() => import('./pages/admin/VisitesTechniques'));
+const AddVisiteTechnique = lazy(() => import('./pages/admin/AddVisiteTechnique'));
+const RentabiliteVoitures = lazy(() => import('./pages/admin/RentabiliteVoitures'));
+const Historique = lazy(() => import('./pages/admin/Historique'));
+const Notifications = lazy(() => import('./pages/notifications/NotificationsPage'));
 const NotificationDetail = lazy(() => import('./pages/notifications/NotificationDetail'));
-const ContactMessages = lazy(() => import('./pages/ContactMessages'));
+const ContactMessages = lazy(() => import('./pages/admin/ContactMessages'));
 const PublicHome = lazy(() => import('./pages/PublicHome'));
 const PublicCars = lazy(() => import('./pages/PublicCars'));
 const PublicService = lazy(() => import('./pages/PublicService'));
@@ -108,12 +107,11 @@ const adminRoutes = [
   { path: 'reservations/add', element: <AddReservation /> },
   { path: 'reservations/view/:id', element: <ReservationDetail /> },
   { path: 'reservations/edit/:id', element: <AddReservation /> },
+  { path: 'reservations/historique', element: <Historique /> },
   { path: 'payments', element: <Payments /> },
   { path: 'payments/add', element: <AddPayment /> },
   { path: 'payments/edit/:id', element: <EditPayment /> },
   { path: 'rentabilite', element: <RentabiliteVoitures /> },
-  { path: 'agents', element: <Agents /> },
-  { path: 'agents/add', element: <AddAgent /> },
   { path: 'notifications', element: <Notifications /> },
   { path: 'notifications/:id', element: <NotificationDetail /> },
   { path: 'contact-messages', element: <ContactMessages /> },

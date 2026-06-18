@@ -3,16 +3,15 @@
 This checklist documents everything required to ship the Django + Vite stack to production.
 
 ## 1. Prerequisites
-- Python 3.12+ and Node 18+ installed on the build host.
-- Managed PostgreSQL (or other `DATABASE_URL` compatible database).
-- Object storage bucket (AWS S3 compatible) for static and media files.
-- Reverse proxy capable of terminating TLS (Nginx, Caddy, CloudFront, etc.).
+- Python 3.11+ and Node 20+ installed on the build host.
+- MySQL 8.4 (Docker or managed instance).
+- Reverse proxy capable of terminating TLS (Nginx, Caddy, etc.).
 
 ## 2. Backend setup
 1. Copy `backend/.env.example` to `.env` and fill in:
-   - `DJANGO_SECRET_KEY`, `ALLOWED_HOSTS`, `DATABASE_URL`.
-   - `SENTRY_DSN`, Twilio credentials, AWS bucket settings when `USE_S3_STORAGE=1`.
-   - `START_NOTIFICATION_SCHEDULER=0` for web dynos, `1` only on the scheduler worker.
+   - `DJANGO_SECRET_KEY`, `ALLOWED_HOSTS`, `DB_*` variables.
+   - `START_NOTIFICATION_SCHEDULER=0` on web processes.
+   - `RUN_AS_SCHEDULER=1` only on the dedicated scheduler worker.
 2. Create and activate the virtual environment:
    ```powershell
    cd backend
@@ -45,7 +44,7 @@ The repository includes a `Procfile` suitable for PaaS platforms:
 ```
 release: cd backend && python manage.py migrate --no-input
 web: cd backend && gunicorn backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers ${WEB_CONCURRENCY:-3}
-scheduler: cd backend && START_NOTIFICATION_SCHEDULER=1 python manage.py run_notification_scheduler
+scheduler: cd backend && RUN_AS_SCHEDULER=1 START_NOTIFICATION_SCHEDULER=1 python manage.py run_notification_scheduler
 ```
 - Run `scheduler` only once; the command blocks while APScheduler is alive.
 - Provide `PORT`, `WEB_CONCURRENCY`, and memory limits via platform variables.

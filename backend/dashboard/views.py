@@ -308,7 +308,6 @@ def timeline_aujourdhui(request):
                 'type': 'retour',
                 'title': f'Retour {retour.voiture.marque} {retour.voiture.modele}',
                 'description': f'{retour.client.nom} {retour.client.prenom} - {retour.voiture.immatriculation}',
-                'agent': 'Ali Fallaoui',
                 'priority': 'high',
                 'action': 'Préparer inspection',
                 'link': f'/reservations/edit/{retour.id}'
@@ -326,7 +325,6 @@ def timeline_aujourdhui(request):
                 'type': 'depart',
                 'title': f'Départ {depart.voiture.marque} {depart.voiture.modele}',
                 'description': f'{depart.client.nom} {depart.client.prenom} - Location commence',
-                'agent': 'Anas',
                 'priority': 'medium',
                 'action': 'Vérifier état',
                 'link': f'/reservations/edit/{depart.id}'

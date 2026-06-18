@@ -156,17 +156,17 @@ server {
 
 | Variable           | Value                                      |
 |--------------------|--------------------------------------------|
-| DJANGO_SECRET_KEY  | tA4p3otr1MBI9cD...                         |
+| DJANGO_SECRET_KEY  | *(set in backend/.env.production — never commit)* |
 | DEBUG              | False                                      |
 | ALLOWED_HOSTS      | 45.141.22.232, localhost, 127.0.0.1        |
 | DB_ENGINE          | django.db.backends.mysql                   |
 | DB_NAME            | jet5_db                                    |
 | DB_USER            | jet5_user                                  |
-| DB_PASSWORD        | Jet5Pass2026                               |
+| DB_PASSWORD        | *(set in backend/.env.production)*         |
 | DB_HOST            | db  (Docker service name)                  |
 | DB_PORT            | 3306                                       |
-| CORS_ALLOW_ALL     | True                                       |
-| JWT_SECRET_KEY     | c0FiDPEyWBZ2Go...                          |
+| CORS_ALLOW_ALL     | False                                      |
+| JWT_SECRET_KEY     | *(uses DJANGO_SECRET_KEY by default)*      |
 
 ### Frontend: /opt/jet5/frontend/.env
 
@@ -184,8 +184,8 @@ server {
 | Engine        | MySQL 8.4       |
 | Database name | jet5_db         |
 | User          | jet5_user       |
-| Password      | Jet5Pass2026    |
-| Root password | Jet5Root2026    |
+| Password      | *(see .env.production)*    |
+| Root password | *(see .env.production)*    |
 | Host (inside Docker) | db       |
 | Port          | 3306            |
 
@@ -273,7 +273,7 @@ systemctl reload nginx
 
 ### Backup database
 ```bash
-docker exec jet5_db mysqldump -u jet5_user -pJet5Pass2026 jet5_db > /opt/backups/jet5_$(date +%Y-%m-%d).sql
+docker exec jet5_db mysqldump -u jet5_user -p jet5_db > /opt/backups/jet5_$(date +%Y-%m-%d).sql
 ```
 
 ---

@@ -237,60 +237,73 @@ class AutorisationCirculation(models.Model):
 
     def __str__(self):
         return f"Autorisation de circulation pour {self.voiture}"
-from notifications.models import Notification
+from notifications.compliance import create_compliance_notification
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import date, timedelta
 
 
+def _voiture_label(instance):
+    return str(instance.voiture)
+
+
 @receiver(post_save, sender=Assurance)
 def creer_notification_assurance(sender, instance, **kwargs):
     today = date.today()
+    label = _voiture_label(instance)
     if instance.date_expiration <= today:
-        Notification.objects.create(
-            type='assurance',
-            message=f"L’assurance de {instance.voiture} a expiré.",
-            voiture=str(instance.voiture),
+        create_compliance_notification(
+            notif_type='assurance',
+            message=f"L'assurance de {instance.voiture} a expiré.",
+            voiture_label=label,
+            document_id=instance.id,
         )
     elif instance.date_expiration <= today + timedelta(days=7):
-        Notification.objects.create(
-            type='assurance',
-            message=f"L’assurance de {instance.voiture} expire bientôt.",
-            voiture=str(instance.voiture),
+        create_compliance_notification(
+            notif_type='assurance',
+            message=f"L'assurance de {instance.voiture} expire bientôt.",
+            voiture_label=label,
+            document_id=instance.id,
         )
 
 
 @receiver(post_save, sender=VisiteTechnique)
 def creer_notification_visite(sender, instance, **kwargs):
     today = date.today()
+    label = _voiture_label(instance)
     if instance.date_expiration <= today:
-        Notification.objects.create(
-            type='visite',
+        create_compliance_notification(
+            notif_type='visite',
             message=f"La visite technique de {instance.voiture} a expiré.",
-            voiture=str(instance.voiture),
+            voiture_label=label,
+            document_id=instance.id,
         )
     elif instance.date_expiration <= today + timedelta(days=7):
-        Notification.objects.create(
-            type='visite',
+        create_compliance_notification(
+            notif_type='visite',
             message=f"La visite technique de {instance.voiture} expire bientôt.",
-            voiture=str(instance.voiture),
+            voiture_label=label,
+            document_id=instance.id,
         )
 
 
 @receiver(post_save, sender=AutorisationCirculation)
 def creer_notification_autorisation(sender, instance, **kwargs):
     today = date.today()
+    label = _voiture_label(instance)
     if instance.date_expiration <= today:
-        Notification.objects.create(
-            type='autorisation',
-            message=f"L’autorisation de circulation de {instance.voiture} a expiré.",
-            voiture=str(instance.voiture),
+        create_compliance_notification(
+            notif_type='autorisation',
+            message=f"L'autorisation de circulation de {instance.voiture} a expiré.",
+            voiture_label=label,
+            document_id=instance.id,
         )
     elif instance.date_expiration <= today + timedelta(days=7):
-        Notification.objects.create(
-            type='autorisation',
-            message=f"L’autorisation de {instance.voiture} expire bientôt.",
-            voiture=str(instance.voiture),
+        create_compliance_notification(
+            notif_type='autorisation',
+            message=f"L'autorisation de {instance.voiture} expire bientôt.",
+            voiture_label=label,
+            document_id=instance.id,
         )
 
 
@@ -456,14 +469,11 @@ class PieceRevision(models.Model):
 
 @receiver(post_save, sender=Entretien)
 def creer_notification_entretien(sender, instance, **kwargs):
-    """
-    Crée une notification lorsqu'un entretien est programmé ou urgent.
-    (anciennement envoyait un message WhatsApp en cas d'urgence)
-    """
+    """Crée une notification lorsqu'un entretien est programmé."""
     if instance.prochain_entretien:
-        Notification.objects.create(
-            type='entretien',
+        create_compliance_notification(
+            notif_type='entretien',
             message=f"Un entretien de {instance.voiture} est prévu le {instance.prochain_entretien}.",
-            voiture=str(instance.voiture),
+            voiture_label=str(instance.voiture),
+            document_id=instance.id,
         )
-    # TODO: toute logique de notification additionnelle peut être ajoutée ici

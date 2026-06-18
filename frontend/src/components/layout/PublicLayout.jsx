@@ -9,14 +9,11 @@ import "@/styles/public-contact.css";
 
 export default function PublicLayout({ children }) {
   useEffect(() => {
-    const prev = document.documentElement.getAttribute('data-theme');
     document.documentElement.setAttribute('data-theme', 'dark');
     if (document.body) document.body.setAttribute('data-theme', 'dark');
     return () => {
-      if (prev) {
-        document.documentElement.setAttribute('data-theme', prev);
-        if (document.body) document.body.setAttribute('data-theme', prev);
-      }
+      document.documentElement.setAttribute('data-theme', 'light');
+      if (document.body) document.body.setAttribute('data-theme', 'light');
     };
   }, []);
 

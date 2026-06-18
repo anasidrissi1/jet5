@@ -1,23 +1,46 @@
-/* Final theme consistency layer for legacy styles with hardcoded colors */
+/* Admin light-mode consistency layer */
 
-html[data-theme='dark'],
-html[data-theme='light'] {
+:root,
+html[data-theme="light"],
+html:not([data-theme="dark"]) {
   --legacy-warm-1: #d4b061;
   --legacy-warm-2: #b8923a;
   --legacy-warm-3: #92712b;
-  --legacy-warm-soft: #efe5d2;
+  --legacy-warm-soft: #f7f0e3;
 }
 
-html[data-theme='light'] body,
-html[data-theme='light'] .app-layout,
-html[data-theme='light'] .main-content,
-html[data-theme='light'] .page-content {
+html[data-theme="light"] body,
+html:not([data-theme="dark"]) body,
+html[data-theme="light"] .app-layout,
+html:not([data-theme="dark"]) .app-layout,
+html[data-theme="light"] .main-content,
+html:not([data-theme="dark"]) .main-content,
+html[data-theme="light"] .page-content,
+html:not([data-theme="dark"]) .page-content {
   background: var(--bg-primary) !important;
   color: var(--text-primary);
 }
 
-/* Neutralize stark white card-like surfaces in light mode */
-html[data-theme='light'] :is(
+html[data-theme="light"] :is(
+  .page-container,
+  .page-header,
+  .page-body,
+  .cars-header,
+  .cars-body,
+  .table-container,
+  .summary-card,
+  .dashboard-card,
+  .chart-card,
+  .modal-content,
+  .login-form,
+  .contract-form,
+  .contract-section,
+  .search-and-filters,
+  .stats-header,
+  .filters-section,
+  .cards-grid > *
+),
+html:not([data-theme="dark"]) :is(
   .page-container,
   .page-header,
   .page-body,
@@ -41,22 +64,27 @@ html[data-theme='light'] :is(
   color: var(--text-primary);
 }
 
-/* Ensure form controls switch with theme consistently */
-html[data-theme='light'] :is(input, select, textarea):not([type='checkbox']):not([type='radio']),
-html[data-theme='dark'] :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
-  background: var(--bg-primary) !important;
+html[data-theme="light"] :is(input, select, textarea):not([type='checkbox']):not([type='radio']),
+html:not([data-theme="dark"]) :is(input, select, textarea):not([type='checkbox']):not([type='radio']) {
+  background: var(--bg-card) !important;
   color: var(--text-primary) !important;
   border-color: var(--border-color) !important;
 }
 
-html[data-theme='light'] :is(input, select, textarea):focus,
-html[data-theme='dark'] :is(input, select, textarea):focus {
+html[data-theme="light"] :is(input, select, textarea):focus,
+html:not([data-theme="dark"]) :is(input, select, textarea):focus {
   border-color: var(--primary-color) !important;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 22%, transparent) !important;
 }
 
-/* Map legacy bright yellow accents to softer broken yellow */
-html[data-theme] :is(
+html[data-theme="light"] :is(
+  .btn-danger,
+  .badge-danger,
+  .status-hors_service,
+  .status-pill.status-loue,
+  .status-pill.status-reserve
+),
+html:not([data-theme="dark"]) :is(
   .btn-danger,
   .badge-danger,
   .status-hors_service,
@@ -66,14 +94,20 @@ html[data-theme] :is(
   border-color: var(--legacy-warm-2) !important;
 }
 
-html[data-theme] .badge-danger,
-html[data-theme] .status-hors_service {
+html[data-theme="light"] :is(.badge-danger, .status-hors_service),
+html:not([data-theme="dark"]) :is(.badge-danger, .status-hors_service) {
   background: var(--legacy-warm-soft) !important;
   color: #6f5722 !important;
 }
 
-/* Harmonize table/section gradient bars in legacy pages */
-html[data-theme] :is(
+html[data-theme="light"] :is(
+  .table-header-sticky thead th,
+  .reservation-card-header,
+  .summary-strip,
+  .gradient-bar,
+  .header-accent
+),
+html:not([data-theme="dark"]) :is(
   .table-header-sticky thead th,
   .reservation-card-header,
   .summary-strip,
